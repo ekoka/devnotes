@@ -1,0 +1,163 @@
+- ref: http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python
+
+creating a class
+----------------
+    >>> class ObjectCreator(object):
+    ...    pass
+
+- python classes are objects too and can be used as such
+
+    print it
+    --------
+    >>> print ObjectCreator
+    <class '__main__.ObjectCreator'>
+
+    pass it as an argument to a function
+    ------------------------------------
+    >>> def echo(o):
+    >>>     print o
+
+    >>> echo(ObjectCreator)
+    <class '__main__.ObjectCreator'>
+
+    add attributes
+    --------------
+    >>> ObjectCreator.new_attribute = 'foo'
+    >>> print ObjectCreator.new_attribute
+    foo
+
+    assign a class to a variable
+    ----------------------------
+    >>> ObjectCreatorMirror = ObjectCreator
+    >>> print ObjectCreatorMirror.new_attribute
+    foo
+
+    creating classes within a function
+    ----------------------------------
+    def choose_class(name):
+        if name == 'foo':
+            class InnerClass(object):
+                foo = True
+        else:
+            class InnerClass(object):
+                bar = True
+        return InnerClass
+            
+- the type() function has the ability to create a class 
+
+    type(name of the class,
+        tuple of the parent class (for inheritance; can be empty),
+        dict containing attributes names and values)
+
+    e.g. 
+        >>> class MyShinyClass(object):
+        ...     pass
+
+    could be created like this
+
+        >>> MyShinyClass = type('MyShinyClass', (), {})
+
+    the name of the class and the variable it is assigned to are the same here, but they don't have to be
+
+        >>> class Foo(object):
+        ...     bar = True
+
+        can be written as
+
+        Foo = type('Foo', (), {'bar':True})
+
+    inheritance works too
+    ---------------------
+    >>> class FooChild(Foo):
+    ...     pass
+
+    can be written as
+
+    >>> FooChild = type('FooChild', (Foo,), {})
+    >>> print FooChild
+    <class '__main__.FooChild'>
+    >>> print FooChild.bar # inherited from Foo
+    True
+
+    defining methods
+    ----------------
+    >>> def echo_bar(self):
+    ...     print self.bar
+
+    >>> FooChild = type('FooChild', (Foo,), {'echo_bar':echo_bar})
+    
+    this is what python does when one uses the keyword 'class'
+
+metaclasses
+-----------
+- python classes are objects
+- metaclasses are what create these objects
+    
+    >>> MyClass = MyMetaClass()
+    >>> myObject = MyClass()
+
+- the function type() itself is a metaclass
+- it's the metaclass Python uses to create all classes behind the scene
+- int() is the metaclass that creates integers object, str() is the metaclass that creates string object and type() is the metaclass that creates class objects
+- you can verify this by checking the __class__ attribute of any object
+    >>> a = 33
+    >>> a.__class__
+    int
+- the __class__ of __class__ itself is 'type'
+    >>> a.__class__.__class__
+    type
+
+the __metaclass__ attribute 
+---------------------------
+    class Foo(object):
+        __metaclass__ = something
+
+- before creating Foo, Python will successively look for __metaclass__ in:
+    - class definition
+    - any of the parent classes
+    - in the module
+
+    if successful: 
+        - it will create a "class object" in memory based on __metaclass__
+    otherwise:
+        - it will use type() to create the "class object"
+
+- __metaclass__ can be any callable that uses or subclasses type()
+
+e.g. a metaclass function to turn all attributes to uppercase
+-------------------------------------------------------------
+def upper_attr(future_class_name, future_class_parents, future_class_attr):
+    uppercase_attr = ((key.to_upper(), value) for 
+                       key, val in future_class_parents.items() if not 
+                       key.startswith('__'))
+    return type(future_class_name, future_class_parents, uppercase_attr)
+
+__metaclass__ = upper_attr
+
+
+same functionality, but now with a class
+----------------------------------------
+class UpperAttrMetaClass(type):
+    def __new__(upperattr_metaclass, future_class_name,
+                future_class_parents, future_class_attr):
+        uppercase_attr = ((key.to_upper(), value) 
+                    for key,val in future_class_parents.items() 
+                        if not key.startswith('__'))
+        return type.__new__(upperattr_metaclass, future_class_name,
+                    future_class_parents, uppercase_attr)
+        # or use super()
+        # return super(UpperAttrMetaClass, upperattr_metaclass)\
+        #     .__new__(upperattr_metaclass, future_class_name,
+        #             future_class_parents, future_class_attr)
+
+
+__new__(cls) 
+--------------
+- called before __init__() 
+- creates the new object
+- classmethod so is passed the class object as first param, rather than an object
+
+__init__(self) 
+----------------
+- initializes the object
+

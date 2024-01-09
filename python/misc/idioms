@@ -1,0 +1,108 @@
+* Idioms and Anti-Idioms in Python (http://docs.python.org/howto/doanddont.html)
+* Python Idioms and Efficiency  (http://jaynes.colorado.edu/PythonIdioms.html)
+* Python Style Guide (http://www.python.org/dev/peps/pep-0008/)
+* Google Python Style Guide (http://google-styleguide.googlecode.com/svn/trunk/pyguide.html)
+* Pocoo Style Guide (http://www.pocoo.org/internal/styleguide/)
+
+
+--------------------------
+
+a = b = None
+
+--------------------------
+interdependancy between classes:
+
+class ABC(object):
+    def method_a():
+        result = def.method_z(self)
+    
+    def method_b():
+        return something
+
+class DEF(object):
+    def method_z(abc):
+        r = some_operation()
+        abc.method_b(r)
+
+--------------------------
+sorting:
+
+ls = some list of elements
+fn = a function to be called on each element that returns a sorting index
+
+sorted(ls, fn)
+
+# some interesting functions to use with sorted
+
+given the following class and lists:
+    >>> class Student(object):
+    ...     def __init__(self, name, grade, age):
+    ...         self.name  = name
+    ...         self.grade = grade
+    ...         self.age   = age
+     
+    >>> student_tuples = [ ('john', 'A' 15), ('jane', 'B' 15), ('dave', 'B' 15), ]
+    >>> student_objects = [
+    ...     Student('john', 'A' 15), 
+    ...     Student('jane', 'B' 15), 
+    ...     Student('dave', 'B' 15)]
+
+    >>> from operator import itemgetter, attrgetter
+    >>> a = sorted(student_tuples, key=itemgetter(2))
+    >>> b = sorted(student_objects, key=attrgetter('age'))
+
+itemgetter(2) will create a function f(seq) that returns seq[2]
+attrgetter('age') will create a function f(obj) that returns obj.age 
+
+-------------------------
+importing from strings
+
+    >>> module = 'name.of.module'
+    >>> obj = 'name_of_object'
+    >>> getattr(__import__(module, None, None, [obj]), obj)
+
+--------------------------
+
+rv = object.__new__(self.__class__)
+
+---------------------------
+    >>> from operator import itemgetter
+    >>> class TupleChild(tuple):
+    ...     attr1, attr2, attr3 = (property(itemgetter(x) for x in range(3)))
+
+---------------------------
+try:
+    while true:
+        ...
+        at some point raise an exception
+finally:
+    handle exception here
+
+----------------------------
+setting a value in parent and children
+
+    >>> from collections import deque
+    >>> q = deque([parent])
+    >>> while q:
+    ...     node = deque.popleft()
+    ...     node.var = value
+    ...     q.extend(children)
+    ...     children = node.get_children()
+
+-----------------------------
+>>> def unoptimize_before_dead_code():
+...     x = 42
+...     def f():
+...         if 0: dummy(x)
+...     return f
+ 
+>>> unoptimize_before_dead_code().func_closure
+(<cell at 0x907... : int object at 0x8bb...>,)
+>>> unoptimize_before_dead_code().func_closure[0].cell_contents
+42
+-----------------------------
+# to avoid using the long name
+>>> obj.attrib = attr = []
+>>> attr.append('abc')
+
+

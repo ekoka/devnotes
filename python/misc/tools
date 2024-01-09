@@ -1,0 +1,38 @@
+installing python on mac:
+-------------------------
+http://docs.python.org/using/mac.html
+
+understanding python packages:
+------------------------------
+http://pythonconquerstheuniverse.wordpress.com/2009/10/15/python-packages/
+
+system wide tools:
+------------------
+- pip
+- virtualenv
+- virtualenvwrapper
+- ipython (*see notes at bottom of page)
+
+packages:
+---------
+- sqlalchemy
+- flask (include werkzeug + jinja)
+- wtforms
+
+*note on ipython and virtualenv:
+--------------------------------
+when installed system wide, ipython isn't aware of a running virtualenv. The native python shell doesn't have this problem. e.g. If you run a virtualenv, the native python shell will be able to import packages and modules from it, but not the ipython shell.
+
+There are many ways to go around this problem, many of them deal with configuring ipython. I used a different approach, maybe it'll work for you, maybe it won't. On Ubuntu, I've found out that the command `ipython` actually maps to a Python script. 
+
+    $ which ipython
+    /usr/local/bin/ipython
+    $ cat /usr/local/bin/ipython
+    ... some output here ...
+
+If the output confirms that this is indeed a python script, you can simply alias the command `ipython` at the bottom of your bash configuration file.
+
+    $ vim ~/.bashrc
+    alias ipython="python /usr/local/bin/ipython" 
+
+Since the `python` command is virtualenv aware and is running the ipython script, then the ipython shell will equally be virtualenv aware.

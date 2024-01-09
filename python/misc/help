@@ -1,0 +1,12 @@
+help() function
+---------------
+doc for various modules, classes, functions and methods
+
+    >>> help(len)
+    >>> help(sys)
+    >>> help(sys.path)
+    >>> help('abc'.split)
+
+dir() function
+--------------
+a list of defined symbols

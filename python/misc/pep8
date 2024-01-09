@@ -1,0 +1,68 @@
+resources:
+http://www.python.org/dev/peps/pep-0008/
+http://www.slideshare.net/claytron/code-with-style-4345177
+http://wwd.ca/blog/2009/07/09/pep-8-cheatsheet/
+
+A foolish consistency is the hobgoblin of little minds
+------------------------------------------------------
+- code is read much more often than it is written
+- lets improve code readability and style consistency
+- consistency precedence:
+    pep8 < project < module or function
+- know when to be inconsistent (use your best judgment)
+    for example if:
+    - it makes code more readable
+    - it makes code more consistent with surrounding code
+
+
+indentation:
+------------
+- 4 spaces per level
+- alignment
+
+# vertical alignment. args on first line authorized.
+foo = long_function_name(var_one, var_two,
+                         var_three, var_four)
+
+# non-vertical alignment. no args on first line.
+# hanging indent required, to distinguish args from rest of block.
+def long_function_name(
+        var_one, var_two, var_three, 
+        var_four):
+    print(var_one)
+
+# non-vertical alignment. no args on first line.
+# hanging indent not required. this isn't a block.
+foo = long_function_name(
+    var_one, var_two, 
+    var_three, var_four)
+
+- max line length 79 chars
+- for flowing long blocks of text (docstring or comments),
+72 chars is recommended
+- preferred way of wrapping lines is implied line continuation
+with parentheses, brackets and braces.
+- wrap long expressions in parentheses.
+- break around binary operators *after* the operator
+
+class Rectangle(Blob):
+    def __init__(self, width, height,
+                 color='black', emphasis=None, highlight=0):
+        if (width == 0 and height == 0 and
+            color == 'red' and emphasis == 'strong' or
+            highlight > 100):
+            raise ValueError("sorry, you lose")
+        if width == 0 and height == 0 and (color == 'red' or 
+                                           emphasis is None):
+            raise ValueError("I don't think so -- values are %s, %s" %
+                             (width, height))
+        Blob.__init__(self, width, height,
+                      color, emphasis, highlight)
+
+
+Blank lines separations
+-----------------------
+- top-level functions and class definition: 2 
+- method definitions inside class: 1 
+- use blank lines sparingly to denote logical sections
+

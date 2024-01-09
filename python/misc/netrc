@@ -1,0 +1,12 @@
+# python script
+
+>>> import netrc
+>>> s = netrc.netrc()
+>>> user, account, password = s.authenticators('mykey')
+
+----
+# ~/.netrc file
+
+machine mykey
+    login mike
+    password 1234abcd

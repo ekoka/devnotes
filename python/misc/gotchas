@@ -1,0 +1,61 @@
+- referencing a global variable from within a function, then assigning a value to it later will trigger an UnboundLocalError.
+
+    var1 = 'abc'
+
+    # this will work
+    def x():
+        print(var1)
+    x()
+    > 'abc'
+
+    # this will trigger an UnboundLocalError when called
+    def x():
+        print(var1)
+        var1 = 123
+    x()
+    UnboundLocalError: local variable 'var1' referenced before assignment
+
+---
+
+trying to get a reference to a descriptor returns a different object each time
+
+    class Foo(object):
+        def bar(self):
+            pass
+
+    f = Foo()
+
+    a = f.bar
+    b = f.bar
+
+    a is b
+    > False
+
+    id(a)
+    > 140253122379336
+    id(b)
+    > 140253168989384
+
+---
+
+when trying to open non-text files for reading you should specify them as binary files, otherwise you'll run into `UnicodeDecodeError`
+
+    f = open('some.gif')
+    contents = f.read()
+    UnicodeDecodeError: 'utf-8' codec can't decode byte 0xbe in position 6: invalid start byte
+
+    f = open('some.gif', 'rb')
+    contents = f.read()
+
+---
+late binding:
+
+    >>> functions = [lambda: str(i) for i in range(5)]
+    >>> print(", ".join(fnc() for fnc in functions))
+    4, 4, 4, 4, 4
+
+hack to fix late binding:
+
+    >>> functions = [lambda i=i: str(i) for i in range(5)]
+    >>> print(", ".join(fnc() for fnc in functions))
+    0, 1, 2, 3, 4

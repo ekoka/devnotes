@@ -1,0 +1,98 @@
+installing with pip
+-------------------
+    $ sudo pip install virtualenv
+
+config file on unix
+-------------------
+
+$HOME/.virtualenv/virtualenv.ini
+
+list of config options
+----------------------
+    $ virtualenv --help
+
+configs can be set when invoking virtualenv by prepending them with a -- (double-dash), or by setting them in the config file without the dashes.
+
+    [virtualenv]
+    distribute = true
+    no-site-packages = true
+    extra-search-dir = 
+        /home/mike/some-dists
+        /some/other/dists
+
+the `distribute` option makes virtualenv use a better packaging system based on `distribute` rather than `setuptools`. It also automatically installs pip within the virtualenv. 
+the `no-site-packages` option hides system-wide packages from virtualenv.
+
+create an environment
+---------------------
+    $ mkdir myenv
+    $ virtualenv --distribute --no-site-packages myenv
+
+specifying a python version
+---------------------------
+    $ virtualenv -p python3 myenv
+
+activating the virtualenv
+-------------------------
+    $ cd myenv
+    $ source bin/activate       (aka  . bin/activate)
+    (myenv)$
+
+deactivating the virtualenv
+---------------------------
+    (myenv)$ deactivate
+
+
+==========================
+virtualenvwrapper
+==========================
+
+installation
+------------
+- install system wide with pip 
+    $ sudo pip install virtualenvwrapper
+
+- create a local configuration file for virtualenvwrapper (in your home dir). The name of the file is arbitrary. I simply appended 'rc' to the original name of the tool, to keep with the traditional naming of configuration files.
+    $ touch ~/.virtualenvwrapperrc  
+
+- add this script to bash's (or ksh, csh, etc) script
+    - edit the shell configuration script
+    $ vim ~/.bashrc
+
+    - add the following at the bottom, to source .virtualenvwrapperrc
+    if [ -f ~/.virtualenvwrapperrc ]; then
+        source ~/.virtualenvwrapperrc
+    fi
+
+- add the following directives to ~/.virtualenvwrapperrc and save it. They will now be read by bash when it starts and will therefore also be available to the virtualenvwrapper utility.
+
+    # specify which directory will host virtual environments
+    export WORKON_HOME=$HOME/all_my_envs  
+    # include system wide virtualenvwrapper configurations
+    source /usr/local/bin/virtualenvwrapper.sh
+    
+These are the essentials. Additional customizations and configurations can be found at http://www.doughellmann.com/docs/virtualenvwrapper/
+
+usage (call from anywhere)
+--------------------------
+- creating a virtualenv 
+    $ mkvirtualenv mynewenv     # will create $HOME/all_my_envs/mynewenv
+- switching between envs 
+    $ workon mynewenv           # will look for mynewenv in $HOME/all_my_envs/
+- deactivating running env
+    (mynewenv)$ deactivate
+- deleting env
+    $ rmvirtualenv mynewenv     # will delete mynewenv from $HOME/all_my_envs/
+- listing packages inside env
+    $ lssitepackages            
+
+Shell tab autocompletion works as well. i.e. the command 
+    $ workon <tab><tab> 
+will list all current envs in $HOME/all_my_envs
+
+
+resources
+---------
+http://www.doughellmann.com/docs/virtualenvwrapper/
+http://www.doughellmann.com/projects/virtualenvwrapper/
+http://dabapps.com/blog/introduction-to-pip-and-virtualenv-python/

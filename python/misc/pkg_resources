@@ -1,0 +1,42 @@
+- we start python inside ~/pkg_tut/ 
+- pkg_tut has the following structure
+
+    ~/pkg_tut/
+        myawesomepkg/
+            __init__.py
+            templates/
+                test.html
+                mike.html
+
+    using get_provider (e.g. jinja2.loaders.py)
+    -------------------------------------------
+    >>> from pkg_resources import get_provider
+    >>> package_name = 'myawesomepkg'
+    >>> provider = get_provider(package_name)
+    >>> provider.module_path
+    'myawesomepkg'   
+    >>> provider.has_resource('templates/test.html')
+    True
+    >>> provider.resource_isdir('templates/test.html')
+    False
+    >>> provider.resource_listdir('templates')
+    ['test.html', 'mike.html']
+
+    with DefaultProvider 
+    --------------------
+    >>> from pkg_resources import DefaultProvider 
+    >>> isinstance(provider, DefaultProvider)
+    True
+    
+    and ResourceManager
+    -------------------
+    >>> from pkg_resources import ResourceManage
+    >>> mngr = ResourceManage()
+    >>> provider.get_resource_filename(mngr, 'templates/test.html')
+    'noob/templates/test.html' 
+    >>> provider.get_resource_string(mngr, 'templates/test.html')
+    '<h1>The content of the file is returned</h1>'
+    >>> f = provider.get_resource_stream(mngr, 'templates/test.html')
+    >>> f.read()
+    '<h1>The content of the file is returned</h1>'
+    >>> f.seek(0)

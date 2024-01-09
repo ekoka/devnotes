@@ -1,0 +1,43 @@
+if statement override
+---------------------
+__nonzero__() method is called on if statements
+
+iterating over two lists
+------------------------
+from itertools import izip
+ls1 = [a,b,c,d,e]
+ls2 = [v,w,x,y,z]
+
+for n, m in izip(ls1, ls2):
+    if n == m:
+        print n
+
+
+bitwise operators:
+------------------
+    - & has a higher precedence than | so
+    - a | b & c <=> a | (b & c)
+
+catching multiple exceptions:
+-----------------------------
+    try:
+        return stack[-1]
+    except (AttributeError, IndexError):
+        return None
+
+arbitrary objects
+-----------------
+    >>> a = object()
+    >>> b = object()
+
+    can be used as markers
+
+    >>> is_value = object()
+
+    >>> myList[is_value] = False
+
+
+verify if a string is a digit
+----------------------------
+    >>> "33".isdigit()
+    True

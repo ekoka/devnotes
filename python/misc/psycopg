@@ -1,0 +1,5 @@
+- installing psycopg2 in virtualenv
+
+    $ sudo apt-get install python-dev libpq-dev
+    $ workon someenv
+    $ (someenv) pip install psycopg2

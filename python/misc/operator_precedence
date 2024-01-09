@@ -1,0 +1,58 @@
+- list is sorted from lowest to highest precedence
+- operators on the same line group left to right, except for:
+    - comparisons, including tests, which all have the same precedence and chain from left to right
+    - exponentiation, which groups from right to left
+
+    ---
+
+    lambda
+        - lambda expression
+
+    if ... else
+        - conditional expression
+
+    or
+        - boolean OR
+
+    and
+        - boolean AND
+
+    not x
+        - boolean NOT
+
+    in, not in, is, is not, <, <=, >, >=, <>, !=, == 
+        - comparisons, membership tests, identity tests
+        - all have the same precedence 
+        - chain from left to right
+    |
+        - bitwise OR
+
+    ^
+        - bitwise XOR
+
+    &
+        - bitwise AND
+
+    <<, >>
+        - shift
+
+    +, -
+        - addition, substraction
+
+    *, /, //, %
+        - multiplication, division, remainder
+
+
+    +x, -x, ~x
+        - positive, negative, bitwise NOT
+
+    **
+        - exponentiation
+
+    x[index], x[index:index], x(arguments...), x.attribute
+        - subscription, slicing, call, attribute reference
+
+    (expressions...), [expressions...], {key:value...}, `expressions...`
+        - binding or tuple diplay, list display, dictionary display, string conversion
+
+

@@ -1,0 +1,35 @@
+dictionary updates
+------------------
+dict1.update(dict2)
+dict1.update({key1:value1, key2:value2})
+dict1.update(key1=value1, key2=value2) 
+
+
+command line arguments
+----------------------
+>>> import sys
+>>> for arg in sys.argv:
+...     print arg
+
+
+standard operators as functions
+-------------------------------
+- module
+    >>> import operator
+- comparison functions:
+    - lt(a, b) : <
+    - le(a, b) : <=
+    - eq(a, b) : ==
+    - ne(a, b) : !=
+    - ge(a, b) : >=
+    - gt(a, b) : >
+
+- arithmetic
+    - mul()
+    - truediv()
+    - floordiv()
+    - pow()
+    - mod()
+    - add()
+    - sub()
+

@@ -1,0 +1,59 @@
+# we need the `add-apt-repository` command. In case it's missing install it
+
+    $ sudo apt install software-properties-common python-software-properties
+
+# now add a ppa for python3.6 in ubuntu 
+
+    $ sudo add-apt-repository ppa:jonathonf/python-3.6
+
+# update the sources
+
+    $ sudo apt update
+
+# install python3.6
+
+    $ sudo apt install python3.6
+
+---
+
+# find out which symlink is resolved by `python3`
+
+    $ which python3
+    /usr/bin/python3
+
+# find out more about it
+
+    $ ls -l /usr/bin/python3
+    lrwx...    ... /usr/bin/python3 -> /usr/bin/python3.5
+
+# we need to add Python3.6 as an alternative candidate for Python3 with the `update-alternatives` command.
+
+    The syntax is
+
+    sudo update-alternatives --install <link> <name> <path> <priority>
+
+    where 
+        <link> is the symlink pointing to /etc/alternatives/<name>
+        <name> is the master name for this link group
+        <path> is the location of the alternative target file (where /etc/alternatives/<name> will point to)
+        <priority> is an integer, higher number implies higher priority in automatic mode.
+
+ 
+    $ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 2
+
+# now that python3.6 has been added as an alternative we can set it as the default for python3 as such
+
+    $ sudo update-alternatives --config python3
+
+Simply follow the instructions.
+
+# after python3.6 has been set as the default in ubuntu 16.04 there was an issue with starting gnome terminal.
+
+My solution was to install an alternative terminal, `Tilda` and go through similar steps to set it as the default.
+
+    $ sudo apt install tilda
+    $ sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/tilda 20
+    $ sudo update-alternatives --config x-terminal-emulator
+
+
+

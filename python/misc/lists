@@ -1,0 +1,142 @@
+======================================
+creating lists
+
+---
+>>> L = [] 
+>>> L = [expression, ...]
+
+---
+list comprehension
+>>> L = [expression for x in sequence]
+
+---
+built-in list type
+>>> L = list()
+>>> L = list(sequence)
+>>> L = list(expression for x in sequence)
+
+- sequence can be any sequence object of iterable, including tuples and generators
+- if you pass another list to the list type constructor, a copy is returned
+
+========================================
+List properties
+
+---
+general expression
+a[start : stop : step] 
+
+stop is exclusive
+
+---
+>>> a = b = []
+>>> a.append('a')
+>>> b
+['a']
+>>> a is b 
+True
+>>> c = b
+>>> a is c
+True
+
+---
+>>> a = ['a', 'b', 'c']
+>>> len(a)
+3
+
+---
+>>> a = ['a', 'b', 'c', 'd', 'e']
+>>> b = [:3]
+>>> b
+['a', 'b', 'c']
+
+---
+>>> a[:]
+['a', 'b', 'c', 'd', 'e']
+
+---
+>>> a[-1]
+'e'
+
+---
+>>> a[2:]
+['c', 'd', 'e']
+
+---
+>>> a[2:-1]
+['c', 'd']
+
+---
+steps
+>>> a = ['a', 'b', 'c', 'd', 'e', 'f']
+>>> a[::2]
+['a', 'c', 'e']
+
+
+======================================
+list manipulations
+
+---
+turn a string into a list
+>>> a = list('abcde')
+>>> a
+['a', 'b', 'c', 'd', 'e']
+
+---
+copying a list
+>>> c = []
+>>> c[:] = a
+>>> c
+['a', 'b', 'c', 'd', 'e']
+>>> c is a 
+False
+
+or 
+
+>>> c = list(a)
+>>> c is a
+False
+
+---
+# replacing a subset
+>>> a = ['a', 'b', 'c', 'd', 'e']
+>>> a[2:] = ['x', 'y']
+>>> a 
+['a', 'b', 'x', 'y']
+
+---
+>>> a = ['a', 'b', 'c', 'd', 'e']
+>>> a[2:3] = ['x', 'y']
+>>> a 
+['a', 'b', 'x', 'y', 'd', 'e']
+
+---
+inserting elements within 
+>>> a = ['a', 'b', 'c', 'd', 'e']
+>>> a[2:2] = ['x', 'y']
+>>> a 
+['a', 'b', 'x', 'y', 'c', 'd', 'e']
+
+======================================
+looping
+
+---
+for item in L:
+    print item
+
+---
+for index, item in enumerate(L):
+    print index, item
+
+---
+for index in range(len(L)):
+    print index
+
+---
+creating an iterator
+L = ['a', 'b', 'c', 'd']
+>>> i = iter(L)
+>>> i.next() 
+'a'
+>>> i.next()
+'b'
+

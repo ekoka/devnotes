@@ -1,0 +1,77 @@
+abs(x) : return the absolute value
+---
+any/all(iterable) : return True if any/all elements of iterable are True
+---
+chr(i) : returns a character whose ascii code is the integer i
+ord(c) : returns an the ascii code integer of character c
+---
+cmp(x, y) : compare x and y. negative if x < y, 0 if x==y, positive if x > y
+--
+max(iterable[,a,b,c,...n [, key=sorting_function]] ) :
+if the sorting function is provided it must be called in the keyword form
+e.g.
+max([33, 12, 73, 28], key=bubble_sort)
+max(33, 12, 73, 28, key=bubble_sort)
+---
+setattr(object, name, value) : set an attribute by name
+getattr(object, name) : get attribute by name
+delattr(object, name) : delete attribute.  delattr(foo, 'bar') is equivalent to del foo.bar
+---
+dict([arg]) : create a data dictionary, optionally with items taken from arg
+    dict(key1='value1', key2='value2')
+    dict({'key1':'value1', 'key2':'value2'})
+    dict(zip(('one', 'two'), (1, 2)))
+    dict([['two', 2], ['one', 1]])
+---
+dir([object]) : without argument return the list of names in the current local scope. with argument, attempts to return a list of valid attributes for the object.
+    Can work in conjunction with the __dir__() method of the object. if no __dir__() method is defined, then it relies on __dict__ and/or the object's type object. the result can be unreliable.
+---
+enumerate(sequence[, start=0]):
+    >>> seasons = ['Spring', 'Summer', 'Fall', 'Winter']
+    >>> list(enumerate(seasons))
+    [(0, 'Spring'), (1, 'Summer'), (2, 'Fall'), (3, 'Winter')]
+    >>> list(enumerate(seasons, start=1))
+    [(1, 'Spring'), (2, 'Summer'), (3, 'Fall'), (4, 'Winter')]
+---
+filter(function, iterable):
+    returns a list of all items in iterable, for which function(item) returns True
+    it is equivalent to the following
+    if function is not None: [i for i in iterable if function(i)]
+    if function is None: [i for i in iterable if i]
+
+methods may be bound or unbound
+--------------------------------
+>>> class Cls(object):
+>>>     def hello(self, name):
+>>>         print "Hello %s" % name
+
+>>> def hi(name):
+>>>     print "Hi %s" % name
+
+>>> print Cls.hello
+<unbound method Cls.hello>
+
+>>> obj = Cls()
+>>> print obj.hello
+<bound method Cls.hello of <__main__.Cls object at 0xa28a64c>>
+
+>>> cls_hello = Cls.hello
+>>> print cls_hello
+<unbound method Cls.hello>
+
+>>> obj_hello = obj.hello
+>>> print obj_hello
+<bound method Cls.hello of <__main__.Cls object at 0xa28a64c>>
+
+>>> cls_hello('mike')
+TypeError: unbound method hello() must be called with Cls instance as first argument [...]
+
+>>> obj_hello('mike')
+hello mike
+
+ref: http://stackoverflow.com/questions/114214/class-method-differences-in-python-bound-unbound-and-static
+
+also look at descriptors.
+
+### Creating a bound method
+a.function_to_bind = function_to_bind.__get__(a)

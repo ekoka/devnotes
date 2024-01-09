@@ -1,0 +1,75 @@
+werkzeug.datastructures.MultiDict
+=================================
+ref: http://werkzeug.pocoo.org/docs/datastructures/#werkzeug.datastructures.MultiDict
+
+- A dictionary subclass customized to deal with multiple values for the same key
+- used for form submissions because some elements pass multiple values for one key
+
+    >>> d = MultiDict([('k1', 'a'), ('k1', 'b')])
+
+- it behaves like a normal dict, so dict functions will only return the first value 
+    
+    >>> d.get('k1')
+    >>> 'a'
+    >>> d['k1']
+    >>> 'a'
+
+- to access other values use list methods (key's values are actually stored as lists)
+    
+    >>> d.getlist('k1')
+    >>> ['a', 'b']
+
+* of possible interest: 
+check out the _decode() function in solace/solace/utils/forms.py
+
+
+methods
+-------
+- adding to existing list or creating new one if non-exsiting
+    >>> d.add('k1', 'c')
+
+- creating new list if non-existant, or override existing one
+    >>> d['k2'] = '1'
+    >>> d['k3'] = 'aaa'
+
+- display list
+    >>> d.getlist('k1')
+    ['a', 'b', 'c']
+
+- emptying
+    >>> d.clear()
+
+- copying
+    >>> d2 = d.copy()
+
+- first value in list
+    >>> d['k1']
+    'a'
+    >>> d.get('k1')
+    'a'
+
+- check for key
+    >>> d.has_key('k1')
+
+- (k,v) pairs
+    >>> d.items()           # first elements only
+    >>> d.items(True)       # all list elements
+    >>> d.iteritems()
+    >>> d.iteritems(True)
+
+- keys
+    >>> d.keys()            # list of keys
+    >>> d.iterkeys()        # a key iterator
+
+- list of (key, [vals])
+    >>> d.lists()           # [(k1,[vals1,...]), (k2, [vals2, ...]), (k3, [vals3, ...])]
+    >>> d.listvalues()      # [[vals1, ...], [vals2, ...], [vals3, ...]] 
+
+    >>> zip(d.keys(), d.listvalues()) == d.lists()
+    True
+
+- popping 
+    >>> d.pop('k1')         # return first element of k1 and discard list
+    >>> d.poplist('k1')     # pop k1 list (or [] if k1 not in d)
+    >>> d.popitem()         # pop a (k, v)
+    >>> d.popitemlist()     # pop a (k, [vals...])

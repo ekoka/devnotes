@@ -1,0 +1,4 @@
+solving installation problems
+-----------------------------
+    $ sudo apt-get install libcurl4-gnutls-dev libgnutls-dev
+
