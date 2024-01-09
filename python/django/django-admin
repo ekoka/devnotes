@@ -1,0 +1,5 @@
+starting project
+----------------
+
+    $ django-admin startproject myproject
+

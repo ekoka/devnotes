@@ -1,0 +1,10 @@
+- to create an object, instantiate it using keyword arguments to the model class, then call `save()`
+
+    >>> from blog.models import Blog
+    >>> b = Blog(name='Beatles blog', tagline='All the latest')
+    >>> b.save() # performs an INSERT
+
+- create and save in one step
+
+    >>> b = Blog.objects.create(name='Beatles blog', tagline='All the latest')
+    

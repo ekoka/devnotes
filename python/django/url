@@ -1,0 +1,54 @@
+https://docs.djangoproject.com/en/3.0/ref/urlresolvers/
+
+reverse() 
+--------
+
+    from django.urls import reverse
+
+    reverse(viewname, urlconf=None, args=None, kwargs=None, 
+            current_app=None)
+
+- e.g. consider the following URLconf setup
+
+    # inside "customers.urls"
+
+    from . import views
+    app_name = 'customers'
+    path('edit/<customer_id>', views.edit)
+
+    # inside the global URLconf
+    ...
+    path('customers/', include('customers.urls', namespace='customers'))
+    ...
+
+
+- using `viewname` 
+
+    reverse('customers:edit')
+
+- using `args` and `kwargs` (you can't use them both at the same time)
+
+    # either 
+    reverse('customers:edit', args=[3392])
+
+    # or
+    reverse('customers:edit', kwargs={'customer_id': 3392})
+
+- if no match can be made will raise a `NoReverseMatch`
+
+    try:
+        reverse(...)
+    except NoReverseMatch as e:
+        pass
+
+- `urlconf` is the URLconf module containing URL patterns to use for the reversing. By default the root URLconf for the current thread is used. 
+
+reverse_lazy()
+--------------
+
+
+resolve()
+---------
+
+get_script_prefix()
+--------------------

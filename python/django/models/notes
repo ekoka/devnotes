@@ -1,0 +1,104 @@
+# create then save
+
+    record = MyModel(field='value')
+    record.save()
+
+# create & save
+
+    record = MyModel.objects.create(field='value')
+
+# create record with relationships
+
+    relation = MyRelation.objects.create(field1='value')
+    record = MyModel(field2='value', relation=relation)
+    record.save()
+
+# update a field then save (will save all fields)
+
+    record.field = 'value'
+    record.save()
+
+# update specific field
+    
+    count = MyModel.objects.filter(field2='foo').update(field2='bar')
+
+# deleting
+
+    result = MyModel.objects.filter(field1__contains='baz').delete()
+
+    # result is a two-tuple that lists 
+    # - the total number of records affected
+    # - and a dictionary of affected table and the number of records impacted
+    (2, {'myapp.MyModel': 2})
+
+    # deleting all record requires the explicit use of the .all() method
+
+    MyModel.objects.all().delete()
+
+# get all records
+
+    records = MyModel.objects.all()
+
+# get record's one-to-many relations with <relation>_set
+
+    # one-to-many
+    foos = record.foo_set.all()
+
+    # many to one 
+    record = foo.record
+
+# many-to-many relations
+
+    class User(Model):
+        ...
+        events = ManyToManyField(Event)
+        ...
+
+    event = Event(...)
+    event.save()
+    user.events.add(event)
+    user_events = user.events.all()
+
+    # the relationship in the opposite direction uses the `<object>_set` idiom
+
+    event_users = event.user_set.all()
+
+# get one record based on a unique value
+
+    try:
+        record = MyModel.objects.get(id=2)
+    except DoesNotExist:
+        pass
+    except MultipleObjectsReturned:
+        pass
+
+# filter and return multiple records
+
+    records = MyModel.objects.filter(field1="foo", field2=bar")
+    records = MyModel.objects.filter(field1__contains="foo")
+
+# ordering
+
+    # asc
+    MyModel.objects.order_by("field1")
+    
+    # desc
+    MyModel.objects.order_by("-field1")
+
+    # multiple fields
+    MyModel.objects.order_by("-field1", "field2")
+
+    # a default `ordering` attribute on the model can be set on its Meta class
+
+    class MyModel(models.Model):
+        class Meta: 
+            ordering = ['-field1', 'field2']
+
+# paginating
+
+   # get latest record based on a "created" field
+   record = MyModel.objects.all().order_by('-created')[0]
+
+   # specify a subset of records to retrieve
+   record = MyModel.objects.all().order_by('-created')[2:6]
+

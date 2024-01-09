@@ -1,0 +1,32 @@
+- importing 
+    from django.common import CommonMiddleware, BrokenLinkEmailsMiddleware
+
+`CommonMiddleware`
+----------------
+- in `settings.MIDDLEWARE`
+
+    MIDDLEWARE = [
+        ...
+        'django.middleware.common.CommonMiddleware',
+        ...
+    ]
+
+- provided conveniences:
+
+    - forbid access to user agents in `DISALLOWED_USER_AGENTS` (a list of regex objects)
+
+    - performs url rewriting baed on the `APPEND_SLASH` and `PREPEND_WWW` settings
+
+    - sets the "Content-length" header for non-streaming responses
+
+- `CommonMiddleware.response_redirect_class` defaults to `HttpResponsePermanentRedirect`. To customize this, extend `CommonMiddleware` and override the attribute. 
+
+`BrokenLinkEmailsMiddleware`
+--------------------------
+- sends broken link notification emails to the list in `settings.MANAGERS`. The list has the same format as `settings.ADMINS` and is specifically used to determine who receives these notifications.
+
+    ADMINS = [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
+
+    MANAGERS = [('kim', 'kim@example.com'), ('david', 'david@example.com')]
+
+

@@ -1,0 +1,8 @@
+
+to check out:
+    - date_hierarchy: Provide date-based drilldown for the field.
+    - empty_value_display: Change how empty values are displayed.
+    - exclude: Exclude a field from the form.
+    - filter_horizontal: Add a JavaScript horizontal filter for many-to-many fields. If you want to see the horizontal filter in action see user permissions and groups in the next section.
+    - list_editable. Make the change list fields editable.
+    - readonly_fields. Set form fields to read only. Very handy for timestamp fields and other fields you want shown, but not editable.

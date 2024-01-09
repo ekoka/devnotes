@@ -1,0 +1,57 @@
+Starting a project
+-------------------
+    $ django startproject myproject
+
+Django will create a default web app with the same name. The structure
+looks like this:
+
+    /myproject
+        manage.py
+        /myproject # default web app
+            settings.py
+            urls.py
+            wsgi.py
+
+
+Let's rename the project directory to make things clearer
+
+    $ mv myproject myproject_root
+
+    /myproject_root
+        manage.py
+        /myproject
+            settings.py
+            urls.py
+            wsgi.py
+
+Create a new app
+----------------
+
+    $ cd myproject_root
+    $ django manage.py startapp messaging 
+
+Now the structure should look like this
+
+    /myproject_root
+        manage.py
+        /myproject
+            settings.py
+            urls.py
+            wsgi.py
+        messaging/
+            admin.py
+            apps.py
+            models.py
+            tests.py
+            views.py
+
+    - admin.py is to register the app's models with the Django admin application.
+    - apps.py is a configuration file common to all Django apps.
+    - models.py where the models for the app are placed. 
+            
+- to register the app with the project, go to /myproject_root/myproject/settings.py, add the app's config to the INSTALLED_APPS list.
+
+    INSTALLED_APPS = [
+        'messaging.apps.MessagingConfig'
+        'django.contrib.admin'
+    ]

@@ -1,0 +1,10 @@
+- to create a URLconf we use the `django.urls.path()` function
+
+    from django.urls import path
+    from app1.views import some_view
+
+    path('app1/', some_view)
+
+    i.e. when user requests "http://mysite.com/app1/" run `app1.views.some_view()`
+
+- a URL doesn't have to map to a view, it could map to any module in the Django app. 

@@ -1,0 +1,29 @@
+
+- saving changes to an object
+
+    b = Blog.objects.get(pk=3)
+    b.name = 'foo bar'
+    b.save()
+
+- updating `ForeignKey` fields
+
+    from blog.models import Blog, Entry
+    entry = Entry.objects.get(pk=3)
+    travel_blog = Blog.objects.get(pk=1) 
+    entry.blog = travel_blog
+    entry.save()
+    
+- adding to `ManyToManyField` fields 
+
+    from blog.models import Author
+    john = Author.objects.create(name='John')
+    entry.authors.add(john)
+
+    # adding multiple records
+
+    john = Author.objects.create(name='John')
+    george = Author.objects.create(name='George')
+    ringo = Author.objects.create(name='Ringo')
+    paul = Author.objects.create(name='Paul')
+    entry.authors.add(john, paul, george, ringo)
+

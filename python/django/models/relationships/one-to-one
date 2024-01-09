@@ -1,0 +1,5 @@
+https://docs.djangoproject.com/en/2.2/topics/db/models/#one-to-one-relationships
+
+OneToOneField: https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.OneToOneField
+
+example: https://docs.djangoproject.com/en/2.2/topics/db/examples/one_to_one/

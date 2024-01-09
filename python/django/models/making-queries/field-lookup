@@ -1,0 +1,126 @@
+- where you specify the SQL `WHERE` as keyword arguments to the `QuerySet` methods `filter()`, `exclude()` and `get()`
+
+- basic lookups keyword arguments have the form `field__lookuptype=value` 
+
+    Entry.objects.filter(pub_date__lte='2006-01-01')
+
+    # translates roughly into     
+
+    SELECT * FROM blog_entry WHERE pub_date <= '2006-01-01'; 
+
+- the field specified in lookup has to be the name of a model field, except for ForeignKeys where the name can be specified with an _id suffix.
+
+    Entry.objects.filter(blog_id=8)
+
+- the db API supports about 2 dozen lookup types (see https://docs.djangoproject.com/en/3.0/ref/models/querysets/#field-lookups).
+
+common lookup types
+-------------------
+- `exact` (default lookup type): exact match
+
+    Entry.objects.get(headline__exact='Lazy dog')
+
+    # roughly translates to 
+    
+    SELECT * FROM entries WHERE headline = 'Lazy dog';
+
+if no lookup type is specified explicitly, the lookup type is implicitly assumed to be `exact`.
+
+    c = Color.objects.get(name__exact='Blue') # explicit
+    c = Color.objects.get(name='Blue') # implicit
+
+- `iexact`: case-insensitive match
+
+    c = Color.objects.get(name__iexact='blue') # matches 'Blue', 'bLue', 'BLUE', etc.
+
+- `contain` & `icontain`: containment test
+
+    # all entries that headline case-insensitive variations of "Hawaii" 
+    hawaii_entries = Entry.objects.filter(headline__icontain='hawaii')
+
+- `startswith`, `endswith`, `istartswith`, `iendswith`
+
+lookup spanning relationships
+-----------------------------
+
+- django can handle relationships in lookups, taking care of the SQL `JOINs` automatically.
+
+    travel_entries = Entry.objects.filter(blog__name='Travel Blog')
+
+- the spanning can work backward as well
+
+    Blog.objects.filter(entry__headline__icontains='hawaii')
+
+- when filtering across multiple relationships some of the intermediate models may not have a value that meets the criteria. Django treats them as empty (NULL), but valid objects. 
+
+For instance in the following
+
+    Blog.objects.filter(entry__authors__name__iexact='hemmingway')
+
+If an entry has no related author, it would be treated as if there was also no `name` attached, rather than raising an error. 
+
+- The previous behaviour may be confusing when explicitly trying to match `isnull`
+
+Consider  
+
+    Blog.objects.filter(entry__authors__name__isnull=True)
+
+which will return blog objects that have empty name on the author, as well as blog objects that have entries without authors. 
+
+To filter out the latter, apply an additional lookup to weed out records with non-existing authors
+
+    Blog.objects.filter(entry__authors__isnull=False, entry__authors__name__isnull=True)
+
+spanning multi-valued relationships
+-----------------------------------
+- when filtering an object based on `ManyToManyField` or a reverse `ForeignKey` (many-to-one), two different sorts of filter are of interest:
+
+Consider a Blog/Entry relationship (one-to-many) and trying to select Blogs based on criteria on Entries.
+
+For example:
+
+    - Case 1: we may want all Blogs with entries that have *both* a "title" containing 'hawaii' and a "pub_date" in 2008 (i.e. one entry must have both).
+
+    - Case 2: we also may want all Blogs with some entries that have a "title" containing 'hawaii' *and* some entries with "pub_date" in 2008 (i.e. the same blog must have both types of entries, but an entry does not necessarily fulfill both criteria).  
+The same situation arises with a `ManyToManyField`. 
+
+For example, consider 
+    - Case 1: Filtering for Entries connected to a single Tag that matches "surf" *and* is also set to "active".
+    - Case 2: Versus filtering for Entries connected to the two Tags "beach" and "diving" (i.e. each Entry is connected to both Tags). 
+ 
+- This is how Django handles both situations: 
+    - everything inside a single `filter()` applies to filter out items matching those requirements simultaneously (i.e. a single record must match all requirements inside the `filter()` call).
+    - successive `filter()` calls further restrict the set, but for multi-valued relations, they apply to any object linked to the primary model, not necessarily those objects selected by earlier `filter()` calls.
+
+Examples:
+
+    # select Blogs that have entries with both a "title" containing 'hawaii' and published in 2008
+
+    blogs = Blog.objects.filter(
+        entry__title__icontains='hawaii',
+        entry__pub_date__year=2008
+    )
+
+    # select Blogs that have some entries with a title containing 'hawaii' *and* some entries published in 2008 
+    
+    blogs = Blog.objects.filter(entry__title__icontains='hawaii',)\
+        .filter(entry__pub_date__year=2008)
+
+
+- Note that the behavior of `filter()` for queries that span multi-value relationships is not implemented equivalently for `exclude()`. The condition in a single `exclude()` call will not necessarily refer to the same items.
+
+For instance, the following query would exclude any blog that has entries containing 'hawaii' in their title *as well as* (possibly different) entries published in 2008.
+
+    Blog.objects.exclude(
+        entry__title__icontains='hawaii', 
+        entry__pub_date__year=2008
+    )
+
+To exclude Blogs based on a combination of both criteria on a single Entry, make two queries: 
+
+    Blog.objects.exclude(
+        entry__in=Entry.objects.filter(
+            entry__title__icontains='hawaii', 
+            entry__pub_date__year=2008
+        )
+    )

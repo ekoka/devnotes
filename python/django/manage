@@ -1,0 +1,36 @@
+System check
+------------
+
+    $ python manage.py check
+
+Make migration
+--------------
+
+    $ python manage.py makemigrations  myapp
+
+Output migration
+----------------
+
+    $ python manage.py sqlmigrate myapp <migration_name>
+    # e.g.
+    $ python manage.py sqlmigrate myapp 0001_initial
+
+Apply migrations
+----------------
+
+    $ python manage.py migrate 
+
+Running development server
+--------------------------
+
+    $ python manage.py runserver
+
+Start an app
+------------
+
+    $ python manage.py startapp myapp
+
+Create superuser
+----------------
+
+    $ python manage.py createsuperuser

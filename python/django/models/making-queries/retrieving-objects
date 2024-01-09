@@ -1,0 +1,58 @@
+- each model has at least one `Manager` and it's called `objects` by default
+
+    >>> Blog.objects
+    <django.db.models.manager.Manager object ...>
+
+- to retrieve objects from the database construct a `QuerySet` via the `Manager`
+
+    # e.g.
+    qs = Blog.objects.all()
+    qs = Blog.objects.filter(title='foo bar')
+    
+- a `QuerySet` represents a collection of objects from the database. It can have zero, one or many filters. In SQL terms, a `QuerySet` is equivalent to a `SELECT` statement and a filter is a limiting clause such as `WHERE` or `LIMIT`.
+
+- retrieving all objects
+
+    all_entries = Entry.objects.all()
+
+- retrieving specific objects with filters
+
+    Entry.objects.filter(pub_date__year=2006)
+
+    # equivalent to using the default manager class with 
+    Entry.objects.all().filter(pub_date__year=2006)
+
+
+- the two most common ways to refine a `QuerySet` are `filter(**kwargs)` and `exclude(**kwargs)`
+
+chaining filters
+----------------
+
+- the result of refining `QuerySet` is another `QuerySet`, thus it's possible to chain refinements
+
+    Entry.objects.filter(
+        headline__startswith='What'
+    ).exclude(
+        pub_date__gte=datetime.date.today()
+    ).filter(
+        pub_date__gte=datetime.date(2005, 1, 30)
+    )
+
+- `QuerySets` are lazy, the SQL is only ran when the QuerySet is evaluated for the first time (also see: https://docs.djangoproject.com/en/3.0/ref/models/querysets/#when-querysets-are-evaluated)
+
+retrieving a single object with `get()`
+--------------------------------------
+
+- querying
+
+    one_entry = Entry.objects.get(pk=1)
+
+- `get()` can be used with any query expression just like `filter`
+
+- `get()` expects to match only one item.
+
+- if no item is returned `DoesNotExist` is raised
+- if more than one item matches `MultipleObjectsReturned` is raised
+
+
+

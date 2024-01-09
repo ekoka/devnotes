@@ -1,0 +1,12 @@
+urls.py
+wsgi.py
+
+manage.py inspectdb
+
+models:
+    DateTimeField and time zones
+    django model field lookups
+
+class-based views
+request and response
+path() function

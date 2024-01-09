@@ -1,0 +1,38 @@
+- besides the basic request/response middleware pattern, you can add three other special methods to class-based middleware
+
+    class SomeMiddleware:
+
+        ...
+
+        def process_view(self, request, view_func, view_args, view_kwargs):
+            ...
+
+        def process_exception(self, request, exception):
+            ...
+
+        def process_template_response(self, request, response):
+            ...
+
+        ...
+
+- `process_view(self, request, view_func, view_args, view_kwargs)`
+    - called just before the django calls the view
+    - should return either `None` or an `HttpResponse` object
+    - if it returns `None` django will continue processing the request, executing any other `process_view()` middleware, and then the appropriate view.
+    - if it returns `HttpResponse` django won't bother calling the view, it'll apply response middleware to that `HttpResponse` and return the result.
+
+- accessing `request.POST` inside middleware before the view runs or in `process_view()` will prevent any view running after the middleware from being able to modify the upload handlers for the requet.
+
+- `process_exception(request, exception)`
+    - `exception` is an `Exception` raised by a view
+    - called when a view raises an exception 
+    - should return `None` or an `HttpResponse` object
+    - if it returns `HttpResponse` the template response and response middleware will be applied and the resulting response returned to the client, otherwise default exception handling kicks in.
+
+
+- `process_template_response(request, response)`
+    - `response` is the `TemplateResponse` object returned by a django view or by a middleware.
+    - called just after the view has finished executing, if the response instance has a `render()` method, indicating a `TemplateResponse` or object with equivalent signature.
+    - must return a response object that implements a `render()` method.
+    - can alter the given response by changing `response.template_name` and `response.context_data`
+    - or could create and return a different `TemplateResponse` altogether 

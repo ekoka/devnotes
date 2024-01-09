@@ -1,0 +1,25 @@
+- the 4 most common `QuerySet` methods are `all()`, `filter()`, `exclude()` and `get()`
+
+- but there are more: https://docs.djangoproject.com/en/3.0/ref/models/querysets/#queryset-api
+
+- Use a subset of Python's array-slicing syntax to apply SQL LIMIT and OFFSET to the `QuerySet` (negative indexing not supported)
+
+    Entry.objects.all()[0] # LIMIT 1
+
+    Entry.objects.all()[:5] # LIMIT 5
+
+    Entry.objects.all()[5:10] # OFFSET 5 LIMIT 5
+
+- Generally slicing a `QuerySet` does not evalute it, but rather returns another `QuerySet`. The exception is when using steps in the slicing notation.
+
+    Entry.objects.all()[1:5:2] # will evaluate the QS
+
+- Subtle nuance between `get()` and index when retrieving a single object 
+
+    entry =  Entry.objects.order_by('headline')[0]
+    
+    # roughly equivalent to 
+
+    entry = Entry.objects.order_by('headline').get()
+
+although, if there's no match the first will raise an `IndexError` whereas the second will raise `DoesNotExist`.

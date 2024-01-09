@@ -1,0 +1,48 @@
+- a WSGI middleware is a callable that takes two parameters: the environment and a callable conventionally named `environ` and `start_response()`.
+
+- in django a middleware is a callable that takes a request and returns a response, just like a view
+
+        def middelware(request)
+            ...
+            return response
+
+- django makes use of a pattern in which a middleware factory takes as a parameter a `get_response()` callable and then returns a middleware that is bound to `get_response()` by a closure.
+
+    def middleware_factory(get_response):
+        def middelware(request)
+            ...
+            response = get_response(request)
+            ...
+            return response
+        return middelware
+
+- `get_response()` can thus also be a middleware
+
+- a middleware as a class
+
+    def MiddleWare:
+        def __init__(self, get_response):
+            self.get_response = get_response
+
+        def __call__(self, request):
+            ...
+            response = self.get_response(request)
+            ...
+            return response
+
+- it's sometimes useful to determine at startup time whether a middleware should be used. For this a middleware may raise MiddleWareNotUsed and django will then remove it from the stack of middleware to process.  
+
+    def SoapMiddleWare:
+        def __init__(self, get_response):
+            if not config['INCLUDE_SOAP']:
+                raise MiddleWareNotUsed()
+            self.get_response = get_response
+
+- to activate a middleware, add it to the `MIDDLEWARE` list in the django `settings`
+
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        ...
+    ]
+
+- MIDDLEWARE could be empty, but it's recommended to at least use `CommonMiddleware`
