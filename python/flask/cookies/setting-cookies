@@ -1,0 +1,33 @@
+- use the `set_cookie()` method of the Response object
+
+    >>> response.set_cookie(...)
+
+- signature
+    set_cookie(
+        key, 
+        value='', 
+        max_age=None, 
+        expires=None, 
+        path='/', 
+        domain=None,
+        secure=False,
+        httponly=False,
+        samesite=None
+    )
+
+        key – name of cookie
+        value – value of cookie
+        max_age – number of seconds, or None (default) to last only as long client session
+        expires – datetime object or UNIX timestamp
+        path – limits cookie to given path, defaults to the whole domain
+        domain – to set cross-domain cookie. 
+            e.g. domain=".example.com" will set cookie that is readable by www.example.com, foo.example.com etc. Otherwise, cookie only readable by domain that set it.
+        secure – If True, cookie will only be available via HTTPS
+        httponly – disallow JavaScript to access cookie. An extension to the cookie standard and probably not supported by all browsers.
+        samesite – Limits scope of cookie such that it will only be attached to requests if those requests are “same-site”.
+
+
+- parameters are the same as in the cookie Morsel object in the Python standard library but it accepts unicode data, too.
+
+- warning is raised if size of cookie header exceeds max_cookie_size, but header will still be set
+

@@ -1,0 +1,63 @@
+app = Flask()
+    url_map = Map()
+    
+app
+---
+app.__call__(environ, start_response)
+    app.wsgi_app(environ, start_response) 
+        with app.request_context(environ)
+            ctx.RequestContext(app, environ)
+            response = self.full_dispatch_request()
+
+    app.create_url_adapter(request)
+        return url_map.bind_to_environ(request.environ, server_name=config['SERVER_NAME'])
+
+    app.open_session(request)
+        return Session.load_cookie(request, self.session_cookie_name,
+                                   secret_key=self.secret_key)
+        
+                    
+        
+    app.do_teardown_request()
+        funcs = reversed(self.teardown_request_funcs.get(None, ()))
+        funcs = chain(funcs, reversed(self.teardown_request_funcs[bp]))
+        exc = sys.exc_info()[1]
+        for func in funcs:
+            rv = func(exc)
+            if rv is not None:
+                return rv
+        request_tearing_down.send(self)
+
+ctx
+---
+ctx.RequestContext()
+    __init__(app, environ)
+        request = app.request_class(environ)                
+        url_adapter = app.create_url_adapter(request)
+        g = _RequestGlobals() # empty object
+        flashes = None
+        session = None
+
+        match_request()
+
+    match_request()
+        self.request.url_rule, self.request.view_args = \
+            self.url_adapter.match(return_rule=True)
+
+    __enter__()
+        push()
+            _request_ctx_stack.push(self)
+            self.session = self.app.open_session(self.request)
+
+    __exit__()
+        pop()
+            self.app.do_teardown_request()
+            _request_ctx_stack.pop()
+
+Exceptions
+----------
+RequestContext.match_request()
+    self.request.routing_exception = e
+    
+
+

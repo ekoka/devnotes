@@ -1,0 +1,13 @@
+# the current url rule
+    rule = request.url_rule
+
+# the current view arguments
+    args = request.view_args
+
+# the current view
+    fnc = app.view_functions[request.url_rule.endpoint]
+
+# calling the current view
+    fnc = app.view_functions[request.url_rule.endpoint]
+    args = request.view_args
+    response = fnc(**args)

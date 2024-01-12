@@ -1,0 +1,40 @@
+app(environ, start_response)
+app.wsgi_app(environ, start_response)
+    ctx = RequestContext(app, environ)
+            ctx.request = Request(environ)
+            ctx.url_adapter = app.create_url_adapter(request)
+                app.url_map.bind_to_environ(
+                    request.environ, 
+                    server_name=app.config['SERVER_NAME'])
+            ctx.match_request()
+                r = ctx.request
+                r.url_rule, r.view_args = ctx.url_adapter.match(return_rule=True)
+
+
+    ctx.push()
+
+    response = app.full_dispatch_request()
+        app.try_trigger_before_first_request_functions()
+        app.preprocess_request()
+            request = _request_ctx_stack.top.request
+            bp = request.blueprint
+                request.url_rule.endpoint.rsplit('.', 1)[0] 
+                e.g. "application.admin.users" => "application.admin"
+
+            funcs = app.url_value_preprocessors.get(None, ())
+            funcs = chain(funcs, app.url_values_preprocessors[bp])
+            for func in funcs:
+                func(request.endpoint, request.view_args)
+
+            funcs = app.before_request_funcs.get(None, ())
+            funcs = chain(funcs, app.before_request_funcs[bp])
+            for func in funcs:
+                func()
+
+
+        
+
+    ctx.auto_pop()
+           
+
+=======

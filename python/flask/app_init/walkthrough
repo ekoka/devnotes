@@ -1,0 +1,149 @@
+(1) the server imports the main Flask object and invoke its __call__() method. i.e. it is called as a normal wsgi application and passed the `environ` and `start_response()` parameters.
+from myapp import app as application
+application(environ, start_response) # application.__call__(environ, start_response)
+
+(2) it turns out that the Flask.__call__() method actually just proxies to the real wsgi app, `Flask.wsgi_app`, which is called with the same params. The reason for this scheme is to avoid losing a reference to the Flask object, when adding wsgi middlewares in the mix. Instead of doing this in your code `app = somemiddleware(app)`, you'd rather do this `app.wsgi_app = somemiddleware(app.wsgi_app)`.
+app.wsgi_app(environ, start_response)
+
+    (3) a request context is created and within, a request object is initialized with the environ. ctx.url_adapter is a MapAdapter bound to the environ, by way of the Map. Since path_info is already set on the wsgi environ (path_info defaults to '/' in wsgi environ), its value will also be reflected on the Map and the generated MapAdapter. The MapAdapter.match() method therefore won't need a `path_info` param to return a (rule, args) tuple. Note that by the end of this stage, ctx.request will know the current url routing rule and the arguments for the view.
+    ctx = RequestContext(app, environ)
+            ctx.request = Request(environ)
+            ctx.url_adapter = app.create_url_adapter(ctx.request)
+                app.url_map.bind_to_environ(
+                    ctx.request.environ, 
+                    server_name=app.config['SERVER_NAME'])
+            ctx.match_request()
+                request = ctx.request
+                request.url_rule, request.view_args = ctx.url_adapter.match(return_rule=True)
+
+    (4) the request context object is pushed at the top of the request context stack. An application context is also created and pushed at the top of the stack, provided there's currently no application context at the top of the application context stack, or if the application context currently at the top is not associated with the current application. Note that the request context keeps an inner application context stack, that it uses to synchronize the pushing and popping of both its application contexts and its own from the main stacks (application contexts can be added to the outside stack independendly from the request). A session is opened at this stage as well and attached to the request context.
+    ctx.push()
+        #TODO: app.app_context()
+               ctx.session = app.open_session(ctx.request)
+        
+
+    (5) dispatch begins
+    response = app.full_dispatch_request()
+
+        > (6) the Flask.try_trigger_before_first_request_functions() method is called and the routine within is executed if this is the first request.
+        > app.try_trigger_before_first_request_functions()
+
+        > (7) the Flask.preprocess_request() is called. 
+        > rv = app.preprocess_request()
+        >     request = _request_ctx_stack.top.request
+        >     bp = request.blueprint
+        >         request.url_rule.endpoint.rsplit('.', 1)[0] 
+        >         e.g. "application.admin.users" => "application.admin"
+        >     (8) a list of url_value_preprocessors for the app and the current blueprint is compiled. Each preprocessor is called and passed the endpoint and the args.
+        >     funcs = app.url_value_preprocessors.get(None, ()) # app
+        >     funcs = chain(funcs, app.url_values_preprocessors[bp]) # blueprint
+        >     for func in funcs:
+        >         func(request.endpoint, request.view_args)
+
+        >     (9) before_request functions are called.
+        >     funcs = app.before_request_funcs.get(None, ())
+        >     funcs = chain(funcs, app.before_request_funcs[bp])
+        >     for func in funcs:
+        >         rv = func()
+        >         (10) if the function returns a value the before_request chain is interrupted
+        >          if rv is not None:
+        >             return rv
+
+        > (11) if rv is None we dispatch the request to the view function
+        > if rv is None:
+        >     rv = app.dispatch_request()
+        >         > request = _request_ctx_stack.top.request
+        >         > (12) if request routing resulted in an exception, raise it
+        >         > if request.routing_exception is not None:
+        >         >     app.raise_routing_exception(request)
+        >         >         (13) if we're not in DEBUG mode,
+        >         >             or if exception is not a RequestRedirect
+        >         >             or if http method is 'GET', 'HEAD' or 'OPTIONS'
+        >         >                 raise exception
+        >         >         (14) otherwise raise a debughelpers.FormDataRoutingRedirect()
+        >         >         raise debughelpers.FormDataRoutingRedirect(request)
+
+        >         > (13) else if we provide automatic options for this URL and the request 
+        >         > came with the OPTIONS method, return a default options response return 
+        >         > app.make_default_options_response()
+        >         >     > url_adapter = _request_ctx_stack.top.url_adapter
+        >         >     > 
+        >         >     > (14) we gather the allowed methods. Werkzeug 0.7 has a method to do 
+        >         >     > that directly. For previous version, we implement the scheme on the 
+        >         >     > spot. We try to match a non-existent method on the MapAdapter object
+        >         >     > and see what kind of error comes back. If we get a MethodNotAllowed 
+        >         >     > error, we know that there's a match for the url, but not the 
+        >         >     > currently specified method. The error keeps a list of valid_methods.
+        >         >     > If we get any other error, this url is not matched and our list of 
+        >         >     > methods is empty.
+        >         >     > # for Werkzeug > 0.7
+        >         >     > if hasattr(url_adapter, 'allowed_methods'):
+        >         >     >     methods = url_adapter.allowed_methods()
+        >         >     > # for Werkzeug < 0.7: the following is an implementation 
+        >         >     > # of MapAdapter.allowed_methods()
+        >         >     > else:
+        >         >     >     methods = []
+        >         >     >     try:
+        >         >     >         # try a non existent method
+        >         >     >         adapter.match(method='--') 
+        >         >     >     except MethodNotAllowed as e:
+        >         >     >         # gather the allowed methods from the caught 
+        >         >     >         # MethodNotAllowed exception.
+        >         >     >         methods = e.allowed_methods()
+        >         >     >     except HTTPException as e:
+        >         >     >         pass
+        >         >     > response = wrapper.Response()
+        >         >     > response.allow.update(methods)
+        >         >     > return response
+        >         > 
+        >         > (15) else we simply dispatch to the view function associated with that 
+        >         > endpoint and return the result.
+        >         > return app.view_functions[rule.endpoint](**request.view_args)
+        >         
+        > response = app.make_response(rv)
+        >       status = headers = None
+        >       if isinstance(rv, tuple):
+        >           missing_items = (3 - len(rv)) * (None,)
+        >           rv, status, headers = rv + missing_items
+
+        >       if rv is None: raise ValueError('View function did not return a response')
+
+        >       if not isinstance(rv, self.response_class):
+        >           if isinstance(rv, (text_type, bytes, bytearray)):
+        >               rv = Response(rv, headers=headers, status=status)
+        >               headers = status = None
+        >           else:
+        >               rv = Response.force_type(rv, request.environ)
+        >                       # werkzeug.wrapper.BaseResponse.force_type(cls, response, environ)
+        >                       if not isinstance(response, BaseResponse):
+        >                           response = BaseResponse(*_run_wsgi_app(response, environ))
+        >                                       # TODO _run_wsgi_app()
+        >                       response.__class__ = Response
+        >       if status is not None:
+        >           # if status is an int, then it's the status code
+        >           if isinstance(status, string_types):
+        >               rv.status = status
+        >           else:
+        >               rv.status_code = status
+
+        >       if headers:
+        >           rv.headers.extend(headers)
+        >       return rv
+
+        > response = app.process_response(response)
+        >       # call all the after-request functions registered on: request context, blueprint and app, passing each the response object.
+        >       funcs = ctx._after_request_functions
+        >       funcs = chain(funcs, reversed(app.after_request_funcs[bp]))
+        >       funcs = chain(funcs, reversed(app.after_request_funcs[None]))
+        >
+        >       for f in funcs:
+        >           response = f(response)
+        >
+        >       if not app.session_interface.is_null(ctx.session):
+        >           app.save_session(ctx.session, response)
+        >       return response
+        >
+        > return response
+
+    response(environ, start_response)
+    ctx.auto_pop()

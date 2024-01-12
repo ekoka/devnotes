@@ -1,0 +1,29 @@
+Flask.test_request_context(*args, **kwargs)
+    - creates a WSGI environment from the given values (see werkzeug.test.EnvironBuilder)
+
+Flask.request_context(environ)
+    - creates a RequestContext() object
+    - pushes it at the top of the request contexts stack (flask.request)
+
+    >>> from flask import request
+    >>> with app.request_context(environ):
+    >>>     do_something_with_request(request)
+
+    >>> from flasks import request
+    >>> ctx = app.request_context(environ)
+    >>> ctx.push()
+    >>> try:
+    >>>     do_something_with_request(request)
+    >>> finally:
+    >>>     ctx.pop()
+        
+
+ctx.RequestContext(app, environ, request=None)
+    - do not use this class directly, instead use test_request_context()
+    or request_context()
+    
+    copy() : 
+    match_request() : 
+    pop() : 
+    push() : 
+

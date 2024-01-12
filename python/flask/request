@@ -1,0 +1,15 @@
+- BaseRequest docs
+    http://werkzeug.pocoo.org/docs/wrappers/#werkzeug.wrappers.BaseRequest
+
+- dealing with request data
+    http://werkzeug.pocoo.org/docs/request_data/
+
+POST values:
+    BaseRequest.form
+
+GET values:
+    BaseRequest.args
+
+POST and GET values combined:
+    BaseRequest.values
+

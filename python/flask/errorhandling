@@ -1,0 +1,38 @@
+- Flask.errorhandler(code_or_exception)
+
+    # using code
+    @app.errorhandler(404)
+    def NotFound(error):
+        return 'Page does not exist', 404
+
+    # handler for arbitrary exceptions
+    @app.errorhandler(DatabaseError)
+    def special_exception_handler(error):
+        return 'Database Connection failed', 500
+
+    # using the error object
+    @app.errorhandler(404)
+    def jsonify_error(error):
+        error_response = jsonify({"code": error.code, "description": error.description})
+        error_response.status_code = error.code
+        return error_response, error.code
+
+- Blueprint.errorhandler(code_or_exception)
+    - registers handler active for this blueprint only
+    - remember that routing happens at the application level, not the blueprint level. So a 404 is only handled by this blueprint handlers if it's raised within the blueprint.
+    - if the app raises the 404 because it could not match a route, this handler won't pick up the error, even if the route's prefix indicates that it would be directed to this blueprint. 
+    - to implement a blueprint 404 handler, it's usually required to first define a catchall route for the blueprint that will then raise a 404
+
+        @bp.route('/my-blueprint-prefix/<path:catchall>')
+        def catchall(*a, **kw):
+            # blueprint's 404 errorhandler can now catch this
+            abort(404)
+
+        @bp.errorhandler(404)
+        def BlueprintNotFound(error)
+            return 'Resource Not Found on base path /my-blueprint/prefix/...', 404
+
+
+- Blueprint.app_errorhandler(code): 
+    - registers handler for Flask.errorhandler(), but from within a blueprint. 
+    - this handler will be used for all requests, even if outside of the blueprint.

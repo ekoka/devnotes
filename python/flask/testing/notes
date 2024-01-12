@@ -1,0 +1,67 @@
+# the current url rule
+    rule = request.url_rule
+
+# the current view arguments
+    args = request.view_args
+
+# the current view
+    fnc = app.view_functions[request.url_rule.endpoint]
+
+# calling the current view
+    fnc = app.view_functions[request.url_rule.endpoint]
+    args = request.view_args
+    response = fnc(**args)
+
+
+# using a test client
+# -------------------
+
+# creating the test client
+client = app.test_client()
+
+# testing json response
+response = client.get('/')
+jsn = json.loads(response.data)
+assert jsn['key'] == 'some value'
+
+-----
+
+Flask.test_request_context()
+Flask.request_context()
+Flask.app_context()
+
+---
+Flask.test_client(use_cookies=True):
+Flask.test_client_class:
+Flask.testing:
+    - set this flag to True on your app when you're testing
+
+    >>> app.testing = True
+    >>> client = app.test_client()
+    # to keep the context after the request ends
+    >>> from flask import request
+    >>> with app.test_client() as c:
+    ...     # work with c
+    ...     response = c.get('/somepath?id=334')
+    ...     assert request.args['id']=='334'
+    
+
+---
+flask.testing.FlaskClient(
+    application, 
+    response_wrapper=None,
+    use_cookies=True, 
+    allow_subdomain_redirects=False
+)
+
+- works like werkzeug.test.Client()
+- FlaskClient.session_transaction(*args, **kwargs):
+    - when used as a context manager, opens a session transaction.
+    - can be used to modify the session that the test client uses. 
+
+    >>> with client.session_transaction() as session:
+    ...     session['value'] = 42
+
+    - internally this goes through a temporary test request context.
+    - accepts the same arguments as `Flask.test_request_context()`.
+

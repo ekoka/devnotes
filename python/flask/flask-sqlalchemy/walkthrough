@@ -1,0 +1,43 @@
+
+class SQLAlchemy(object):
+
+    def __init__(self, app=None,
+                 use_native_unicode=True,
+                 session_options=None):
+
+
+        session_options['scope_func'] = _app_ctx_stack.__ident_func__
+
+        self.session = self.create_scoped_session(session_options)
+            > def create_scoped_session(self, options=None):
+            >     scopefunc = options.pop('scopefunc', None)
+            >     return sqlalchemy.orm.scoped_session(
+            >         partial(_SignallingSession, self, **options), scopefunc=scopefunc)
+            >   > class _SignallingSession(Session):
+            >   >     def __init__(self, db, autocommit=False, autoflush=False, **options):
+            >   >         self.app = db.get_app()
+
+            >   >         self._model_changes = {}
+            >   >         Session.__init__(self, db, 
+            >   >                          autocommit=autocommit, 
+            >   >                          autoflush=autoflush,
+            >   >                          bind=db.engine,
+            >   >                          binds=db.get_binds(self.app), **options)
+
+            >   >     def get_bind(self, mapper, clause=None):
+            >   >         if mapper is not None:
+            >   >             info = getattr(mapper.mapped_table, 'info', {})
+            >   >             bind_key = info.get('bind_key')
+            >   >             if bind_key is not None:
+            >   >                 state = get_state(self.app)
+                                    > self.app.extensions['sqlalchemy'] # _SQLAlchemyState(db, app)
+            >   >                 return state.db.get_engine(self.app, bind=bind_key)
+            >   >         return Session.get_bind(self, mapper, clause)
+                        
+                
+        self.Model = make_declarative_base()
+        self._engine_lock = Lock()
+
+        self.app = app
+        if  self.app is not None:
+            self.init_app(self.app)

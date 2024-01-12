@@ -1,0 +1,49 @@
+=============================================
+definition:
+Blueprint(
+    name, import_name, static_folder=None,
+    static_url_path=None, template_folder=None, 
+    url_prefix=none, subdomain=none, url_defaults=none
+)
+=============================================
+serve static files from 2 blueprints sharing the same url prefix
+---
+skeleton_admin = Blueprint(
+    name='admin',
+    import_name=__name__,  # skeleton.admin
+    template_folder='templates',
+    static_folder='static', 
+    url_prefix='/admin',
+    static_url_path='/base/static' # static url base path will be /admin/base/static
+)
+
+custom_admin = Blueprint(
+    name='local',
+    import_name=__name__,  # app_module.admin
+    template_folder='templates',
+    static_folder='static', 
+    url_prefix='/admin',
+    static_url_path='/custom/static' # static url base path will be /admin/custom/static/
+)
+
+# note that the static_url_path is appended to the url_prefix to get the actual static base url
+# static_url_path default to the name 'static_folder'
+
+=============================================
+Blueprint registration
+---
+# app is Flask object
+app.register_blueprint(local_admin, url_prefix='/admin')
+app.register_blueprint(skeleton_admin, url_prefix='/admin')
+
+overridable blueprint options at registration
+---
+url_prefix
+subdomain
+url_defaults # gets added to the blueprint.url_values_defaults dictionary
+
+=============================================
+custom static file handler
+
+---
+Blueprint.serve_static_file() (default handler)

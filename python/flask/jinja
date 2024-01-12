@@ -1,0 +1,62 @@
+autoescaping 
+------------
+- automatically set for templates ending with 
+    .html .htm .xml .xhtml
+- temporarily disable autoescaping
+   {% autoescape false %}
+       <li>{{ will_not_be_escaped }}</li>
+   {% autoescape %}
+- wrap safe html string in a Markup object before passing it to the template
+- use the |safe filter to explicitly mark a string as safe html  
+
+global variables
+----------------
+- flask inserts a couple of functions and helpers into the jinja2 context
+    - config: current config object (flask.config)
+    - request: current request object (flask.request)
+    - session: current session object (flask.session)
+    - g: request-bound object for global variables (flask.g)
+    - url_for: flask.url_for() function
+    - get_flashed_messages: flask.get_flashed_messages()
+- these are not global variables, they're simply added to the context. 
+i.e. to make them accessible to an imported template, import with context
+    
+    {% from '_helpers.html' import my_macro with context %}
+
+filters added by flask
+----------------------
+- tojson(): make sure to disable escaping within <script> tags
+    
+    <script>
+        doSomethingWith({{ user.username|tojson|safe }})
+    </script>
+
+
+registering filters
+-------------------
+- there are 2 ways:
+    - put them by hand in the jinja_env of the application
+
+        >>> def reverse_filter(s):
+        ...     return s[::-1]
+        >>> app.jinja_env['reverse'] = reverse_filter
+        
+    - use the template_filter() decorator
+        >>> @app.template_filter('reverse')
+        ... def reverse_filter(s):
+        ...     return s[::-1]
+
+
+context processor
+-----------------
+- run before the template is rendered  
+- can inject new variable automatically into the context of a template.
+- keys and values of the returned dictionary are merged in the template context.
+- variables are available to all templates
+
+    @app.context_processor
+    def utility_process():
+        def format_price(amount, currency=u'$')
+            return u'{0:.2f}{1}.format(amount, currency)
+        return dict(format_price=format_price)
+

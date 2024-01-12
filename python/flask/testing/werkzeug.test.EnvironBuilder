@@ -1,0 +1,106 @@
+werkzeug.test.create_environ()
+werkzeug.test.EnvironBuilder(): 
+    ref: http://werkzeug.pocoo.org/docs/test/#werkzeug.test.EnvironBuilder
+
+    - to create a WSGI environment for testing purposes
+
+    __init__(
+        path, 
+            # path of the request. will become PATH_INFO in the environment object.
+        base_url, 
+            # used to extract: 
+            #     - wsgi url scheme
+            #     - host (server name + server port)
+            #     - script root (SCRIPT_NAME)
+        query_string,
+            # optional query string param, or dict.
+        method,
+        input_stream,
+            # optional. do not specify this and `data`. 
+            # If this is set you can't modify args and files 
+        content_type,
+        content_length,
+        errors_stream, 
+            # optional. error stream used for wsgi.errors. default to stderr.
+        multithread, # see wsgi.multithread. defaults to False
+        multiprocess, # see wsgi.multiprocess. default to False
+        run_once, # see wsgi.run_once. default to False
+        headers, # optional list of headers
+        data, # dict or string of form data.
+        environ_base, # optional dict of environment defaults.
+        environ_overrides, optional dict of environment overrides.
+        charset, # charset used to encode unicode data.
+    )
+
+    # Attributes
+    - path | PATH_INFO
+    - charset
+    - headers
+    - errors_stream # error stream used for wsgi.errors.
+    - multithread
+    - multiprocess
+    - environ_base
+    - environ_overrides # a dict with values used to override the generated environ.
+    - input_stream  # optional. is mutually exclusive with `form`/`files`.
+                    # don't provide if not POST, PUT, or something comparable.
+    - args  # url arguments as MultiDict
+    - base_url
+    - close()   # closes all files.
+    - content_length    # reflected from and to `headers`. 
+                        # ignore, if you set `form` and `files` for auto detection.
+    - content_type  # same principle as `content_length` 
+    - get_environ() # returns the built environ
+    - get_request(cls=None) # if no cls is specified will use `request_class`
+    - request_class # defaults to BaseRequest
+    - input_stream  # optional. if set, it will clear `form` and `files`.
+    - query_string  # if set to a string, `args` won't be available.
+    - server_name   # read-only. use `host` to set.
+    - server_port   # read-only. use `host` to set.
+    - server_protocol   # defautls to HTTP/1.1
+    - wsgi_version  # defaults to (1, 0)
+
+---
+
+
+# Making an environment
+>>> from werkzeug.test import EnvironBuilder
+>>> from StringIO import StringIO
+>>> builder = EnvironBuilder(
+        method='POST', 
+        data={
+            'foo':'this is some text', 
+            'file': (StringIO('my file contents'), 'test.txt')})
+>>> env = builder.get_environ()
+
+# env is a regular WSGI environment that can be used for further processing:
+
+>>> from werkzeug.wrappers import Request
+>>> req = Request(env)
+>>> req.form['foo']
+u'this is some text'
+>>> req.files['file']
+<FileStorage: u'test.txt' ('text/plain')>
+>>> req.files['file'].read()
+'my file contents'
+
+---
+# Making a json request
+>>> from werkzeug.test import EnvironBuilder
+>>> from werkzeug.wrappers import Request
+    
+>>> builder = EnvironBuilder(
+...     path='/my/json/path', 
+...     method='POST', 
+...     data='{"username": "foo", "password":"bar", "domain": "baz"}',
+...     content_type='application/json',
+... )
+>>> env = builder.get_environ()
+>>> req = Request(env)
+ 
+>>> if req.content_type!='application/json': # can also use req.mimetype
+...     return None
+ 
+>>> try:
+...     return json.loads(req.data)
+... except:
+...     return None
