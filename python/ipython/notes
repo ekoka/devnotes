@@ -1,0 +1,16 @@
+reloading modules
+-----------------
+    %load_ext autoreload
+    %autoreload 2
+
+# tip to remember the reloading
+    include autoreload
+    autoreload?
+
+pasting code
+------------
+    %cpaste
+# enter -- after the paste or ctrl-d to stop
+
+# to assign the code block ot a variable 
+    %cpaste foo_code_block
