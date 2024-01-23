@@ -1,0 +1,4 @@
+2012-08-04 17:12:13,430 - ex2 - INFO - info message
+2012-08-04 17:12:13,431 - ex2 - INFO - filemode: a
+2012-08-04 17:12:13,431 - ex2 - ERROR - error message
+2012-08-04 17:12:33,670 - ex2.b.a - INFO - info message for A logger

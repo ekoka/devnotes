@@ -1,0 +1,67 @@
+simple logging
+--------------
+
+    >>> import logging
+
+    >>> logging.basicConfig(filename="outputs/ex1.log", level=logging.INFO,
+                            filemode="w")
+
+if you don't use basicConfig(), then the logging module will output to stdout.
+    
+
+Other config options
+    - filename
+    - filemode
+    - format
+    - datefmt
+    - level : (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    - stream
+
+    >>> logging.debug("debug message")
+    >>> logging.info("information message")
+    >>> logging.error("error message")
+
+
+creating a logger
+-----------------
+
+    >>> import logging
+    >>> logger = logging.getLogger('myapp')
+    >>> logger.setLevel(logging.INFO)
+
+    >>> fh = logging.FileHandler('myapp.log')
+    >>> formatter = logging.Formatter('%(asctime)s - %(name)s -\
+                                      %(levelname)s - %(message)s')
+    >>> fh.setFormatter(formatter)
+
+    >>> logger.addHandler(fh)
+
+    >>> logger.info("info message")
+
+- in some other module you can then use this logger
+
+    >>> import logging
+    >>> module_logger = logging.getLogger("myapp.othermodule")
+    >>> function_logger = logging.getLogger("myapp.othermodule.somefunc")
+
+
+LogRecord Attributes
+--------------------
+
+- how to use:
+
+    >>> formatter = logging.Formatter('%(asctime)s - %(name)s -\
+                                      %(levelname)s - %(message)s')
+
+- full list:
+
+    http://docs.python.org/library/logging.html#logrecord-attributes
+
+logging configuration
+---------------------
+
+- 3 ways to configure a logger: 
+    - using logger, formatter and handler's methods as seen earlier
+    - using a config file with the fileConfig() function
+    - using a config dict with the dictConfig() function
+
