@@ -1,0 +1,37 @@
+given this structure:
+
+    pack1/
+        __init__.py
+        mod2.py
+
+let pack1.__init__.py also thus define a variable `mod2`:
+
+    mod2 = 'my name is mod2' 
+
+---
+
+If you were to now import mod2 from pack1 you'd in fact get the mod2 variable defined in pack1.__init__.py, as it hides the mod2 module under pack1.
+
+$ python
+
+    >>> from pack1 import mod2 
+    >>> print(mod2) 
+    my name is mod2
+
+    # it works with direct import as well
+    >>> import pack1.mod2
+    >>> print(pack1.mod2)
+    my name is mod2
+
+You could, however, get to the contents of mod2 with the `from package-list import item` syntax.
+
+For example, if your `mod2` module thus defines a variable `var3`: 
+
+    var3 = 'This is var3 in mod2'
+
+You could reach it with
+    
+    from pack1.mod2 import var3
+
+This is because the `from` part of the `from-import` statement only expects packages and modules. Any symbols declared in 
+a module is not considered and thus cannot hide inner packages or modules.

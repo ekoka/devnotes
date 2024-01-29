@@ -1,0 +1,76 @@
+===============================================
+reloading a module in the interactive shell
+>>> reload(modulename)
+
+===============================================
+name of module is available in the variable __name__
+
+===============================================
+when running a module with 
+python modulename.py
+
+the __name__ is set to "__main__"
+
+===============================================
+When importing a module named spam, the interpreter searches for a file name spam.py:
+    - in the directory containing the input script 
+    - then in the list of directories specified by the environment variable PYTHONPATH
+The list of directories in the search path can be found in sys.path
+
+===============================================
+find which names a module defines
+>>> import sys
+>>> dir(sys) 
+
+===============================================
+to make a directory a package it is required to include a __init__.py file
+
+===============================================
+Importing syntax
+>>> from package import item
+item can be a module, submodule (or subpackage), or some other name defined in the package (function, class, variable).
+
+>>> import item.subitem.subsubitem
+Each item in the chain must be a package. The last item can be a module or a package, but can't be a class, function nor a variable defined in the preceding item.
+
+===============================================
+if a package’s __init__.py code defines a list named __all__, it is taken to be the list of module names that should be imported when from package import * is encountered.
+
+If __all__ is not defined, the statement 
+
+from sound.effects import * 
+
+does not import all submodules from the package sound.effects; it only ensures that the package sound.effects has been imported (possibly running any initialization code in __init__.py) and then imports whatever names are defined in the package. This includes any names defined (and submodules explicitly loaded) by __init__.py. It also includes any submodules of the package that were explicitly loaded by previous import statements (This also works when __all__ is defined). 
+
+===============================================
+intra-package imports
+---
+import statement first look into the containing package of the importing module, before looking in the standard module search path.
+./sound
+    |-__init__.py
+    |-formats
+    |-filters
+        |-__init__.py
+        |-vocoder.py
+    |-effects
+        |-__init__.py
+        |-surround.py
+        |-echo.py
+        |-reverse.py
+
+# ...  
+# sound.effects.surround.py
+# ...  
+import reverse
+import echo
+from echo import echofilter
+
+---
+when package are structured into subpackages, you can use absolute imports to refer to submodules of sibling packages. 
+
+e.g.
+
+# ...  
+# sound.filters.vocoder.py
+# ...  
+from sound.effects import echo
