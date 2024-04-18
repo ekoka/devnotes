@@ -1,0 +1,208 @@
+Decorator
+---------
+- A decorator functions takes a function as its single argument, does something with it or to it and returns a function
+
+    >>> def decorator(fnc):
+    ...     do_something_to(fnc)
+    ...     do_something_with(fnc())
+    ...     return another_fnc or fnc
+
+example usage
+-------------
+- add functionality by wrapping a function inside another
+
+    # lets define a simple function that displays text in bold
+    >>> def bold(txt):
+    ...     return "<b>%s</b>" % txt
+
+    # we define a decorator to add the italic functionality
+    >>> def add_italic(fnc):
+    ...     def italicize(txt): # this is the wrapper function
+    ...         return "<i>%s</i>" % fnc(txt)
+    ...     return italicize
+
+
+    # now to make the bold function also display in italics, we can decorate it
+    >>> bold = add_italic(bold)
+
+- perform some operation with the function without actually changing it.
+
+    >>> fnc_register = list()
+
+    >>> def bold(txt):
+    ...     return "<b>%s</b>" % txt
+
+    >>> def register_functions(fnc):
+    ...     global fnc_register
+    ...     fnc_register.append(fnc)
+    ...     return fnc
+
+    >>> bold = register_functions(bold)
+
+this latest example seems a bit convoluted, but we'll explain the usefulness of having a decorator like this in a moment.
+
+decorating a function
+---------------------
+- to decorate a function, call the decorator function, pass as a parameter the function to decorate. Assign the return value (the inner function to return) to the old name of the function we're decorating.
+
+    >>> def decorator_function(fnc):
+    ...     # do something with or to fnc
+    ...     return a_function
+
+    >>> def some_function():
+    ...     return "whazzzap!!"
+    >>> some_function = decorator_function(some_function)
+
+- there's a special syntax to generalize the pattern
+    >>> @decorator_function
+    ... def some_function():
+    ...     return "whazzzap!!"
+
+The two forms are equivalent. Now going back to our previous example, register_functions can be used as such
+
+    >>> @register_functions
+    ... def bold(txt):
+    ...    return "<b>%s</b>" % txt
+
+evaluation of decoration expression
+-----------------------------------
+When is the decorator called?
+
+    >>> def decorator(func):
+    ...     print "hello from decorator"
+    ...     def func_wrapper():
+    ...         print "before func()"
+    ...         print func()
+    ...         print "after func()"
+    ...     return func_wrapper
+
+    >>> @decorator
+    >>> def somefunc():
+    ...     return "inside somefunc()"
+    hello from decorator
+
+    # right after somefunc() *definition*, decorator() will be called
+    # and somefunc() will be wrapped and now behave like func_wrapper()
+
+When using the decorator syntax, the decorator function is called *as soon as the function being decorated has been defined*. That is, right after its definition, the decorated function's name will already have been remapped to the function returned by the decorator.
+
+Multiple decorators example
+---------------------------
+
+    >>> def italic(fnc):
+    ...     def wrapper():
+    ...         return "<i>%s</i>" % fnc()
+    ...     return wrapper
+
+    >>> def bold(fnc):
+    ...     def wrapper():
+    ...         return "<b>%s</b>" % fnc()
+    ...     return wrapper
+
+    >>> @bold
+    >>> @italic
+    >>> def sing()
+    ...     return "Hammer time!"
+
+    >>> sing()
+    <b><i>Hammer time!</i></b>
+
+
+
+Decorator factories
+-------------------
+
+- instead of returning a wrapper function, we return a decorator.
+
+    >>> def decorator_factory(param1, param2):
+    ...     def a_decorator(fnc):
+    ...         # do something with params here
+    ...         def the_wrapper_function():
+    ...             # or do something with params here
+    ...             print fnc()
+    ...             # do some more things
+    ...
+    ...         return the_wrapper_function # the decorator returns a wrapper function
+    ...     return a_decorator # while the decorator factory returns a decorator
+
+
+    >>> @decorator_factory('mike', 'steak') # calling the factory will return a decorator
+    ... def my_function():
+    ...     return "can't touch this!"
+
+# note that we're actually *calling* the decorator factory, which returns a decorator,
+# whereas previously we simply decorated the function.
+
+===================================================
+Passing arguments to decorated function
+---------------------------------------
+
+def my_decorator(fnc):
+    def the_wrapper_function(*args, **kwargs):
+        # do something
+        fnc(*args, **kwargs)
+        # do some more
+    return the_wrapper_function
+
+@my_decorator
+def my_function(username, password, email=None):
+    # do something
+    pass
+
+===================================================
+Decorating methods
+------------------
+
+    >>> def my_decorator(method):
+    ...     def the_wrapper_method(self, *args, **kwargs):
+    ...         # do something
+    ...         method(self, *args, **kwargs)
+    ...         # do some more
+    ...     return the_wrapper_method
+
+    >>> class some_class(object):
+    ...     @ my_decorator
+    ...     def my_method(self, username, email=None):
+    ...         # do something
+    ...         pass
+
+===================================================
+functools.wraps
+---------------
+
+the problem
+-----------
+    >>> def foo():
+    ...     pass
+
+    >>> print foo.__name__
+    foo
+
+    >>> def bar(fnc):
+    ...     def wrapper():
+    ...         return fnc()
+    ...     return wrapper
+
+    >>> @bar
+    ... def foo():
+    ...     pass
+
+    >>> print foo.__name__
+    wrapper
+
+solution with functools
+-----------------------
+import functools
+
+    >>> def bar(fnc):
+    ...     @functools.wraps(fnc)
+    ...     def wrapper():
+    ...         return fnc()
+    ...     return wrapper
+
+    >>> @bar
+    ... def foo():
+    ...     pass
+
+    >>> print foo.__name__
+    foo
