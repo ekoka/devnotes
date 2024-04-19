@@ -1,0 +1,129 @@
+try-except-else
+---------------
+
+    try:
+        # try something here
+    except Exception1:
+        # handle Exception1
+    except Exception2:
+        # handle Exception2
+    else:
+        # enters here if no Exception was *raised* in `try`
+
+catching all exceptions:
+------------------------
+- to catch any exception use `except` without specifying Exception
+
+    try:
+        # try something here
+    except:
+        # catches any exception
+    else:
+        # no exception were raised
+
+try-finally
+-----------
+- `finally` is executed whether or not there was an exception
+- `finally` is executed even if there's a `break`, `continue` or `return` statement in earlier blocks
+- after the `finally` block is executed, any exception raised by earlier blocks is re-raised
+
+    try:
+        # try something here
+    except Exception1:
+        # handle Exception1
+    except Exception2:
+        # handle Exception2
+    else:
+        # enters here if no Exception was *raised* in `try`
+    finally:
+        # Exception, break, continue, return or not, do something here
+
+
+catching multiple exceptions
+----------------------------
+    
+    try:
+        # try something here
+    except(Exception1, Exception2, ..., ExceptionN):
+        # catches any exception
+    else:
+        # no exception were raised
+
+- the parentheses surrounding the Exceptions tuple is not optional. This is to differentiate from the old syntax used to pass a variable to the `except` block
+
+    # old syntax for passing a variable to an except block
+    try:
+        # try something here
+    except SomeException, e:
+        # work with the variable e
+
+passing an instance of the error to except
+------------------------------------------
+
+- new syntax
+
+    try:
+        # try something here
+    except Exception as e:
+        # work with the variable e
+
+    # multipe Exceptions 
+    try:
+        # try something here
+    except (Exception1, Exception2) as e:
+        # work with the variable e
+
+- old syntax
+
+    try:
+        # try something here
+    except Exception, e:
+        # work with the variable e
+
+    # multipe Exceptions 
+    try:
+        # try something here
+    except (Exception1, Exception2), e:
+        # work with the variable e
+
+- arguments are accessible with the .args attribute on the instance
+
+    def will_fail():
+        raise Exception("omg", "it has failed")
+    try:
+        # try something here
+    except Exception as e:
+        print e.args
+        # ("omg", "it has failed")
+
+- for convenience, instances of Exception define __str__() so that arguments can be printed without having to print `Exception.args`. 
+
+
+raising an exception
+--------------------
+
+- syntax
+    raise [Type, [args, [traceback]]]
+
+- you can raise a class, an object or a string
+
+- raising and catching a string
+
+    def access_check(permission):
+        if permission is None:
+            code = 401
+            raise "not authorized", code
+        elif permission!='admin':
+            code = 403
+            raise "forbidden", code
+        return True
+
+    try:
+        access = user.access
+        access_check(user.access)
+    except "not authorized" as e:
+        redirect('/login')
+    except "forbidden" as e:
+        code = e.args
+        return error_page(code)
+    
