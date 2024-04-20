@@ -1,0 +1,31 @@
+# generate a temporary file with a visible name in the file system
+
+    >>> import tempfile
+    >>> temp = tempfile.NamedTemporaryFile()
+    >>> temp.write('some data in here')
+    >>> filename = temp.name
+    >>> temp.close()
+
+    # a useful context manager 
+    >>> import tempfile
+    >>> from contextlib import contextmanager
+    >>> @contextmanager 
+    >>> def tempinput(data):
+    >>>     temp = tempfile.NamedTemporaryFile()
+    >>>     temp.write(data)
+    >>>     yield temp.name
+    >>>     temp.close()
+
+    >>> with tempinput('testing data') as tempfilename:
+    >>>     workwithfilename(tempfilename)
+
+
+# TODO:
+tempfile.TemporaryFile()
+tempfile.SpooledTemporaryFile()
+tempfile.mkstemp() # make temp file in the most secure manner possible
+tempfile.mkdtemp() # create a temp directory in the most secure manner possible
+
+ref: 
+https://docs.python.org/2/library/tempfile.html
+http://stackoverflow.com/questions/11892623/python-stringio-and-compatibility-with-with-statement-context-manager

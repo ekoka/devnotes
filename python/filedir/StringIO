@@ -1,0 +1,33 @@
+# Read & Write strings as files
+# -----------------------------
+
+# start with empty buffer
+output = StringIO.StringIO()
+output.write('add something to the buffer')
+
+# start with some value in the buffer
+output = StringIO.StringIO('add something to the buffer')
+
+# get buffer's contents
+contents = output.getvalue()
+
+# close buffer and free memory
+output.close()
+
+# faster version of StringIO
+import cStringIO
+
+output = cStringIO.StringIO()
+output.write('put something in the stream\n')
+print >> output, 'put something else in the stream\n'
+
+output.getvalue()
+'put something in the stream\nput something else in the stream\n'
+
+# StringIO can be used where a file is expected
+    >>> import sys, StringIO
+    >>> out = StringIO.StringIO()
+    >>> sys.stdout = out
+    >>> print "testing testing"
+    >>> sys.stdout = sys.__stdout__
+    >>> print out.getvalue()

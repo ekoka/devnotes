@@ -1,0 +1,216 @@
+opening file
+------------
+# open new or existing file
+
+    >>> f = open('x'[, 'r'|'w'|'a'|...] )
+
+
+file meta information 
+---------------------
+# file name
+
+    >>> f.name
+
+    
+seeking
+-------
+
+    # seek 7 bytes from the beginning of file
+    >>> f.seek(7, 0)
+    
+    # seek 7 bytes from current position
+    >>> f.seek(7, 1) 
+    
+    # seek backward 7 bytes from end of file, note the negative sign
+    >>> f.seek(-7, 2) 
+
+
+reading from files
+------------------
+
+# list of all lines, from current pointer position to eof
+
+    >>> f.readlines()
+
+# go back to byte 0, i.e. bof
+
+    >>> f.seek(0)
+
+# get all bytes in a string (will move pointer to eof) 
+
+    >>> f.read()
+
+# read only 3 first bytes
+
+    >>> f.seek(0)
+    >>> f.read(3)
+
+
+writing to files
+------------------
+
+# writing to existing file
+
+    >>> f = open('myfile.txt', 'w')
+    >>> f.write('my name is michael')
+    >>> f.write(' ekoka\n')
+    >>> f.close() # required to write in the actual file
+
+# create and write to a new file
+                                    
+    >>> f = open('myfile.txt', 'w')
+    >>> f.writelines(['here is a line,\n', 'and another.\n'])
+    >>> f.close() 
+
+# opening file in append mode
+                                 
+    >>> f = open('myfile.txt', 'a')
+    >>> f.write('a multiline file\n')
+    >>> f.close()
+
+
+deleting a file
+---------------
+    >>> os.unlink(path)
+    >>> os.remove(path)
+
+deleting a directory
+--------------------
+    >>> os.rmdir(path)
+    # or
+    >>> shutil.rmtree(path)
+
+rename/move a file
+------------------
+
+    >>> os.rename(src, dst)
+
+    # alternatively use
+    >>> import shutil
+    >>> shutil.move(src, dst)
+
+directories:
+------------
+
+    >>> import os
+    >>> os.path.curdir (python humor)
+    '.' 
+
+# get dirname for current script's file
+                                         
+    >>> os.path.dirname(__file__)
+
+# list directory
+                  
+    >>> os.listdir(p) # returns a list with items in the dir excluding '.' and '..'
+    ['a', 'b', 'c', 'x', 'y', 'z']
+
+# change directory
+                    
+    >>> os.chdir('a') 
+    >>> os.chdir('..') 
+
+# create new dir
+                  
+    >>> os.mkdir('z')
+
+# create new dirs recursively
+
+    >>> os.makedirs('a/b/c/d')
+
+    # if the dir exists it raises an error. Using a try/except.
+    >>> import errno
+    ... try:
+    ...     os.makedirs('a/b/c/d')
+    ... except OSError as e:
+    ...     # we only skip the error if the path exists
+    ...     # all other errors are raised
+    ...     if e.errno != errno.EEXIST:
+    ...         raise
+    
+    # in Python 3.3+ instead of try/except you can do
+    >>> os.makedirs('a/b/c/d', exist_ok=True)
+
+# delete dir
+
+    >>> os.rmdir('z')
+
+# delete non-empty dir
+
+    >>> shutil.rmtree('z')
+
+deleting a directory
+--------------------
+    >>> os.rmdir(path)
+    # or
+    >>> shutil.rmtree(path)
+
+check if file or dir exists
+---------------------------
+
+    >>> os.path.isdir() # check if it's a dir
+    >>> os.path.isfile() # check if it's a file
+    >>> os.path.exists() # check if it exists
+
+utilities
+---------
+
+    full path
+    ---------
+    >>> p = os.path.abspath(os.path.curdir)
+    >>> p
+    /home/mike/tuts/python/filedir
+
+    or 
+    
+    >>> p = os.getcwd()
+    >>> p
+    /home/mike/tuts/python/filedir
+
+    tail end of the path
+    --------------------
+    >>> p = /home/mike/tuts/python/filedir
+    >>> os.path.basename(p)
+    filedir
+
+    also applies to file name
+    -------------------------
+    >>> p = /home/mike/tuts/python/file.py
+    >>> os.path.basename(p)
+    file.py
+
+    get all info about a file
+    -------------------------
+    >>> os.stat('a')
+    (33152, 5079544l, 773l, 1, 0, 0, 9l, 1112979025, 1112977272, 1112977272)
+    # the numbers above are: inode protection mode; inode number; device
+    # inode resides on; number of links to the inode; user id of the owner;
+    # group id of the owner; size in bytes; time of last access; time
+    # of last modification; "ctime" as reported by os
+
+    >>> os.path.getsize('x')
+
+    >>> os.path.isdir('a')
+    true
+    >>> os.path.isdir('notes')
+    false
+
+    >>> os.path.getmtime('a') # get last modification time. sec since epoch
+    >>> import time
+    >>> time.ctime(os.path.getmtime('a')) # human readable
+
+
+    splitting the file extension
+    ----------------------------
+    root, ext = os.path.splitext(file_path.lower())
+
+stdin and stdout are file-like objects as well
+---------------------------------------------- 
+
+    >>> import sys
+    >>> w = sys.stdin.readlines() # keyboard input, ctrl-d to end
+    moon, sun
+    and
+    stars
+    >>> w
+    ['moon, sun\n', 'and\n', 'stars\n']

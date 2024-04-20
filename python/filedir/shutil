@@ -1,0 +1,43 @@
+import shutil
+
+useful operations
+-----------------
+
+- copy permission bits: 
+
+    >>> shutil.copymode(src, dst)
+
+- copy permission bits, last access time, last modifcation time, and flags from src to dst
+
+    >>> shutil.copystat(src, dst)
+    
+- copy file src to file or directory dst. Permission bits are copied
+
+    >>> shutil.copy(src, dst)
+
+- copy file src to file or directory dst, permissions and metadata 
+
+    >>> shutil.copy2(src, dst)
+
+    is the equivalent of shutil.copy() followed by shutil.copystat().
+    is similar to the unix command cp -p.
+
+- shutil.move(src, dst)
+    recursively move a file or directory src to another location. 
+    If the destination is a directory or a symlink to a directory, then src is moved inside. 
+    destination directory must not already exist.
+
+- shutil.ignore_patterns(*patterns)
+    a factory function that creates a function to be used with shutil.copytree(), to ignore files and directories that match one of the glob-style patterns provided.
+    
+    ignore = shutil.ignore_patterns("*.pyc", "*.jpg", "*.avi")
+
+- shutil.copytree(src, dst, symlinks=False, ignore=None)
+    recursively copy and entire directory tree. 
+    if 'ignore' is given it must be a callable that receives as its arguments a directory and a list of its contents, as returned by os.listdir(). It must then return a list of directory and file names to ignore during the copy process.
+
+- shutil.rmtree(path[, ignore_errors[, onerror]])
+    delete an entire directory tree.
+    if onerror is provided, it must be a callable that accepts three params: function (that raised the error), path (path name passed to function) and excinfo (exception information return by sys.exc_info()).
+
+more at: http://docs.python.org/2/library/shutil.html
