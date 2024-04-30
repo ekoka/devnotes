@@ -1,0 +1,286 @@
+# Provide path-handling operations without accessing the file system.
+
+https://docs.python.org/3/library/pathlib.html#pure-paths
+
+    from pathlib import (
+        PurePath,
+        PurePosixPath,
+        PureWindowsPath,
+    )
+
+    path = PurePath('path', 'segments', 'to', 'some', 'dir')
+
+# current directory
+
+    path = PurePath('.')
+
+
+General properties
+------------------
+
+- immutable and hashable
+
+    >>> PureWindowsPath('FOO') in { PureWindowsPath('foo') }
+    True
+
+- Paths of a same flavour are comparable and orderable and respect platform's case-folding semantics:
+
+    >>> PurePosixPath('foo') == PurePosixPath('FOO')
+    False
+    >>> PureWindowsPath('foo') == PureWindowsPath('FOO')
+    True
+    >>> PureWindowsPath('C:') < PureWindowsPath('d:')
+    True
+
+- Paths of a different flavour compare unequal and cannot be ordered
+
+    >>> PureWindowsPath('foo') == PurePosixPath('foo')
+    False
+    >>> PureWindowsPath('foo') < PurePosixPath('foo')
+    Traceback (most recent call last):
+    TypeError
+
+Operators
+---------
+
+- slash to create child paths
+
+    >>> p = PurePath('/etc')
+    >>> p / 'init.d' / 'apache2'
+    PurePosixPath('/etc/init.d/apache2')
+    >>> q = PurePath('bin')
+    >>> '/usr' / q
+    PurePosixPath('/usr/bin')
+
+- `Path` object can be used anywhere an os.PathLike is accepted
+
+    >>> import os
+    >>> p = PurePath('/etc')
+    >>> os.fspath(p)
+    '/etc'
+
+- `str` representation of `Path` is raw filesystem path itself (in native form, e.g. with backslashes under Windows), which you can pass to any function taking a file path as a string
+
+    >>> p = PureWindowsPath('c:/Program Files')
+    >>> str(p)
+    'c:\\Program Files'
+
+- `bytes` representation of `Path` gives raw filesystem path as bytes object, as encoded by `os.fsencode()`. Only recommended under Unix.
+    >>> bytes(p)
+    b'c:\\Program Files'
+
+
+Pure path attributes
+--------------------
+
+- description of a path format
+
+    drive + root + path
+    # Windows
+    'c:'    + '\\'  + 'path'
+    # Unix
+    ''  + '/'  + path
+
+- parts : tuple of path's various components
+
+    >>> p = PurePath('/usr/bin/python3')
+    >>> p.parts
+    ('/', 'usr', 'bin', 'python3')
+
+    >>> p = PureWindowsPath('c:/Program Files/PSF')
+    >>> p.parts
+    ('c:\\', 'Program Files', 'PSF')
+
+    (note that drive and local root are grouped)
+
+- drive : drive letter or name, if any
+
+    >>> PureWindowsPath('c:/Program Files/').drive
+    'c:'
+    >>> PureWindowsPath('/Program Files/').drive
+    ''
+    >>> PurePosixPath('/etc').drive
+    ''
+    # UNC shares are also considered drives:
+    >>> PureWindowsPath('//host/share/foo.txt').drive
+    '\\\\host\\share'
+
+- root : (local or global) root, if any
+
+    >>> PureWindowsPath('c:/Program Files/').root
+    '\\'
+    >>> PureWindowsPath('c:Program Files/').root
+    ''
+    >>> PurePosixPath('/etc').root
+    '/'
+    # UNC shares always have a root:
+    >>> PureWindowsPath('//host/share').root
+    '\\'
+
+- anchor : concatenation of drive + root
+
+    >>> PureWindowsPath('c:/Program Files/').anchor
+    'c:\\'
+    >>> PureWindowsPath('c:Program Files/').anchor
+    'c:'
+    >>> PurePosixPath('/etc').anchor
+    '/'
+    >>> PureWindowsPath('//host/share').anchor
+    '\\\\host\\share\\'
+
+- parents : immutable sequence of logical ancestors of the path
+
+    >>> p = PureWindowsPath('c:/foo/bar/setup.py')
+    >>> p.parents[0]
+    PureWindowsPath('c:/foo/bar')
+    >>> p.parents[1]
+    PureWindowsPath('c:/foo')
+    >>> p.parents[2]
+    PureWindowsPath('c:/')
+
+- parent : logical parent of the path
+
+    >>> p = PurePosixPath('/a/b/c/d')
+    >>> p.parent
+    PurePosixPath('/a/b/c')
+
+    # cannot go past an anchor, or empty path:
+
+    >>> p = PurePosixPath('/')
+    >>> p.parent
+    PurePosixPath('/')
+
+    >>> p = PurePosixPath('.')
+    >>> p.parent
+    PurePosixPath('.')
+
+    Note
+
+    - This is a purely lexical operation, hence the following behaviour:
+
+    >>> p = PurePosixPath('foo/..')
+    >>> p.parent
+    PurePosixPath('foo')
+
+    - to walk an arbitrary filesystem path upwards, first call `Path.resolve()` to resolve symlinks and eliminate ".." components.
+
+- name : final path component, excluding the drive and root, if any
+
+    >>> PurePosixPath('my/library/setup.py').name
+    'setup.py'
+    # UNC drive names are not considered
+    >>> PureWindowsPath('//some/share/setup.py').name
+    'setup.py'
+    >>> PureWindowsPath('//some/share').name
+    ''
+
+- suffix : file extension of the final component, if any
+
+    >>> PurePosixPath('my/library/setup.py').suffix
+    '.py'
+    >>> PurePosixPath('my/library.tar.gz').suffix
+    '.gz'
+    >>> PurePosixPath('my/library').suffix
+    ''
+
+- suffixes : list of path's file extensions
+
+    >>> PurePosixPath('my/library.tar.gar').suffixes
+    ['.tar', '.gar']
+    >>> PurePosixPath('my/library.tar.gz').suffixes
+    ['.tar', '.gz']
+    >>> PurePosixPath('my/library').suffixes
+    []
+
+- stem
+
+    The final path component, without its suffix:
+    >>>
+
+    >>> PurePosixPath('my/library.tar.gz').stem
+    'library.tar'
+    >>> PurePosixPath('my/library.tar').stem
+    'library'
+    >>> PurePosixPath('my/library').stem
+    'library'
+
+- as_posix() : string representation of path with forward slashes
+
+    >>> p = PureWindowsPath('c:\\windows')
+    >>> str(p)
+    'c:\\windows'
+    >>> p.as_posix()
+    'c:/windows'
+
+- as_uri() : path as a file URI. `ValueError` is raised if path isn’t absolute
+
+    >>> PurePosixPath('/etc/passwd').as_uri()
+    'file:///etc/passwd'
+
+    >>> PureWindowsPath('c:/Windows').as_uri()
+    'file:///c:/Windows'
+
+- is_absolute() : is path absolute or not. A path is considered absolute if it has both a root and (if the flavour allows) a drive
+
+    >>> PurePosixPath('/a/b').is_absolute()
+    True
+    >>> PurePosixPath('a/b').is_absolute()
+    False
+
+    >>> PureWindowsPath('c:/a/b').is_absolute()
+    True
+    >>> PureWindowsPath('/a/b').is_absolute()
+    False
+    >>> PureWindowsPath('c:').is_absolute()
+    False
+    >>> PureWindowsPath('//some/share').is_absolute()
+    True
+
+- is_reserved() :
+    - with `PureWindowsPath`,
+        True: if path is considered reserved under Windows
+        False: otherwise.
+    - with `PurePosixPath`, always False
+    - File system calls on reserved paths can fail mysteriously or have unintended effects.
+
+    >>> PureWindowsPath('nul').is_reserved()
+    True
+    >>> PurePosixPath('nul').is_reserved()
+    False
+
+
+- joinpath(*other) : equivalent to combining the path with each of the other arguments in turn:
+
+    >>> PurePosixPath('/etc').joinpath('passwd')
+    PurePosixPath('/etc/passwd')
+    >>> PurePosixPath('/etc').joinpath(PurePosixPath('passwd'))
+    PurePosixPath('/etc/passwd')
+    >>> PurePosixPath('/etc').joinpath('init.d', 'apache2')
+    PurePosixPath('/etc/init.d/apache2')
+    >>> PureWindowsPath('c:').joinpath('/Program Files')
+    PureWindowsPath('c:/Program Files')
+
+- match(pattern) : Match path against provided glob-style pattern. Return True if matching is successful, False otherwise.
+
+    - If pattern is relative, the path can be either relative or absolute, and matching is done from the right:
+
+        >>> PurePath('a/b.py').match('*.py')
+        True
+        >>> PurePath('/a/b/c.py').match('b/*.py')
+        True
+        >>> PurePath('/a/b/c.py').match('a/*.py')
+        False
+
+    - If pattern is absolute, the path must be absolute, and the whole path must match:
+
+        >>> PurePath('/a.py').match('/*.py')
+        True
+        >>> PurePath('a/b.py').match('/*.py')
+        False
+
+    - case-sensitivity follows platform defaults
+
+        >>> PurePosixPath('b.py').match('*.PY')
+        False
+        >>> PureWindowsPath('b.py').match('*.PY')
+        True

@@ -1,0 +1,85 @@
+# Path object
+
+    from pathlib import Path
+    path = Path('path', 'segments', 'to', 'some', 'dir')
+
+# checking properties
+
+    # if exists
+    path.exists()
+
+    # if is directory
+    path.is_dir()
+
+    # if is file
+    path.is_file()
+
+# path are immutable and hashable
+
+    path_set = {
+        Path('.'),
+        Path('/usr'),
+        Path('/etc'),
+    }
+
+Parts of a Path
+---------------
+    >>> p = PurePath('/usr/bin/python3')
+    >>> p.parts
+    ('/', 'usr', 'bin', 'python3')
+
+    >>> p = PurePath('c:/Program Files/PSF')
+    >>> p.parts
+    ('c:\\', 'Program Files', 'PSF')
+
+
+
+Typing
+------
+# Paths of different platforms compare as unequal and can't be ordered
+
+    >>> PureWindowsPath('foo') == PurePosixPath('foo')
+    False
+    >>> PureWindowsPath('foo') < PurePosixPath('foo')
+    TypeError
+
+# Path objects can be used anywhere os.PathLike is accepted
+
+    >>> import os
+    >>> p = Path('/etc')
+    >>> os.fspath(p)
+    '/etc/'
+
+# the string representation of Path is a raw filesystem path
+    >>> p = PureWindowsPath('c:/Program Files')
+    >>> str(p)
+    'c:\\Program Files'
+
+# the byte representation of Path is a raw filesystem path as bytes object (recommended only for Unix)
+    >>> p = PureWindowsPath('c:/Program Files')
+    >>> bytes(p)
+    b'c:\\Program Files'
+
+# list directory contents
+
+    list(path.iterdir())
+
+# filtering tree contents with glob (i.e. descendants)
+
+    # all .py files in tree
+    path.glob('**/*.py')
+
+# child paths can be created with the / operator
+
+    >>> p = Path('/')
+    >>> path / 'etc'
+    Path('/etc')
+
+
+---
+Working with files
+
+# open file
+
+    with path.open() as f:
+        f.readlines()
