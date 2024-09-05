@@ -1,0 +1,10 @@
+## installation
+
+- fsdisk and sfdisk are provided as part of the `util-linux` package, a dependency of the `base` meta package. 
+
+## listing partitions
+
+    # fdisk -l
+    # fdisk -l /dev/sda
+
+if the device is not specified, all partition in /proc/partitions are listed.

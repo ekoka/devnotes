@@ -1,0 +1,11 @@
+- before making changes to a hard disk, you may want to backup the partition table and partition scheme of the drive.
+
+- the backup can also be used to copy the same partition layout to numerous drives.
+
+- for both GPT and MBR you can use `sfdisk` to save the partition layout of your device to a file with `-d|--dump`
+
+    # sfdisk -d /dev/sda > sda.dump
+
+- to restore this layout
+    
+    # sfdisk /dev/sda < sda.dump
