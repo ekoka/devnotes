@@ -1,0 +1,22 @@
+## Partial read
+
+ref: https://unix.stackexchange.com/questions/121865/create-random-data-with-dd-and-get-partial-read-warning-is-the-data-after-the/121888#121888
+
+- files created with `dd` can end up with a smaller size than requested if a full input block is not available and the read system call returns early (with less than a full block). This can happen when reading from a pipe or when reading from /dev/random and there isn't enough entropy, or from /dev/urandom when reading more than 32MiB. 
+
+- dd may warn you of the issue but there's no guarantee. 
+
+- The solution is to add the `iflag=fullblock`
+    
+    # dd if=/dev/random of=bigsecret.img bs=1K count=1 iflag=fullblock
+    # dd if=/dev/urandom of=bigsecret.img bs=40M count=1 iflag=fullblock
+
+- it's recommended to always add the `iflag=fullblock` option to the `dd` command when reading from `/dev/random` and `/dev/urandom`
+
+- as an alternative for `/dev/urandom`, you can lower the block size to less than 32MiB and increase the copy count
+
+    # dd if=/dev/urandom of=bigsecret.img bs=1M count=40 
+
+- as an alternative to the `iflag=fullblock` fix when reading from pipe, limit the `bs` to the PIPE_BUF constant value, defined in /usr/include/linux/limits.h
+
+    # cat input.img | dd of=output.img bs=4K count=100

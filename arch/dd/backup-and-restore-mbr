@@ -1,0 +1,26 @@
+- before making change to a disk, you may want to backup the partition table and partition scheme of the drive
+
+- the backup can also be used to copy the same partition layout to numerous drives
+
+    # dd if=/dev/sdX of=/path/to/mbr_file.img bs=512 count=1
+
+- extracting the MBR from a full disk image
+
+    # dd if=/path/to/disk.img of=/path/to/mbr_file.img bs=512 count=1
+
+- to restore the image (will destroy existing partition table and with it, access to existing data)
+
+    # dd if=/path/to/mbr_file.img of=/dev/sdX bs=512 count=1
+
+- to only restore the bootloader, but not the primary partition table entries, only store the first 440 bytes of the MBR
+
+    # dd if=/path/to/mbr_file.img of=/dev/sdX bs=440 count=1
+
+- to only restore the partition table, without overwriting the bootloader
+
+    # dd if=/path/to/mbr_file.img of=/dev/sdX skip=446 bs=1 count=64
+
+- remove the bootloader (zeroing first 440 bytes) 
+
+    # dd if=/dev/zero of=/dev/sdX bs=440 count=1
+    

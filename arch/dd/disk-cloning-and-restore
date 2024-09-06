@@ -1,0 +1,87 @@
+## Disk cloning and restore
+
+- simple, yet versatile and powerful command
+- can be used to copy from source to destination, block-by-block, regardless of filesystem types or OS. 
+- it's convenient to use `dd` from a live environment (e.g. live CD).
+- be cautious when using `dd`, as it can destroy data.
+- /!\ the order of parameters is input first then output, do not reverse them 
+
+    # dd if=in-foo of=out-bar
+
+- /!\ also ensure that the destination is of equal or greater size than source 
+
+### syntax
+
+    # dd \
+        if=INPUT_FILE \ 
+        of=OUTPUT_FILE \
+        bs=BLOCK_SIZE \ 
+        conv=CONVERSION_INSTRUCTIONS \
+        status=REPORTING_LEVEL
+
+- notes on params
+    - `if` defaults to "stdin". 
+    - `of` defaults to "stdout". 
+    - `bs`: block size
+        - defaults to 512B, but routinely set to 64K or 128K
+        - you may want to set it to the cache value of the HD. e.g. `bs=8192K` works for an 8MiB cache. 
+        - /!\ bs affects how read errors are handled. 
+        - Implicitly sets both `ibs` (input block size) and `obs` (output block size).
+    - `conv`: convert the file as per the comma separated list of instructions. e.g. "sync" fills input blocks with zeroes, if there were any read errors, so data offsets stay in sync. 
+    - status: specify level of information to report in stderr. e.g. 
+        - "none" for only errors
+        - "noxfer" to suppress final transfer stats
+        - "progress" for periodic transfer stats. 
+
+
+
+### Cloning a partition
+
+- from physical disk /dev/sda, partition 1, to physical disk /dev/sdb, partition 1
+
+    # dd if=/dev/sda1 of=/dev/sdb1 bs=64K conv=noerror,sync status=progress
+
+- /!\ if the destination partition does not exist, dd will create a file with the name and will start filling the up the root file system.
+
+### Cloning an entire hard disk
+
+- from physical disk /dev/sda to physical disk /dev/sdb 
+
+    # dd if=/dev/sda of=/dev/sdb bs=64K conv=noerror,sync status=progress
+
+- the above will clone the entire drive, including MBR, all partitions, UUIDs, and data.
+
+- to regain unique UUIDs of an ext2/3/4 filesystem, use `tunefs /dev/sdXY -U random` on every partition. For swap partitions, use `mkswap /dev/sdXY` instead.
+
+- partition table changes from dd are not registered by the kernel. Use a utility like `partprobe` (part of `Parted`) to notify.
+
+### Backing up partition table (see fdisk) 
+
+### Create disk image
+
+- boot from a live medium and ensure that no partitions are mounted from the source drive, then mount the external hard drive and back up the drive
+
+    # dd if=/dev/sda conv=sync,noerror bs=64 | gzip -c > /path/to/backup.img.gz
+
+- if necessary split the disk image into multiple parts (see `split` command)
+
+    # dd if=/dev/sda conv=sync,noerror bs=64 | gzip -c | split -a3 -b 2G - /path/to/backup.img.gz
+
+- copying image remotely via ssh  
+
+    # dd if=/dev/sda conv=sync,noerror bs=64 | gzip -c | ssh user@remote dd of=backup.img.gz
+
+- save extra information about the drive geometry necessary in order to interpret the partition table stored within the image, the most important of which is the cylinder size
+
+    # fdisk -l /dev/sda > /path/to/list_fdisk.info
+    
+### Restore system
+
+- to restore a system
+
+    # gunzip -c /path/to/backup.img.gz | dd of=/dev/sda
+
+- if image is split concatenate it (with cat) 
+
+    cat /path/to/backup.img.gz* | gunzip -c | dd of=/dev/sda
+

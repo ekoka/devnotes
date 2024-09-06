@@ -1,0 +1,1 @@
+- it is strongly recommended to always add the `iflag=fullblock` option to the `dd` command when input file is `/dev/random` or `/dev/urandom` (see troubleshooting for explanation)

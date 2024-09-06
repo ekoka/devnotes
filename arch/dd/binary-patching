@@ -1,0 +1,3 @@
+- to replace offset `0x123AB` of a file with the `FF C0 14` hexadecimal sequence
+    # printf '\xff\xc0\x14' | dd seek=$((0x123AB)) conv=notrunc bs=1 of=/path/to/file
+
