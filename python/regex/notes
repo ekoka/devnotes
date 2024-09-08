@@ -1,0 +1,215 @@
+Regex Module
+------------
+Ref: 
+http://docs.python.org/howto/regex.html
+http://docs.python.org/library/re.html
+    
+    >>> import re
+
+Compiling a pattern
+-------------------
+    >>> pattern = re.compile(r'ab*')
+    >>> pattern = re.compile(r'ab*', re.IGNORECASE)
+
+- compilation flags:
+    IGNORECASE, I : case-insensitive matches.
+    DOTALL, S     : match any char, including newlines
+    LOCALE, L     : locale aware match (might be useful when matching accented chars in regex)
+    MULTILINE, M  : affects ^ and $
+    VERBOSE, X    : enable re written on multiple lines and comments, for clarity.
+    UNICODE, U    : makes several escapes like \w, \b, \s and \d dependent on the unicode char db (useful)
+
+    to combine flags use bitwise operators: e.g. 
+
+    >>> pattern = re.compile('ab*', re.M|re.I|re.U|re.X)
+
+
+Using compiled pattern to match
+-------------------------------
+
+    # match at the beginning of the string
+    >>> match = pattern.match(subject)          
+
+    # scan through the string for any matches
+    >>> match = pattern.search(subject)         
+
+    # find all substrings where re matches, return them as a list
+    >>> match_list = pattern.findall(subject)   
+
+    # find all substrings where re matches, return them as an iterator
+    >>> match_iter = pattern.finditer(subject)  
+
+- match() and search() methods return None if no match, otherwise a MatchObject. 
+
+
+Using the MatchObject
+----------------------
+
+- retrieve details about matched string
+
+    # whole string matched
+    >>> match.group()          
+
+    # named group match e.g. (?P<name>\w+)
+    >>> match.group('name')    
+
+    # starting position of the match
+    >>> match.start()          
+
+    # end position of the match
+    >>> match.end()            
+
+    # tuple containing start and end positions
+    >>> match.span()           
+
+
+---
+
+- Top level functions similar to MatchObject methods above, but take a RE string as first param
+    >>> import re
+    >>> match = re.match(re_string, subject)
+    >>> match = re.search(re_string, subject)
+    >>> match = re.findall(re_string, subject)
+
+
+Search and Replace
+------------------
+
+    >>> new_string = re.sub(search, replace, old_string)
+
+
+The backslash problem
+---------------------
+
+--- 
+backslash in regex
+
+The backslash can be used by the regex engine in 2 special contexts:
+
+    - to indicate a special form
+        match any digits: \d
+        match any alphanumeric (and underscore): \w 
+        match any whitespace: \s 
+    
+    - to escape special characters and allow them to be used without invoking their special meaning: 
+        match an actual dot: \. 
+        match an actual pipe: \|
+        match an actual parenthese: \(
+        match an actual bracket: \[
+        match an actual backslash: \\ 
+
+---
+backslash in strings
+
+The backslash also happens to be the escape character for string literals in Python. 
+    # write a new line, then a backslash followed by the letter n 
+    >>> "\n\\n"
+
+These two usage of the backslash by the regex engine and string literals conflict.
+
+--- 
+Solution
+
+- When writing regex expression using string literals, you must 
+    1) write the pattern you need to match
+    2) rewrite the pattern expression so that the regex engine can understand it
+    3) write a string literal that can evaluate to that specific expression (i.e. backslashes might need to be escaped again).
+
+e.g. Lets say we want to match this series of characters
+
+1)  \section 
+
+    this is our base pattern, what we need to find in some series of characters
+
+    \ (backslash character), followed by s,e,c,t,i,o and n.
+
+2) we need to rewrite this so that the regex engine understands it
+
+    To match the backslash we need to remove its special meaning from within the regex, otherwise the engine will try to match an empty space (\s):         
+
+    \\section 
+    
+    note that this is *not* in a string yet, it simply is the *expression* of a regex pattern to match \section 
+
+3) Now, we write an actual string literal that can evaluate to that expression   
+
+    '\\\\section'
+
+    >>> pattern = re.compile('\\\\section')
+
+
+So we wanted to match \section and we have create the string as '\\\\section'. Cumbersome indeed!
+
+
+A simpler solution: raw strings 
+-------------------------------
+
+- strings in which backslash don't have any special meaning.
+i.e. we only need to escape the backslash for the regex engine, not for the raw string:
+
+    >>> pattern = re.compile(r'\\section')
+
+    Regular String  | Raw String
+    ----------------------------
+    "ab*"           | r"ab*"
+    "\\\\section"   | r"\\section"
+    "\\w+\\s+\\1" 	| r"\w+\s+\1"
+
+if your raw strings need to include quotes within, triple quote them.
+r"""PHP is "awesome"!"""
+
+
+Grouping
+--------
+- conditional: (?(1/2)yes-pattern|no-pattern) 
+    - groups can be numeric or named. 
+    - no-pattern is optional.
+    e.g.
+    if 'overdue' is matched and stored in `status`, `(?(status).*)` will retrieve the rest of the record, else only the first and last name will be matched.
+    r'(?P<status>overdue)?\s+(?P<first_name>\w+)\s+(?P<last_name>\w+)(?(status).*)'
+- non-capturing: (?:...)
+- positive lookahead: (?=...) 
+- negative lookahead: (?!...) 
+- positive lookbehind: (?<=...)
+- negative lookbehind: (?<!...)
+- comment: (?# this is ignored )
+- named capture: (?P<mymatch>...) 
+    - accessible in the rest of the expression with the name `mymatch`
+    - is also a regular numbered group as if it wasn't named 
+- group recall: 
+    - numbered: \1 \2 ...
+    - named: mymatch
+- match named group: (?P=myname) 
+    - matches whatever was matched by <myname> in earlier group
+
+--- Python specific extensions:
+named group: (?P<name>...)
+backref to a named group: (?P=name)
+
+
+
+==========================================================
+Example from the werkzeug routing library
+
+rule = re.compile(r'''
+    (?P<static>[^<]*)                           # static rule data
+    <
+    (?:
+        (?P<converter>[a-zA-Z_][a-zA-Z0-9_]*)   # converter name
+        (?:\((?P<args>.*?)\))?                  # converter arguments
+        \:                                      # variable delimiter
+    )?
+    (?P<variable>[a-zA-Z][a-zA-Z0-9_]*)         # variable name
+    >
+''', re.VERBOSE)
+
+    >>> m1 = rule.match('/article/<id>/orderby/<order>')
+    >>> (m1.start(), m1.end())
+    (0, 13)
+    >>> m1.group()
+    '/article/<id>'
+    >>> m2 = rule.match('/article/<id>/orderby/<order>', 9)
+    >>> (m2.start(), m2.end())
+    (13,)
+    >>> m2.group()
+    '<id>'
