@@ -1,0 +1,153 @@
+Context Managers (the `with` statement) 
+---------------------------------------
+
+a common pattern when working with various utilities
+-----------------------------------------------------
+
+    set things up
+    try:
+        to do something
+    finally: 
+        tear things down after we're finished
+
+
+but if you do this a lot, you might want to create a generalization for it.
+
+using a function:
+----------------- 
+    >>> def controlled_execution(do_something):
+    ...     set things up
+    ...     try:
+    ...         do_something(thing)
+    ...     finally:
+    ...         tear things down
+
+
+and to use it you'd do
+
+    >>> def user_defined_function(thing):
+    ...     do something with thing
+    >>> controlled_execution(user_defined_function)
+
+as an example, let's define a controlled execution function to work with file objects. What we typically need is to open a file object, work with it and then close it. We can create a generalization for the first and last part, opening and closing file. The mid part, working with the file, usually varies from one situation to the next and would belong in the user_defined_function().
+
+    >>> def file_controlled_execution(user_defined_function, file):
+    ...     try:
+    ...         f = open(file)
+    ...         user_defined_function(f)
+    ...     finally:
+    ...         f.close()
+
+and now, to use it we'd do
+
+    >>> def read_file(f):
+    ...     for l in f:
+    ...         print l
+
+    >>> file_controlled_execution(read_file, 'phonelist.dat')
+
+A bit verbose though, as we now have to enclose the work done in a user_defined_function().
+
+To avoid having to define a function, a quick solution is to turn the controlled_execution() function into a generator and yield the object of interest:
+
+    >>> def controlled_execution(user_defined_function):
+    ...     set things up
+    ...     try:
+    ...        yield thing
+    ...     finally:
+    ...         tear things down
+
+to continue with our example above, let's convert our file_controlled_execution into such a generator: 
+
+    >>> def file_controlled_execution(file):
+    ...     f = open(file)
+    ...     yield f
+    ...     f.close()
+
+and to use it,
+
+    >>> for f in file_controlled_execution('phonelist.dat'):
+    ...     for l in f:
+    ...         print l
+
+This works well, but it's weird to have to use this syntax to do it. Not very Pythonic either, because it makes the code less clear as to the programmer's original intent.
+
+Introducing context managers:
+-----------------------------
+- Python introduces context management as an explicit generalization of the "set up/work/tear  down" pattern.
+- a basic Context Manager class defines 2 methods: __enter__() and __exit__()
+
+    >>> class controlled_execution:
+    ... 
+    ...     def __enter__(self):
+    ...         set things up
+    ...         return thing
+    ... 
+    ...     def __exit__(self, type, value, traceback):
+    ...         tear things down
+
+- using the context manager
+
+    >>> ctx_mnger = controlled_execution()
+    >>> with ctx_mnger as thing:
+    ...     do something
+
+    when the 'with' statement is executed :
+
+        1) python (implicitly) calls ctx_mnger.__enter__() and assigns whatever the method returns to `thing` 
+
+        2) The code in the body of the with statement (do something) is then executed.
+        
+        3) upon completion, ctx_mnger.__exit__() is (implicitly) called and passed the exception's (if any) type, value and traceback. The __exit__() method can then look at any exception thrown, suppress it or act on it if necessary. To suppress the exception, just return a True value.
+
+    example of an __exit__() method that suppresses all `TypeErrors`:
+
+    >>> def __exit__(self, type, value, traceback):
+    ...    return isinstance(value, TypeError) # returns True if exception is a TypeError
+
+Let's convert our previous generator into a proper context manager:
+
+    >>> class FileControlledExecution(object):
+    ...     def __init__(self, file):
+    ...         self.f = open(file)
+    ...     
+    ...     def __enter__(self):
+    ...         return self.f
+    ... 
+    ...     def __exit__(self, type, value, traceback):
+    ...         self.f.close()
+        
+to use it,
+
+    >>> with FileControlledExecution('phonelist.dat') as f:
+    ...     for l in f:
+    ...         print l
+
+The intent is clear: set things up, work with things, tear things down.
+
+the file object as a context manager
+------------------------------------
+- it turns out that our FileControlledExecution class became redundant in python 2.5, where the file object returned from open() itself became a context manager:
+- its __enter__() method returns the object itself
+
+    >>> f = open('phonelist.dat')
+    >>> f
+    <open file 'phonelist.dat', mode 'r' at 0x691c5a0>
+    >>> f.__enter__()
+    <open file 'phonelist.dat', mode 'r' at 0x691c5a0>
+
+- its __exit__() method closes it
+    
+    >>> f.__exit__(None, None, None)
+    >>> f
+    <closed file 'phonelist.dat', mode 'r' at 0x691c5a0>
+
+- to open a file, work with it and then close it:
+
+    >>> with open('phonelist.dat') as f:
+    ...     content = f.read()
+    ...     print content
+
+ref: 
+http://effbot.org/zone/python-with-statement.htm
+http://docs.python.org/library/contextlib.html
