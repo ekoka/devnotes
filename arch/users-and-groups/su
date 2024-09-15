@@ -1,0 +1,34 @@
+## installation
+`su` is part of the `util-linux` package
+
+## usage
+ 
+    # su [username] 
+
+- default username is "root"
+
+## login shell
+- default behavior is to remain within the current directory and to maintain the environment variables of original user (rather than switch to those of new user) 
+
+- it's advisable that administrative users, as well as any users authorized to use `su` acquire the habit of always running the `su` command with the `-l|--login` option.
+
+- the `--login` option has 2 effects:
+    - it switches from the current directory to the home directory of the new user, by logging in as that user. 
+    - it changes the environment variables to those of the new user, as dictated by their preferred shell settings.
+
+- thus admins should generally use `su` as follows 
+
+    $ su -l 
+    $ su -l archie
+
+- you may wish to add an alias to `.bashrc` for this
+
+    alias su="su -l"
+
+- BSD `su` allows only members of the "wheel" group to assume root's identity by default. This is not the default behavior of GNU `su`, but can be mimicked  using PAM. 
+    - uncomment the appropriate line in `/etc/pam.d/su` and `/etc/pam.d/su-l` 
+
+        auth required pam_wheel.so use_uid
+
+
+

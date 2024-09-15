@@ -1,0 +1,51 @@
+- every file on a linux system is owned by a user and a group
+
+- in addition there are 3 types of access permissions: read, write, and execute 
+
+- different access permissions can be applied to a file's owning user, owning group, and others (those without ownership).
+
+- file owners and permissions can be viewed from the the long listing format of the `ls` command
+    
+    $ ls -l /media/
+
+    total 16
+    drwxrwx--- 1 root vboxsf 16384 Jan 29 11:02 sf_Shared
+
+- it's also possible to use the `stat` command
+
+    # owning user
+    $ stat -c %U /media/sf_Shared
+
+    root
+
+    # owning group
+    $ stat -c %G /media/sf_Shared
+
+    vboxsf
+
+    # access rights
+    $ stat -c %A /media/sf_Shared
+
+    drwxrwx---
+
+- Access permissions are displayed in three groups of characters
+    
+    drwxrwx---
+
+    - the first character represents the file's type
+
+- to list files owned by a user or group, use the find utility
+
+    # find / -group <groupname>
+    # find / -user <user>
+
+- a file's owning user and group can be changed with the `chown` command 
+
+   # chown new_owner file_name 
+   # chown new_owner:new_group file_name 
+
+- a file's access permission can be changed with chmod (see notes)
+   
+
+    
+

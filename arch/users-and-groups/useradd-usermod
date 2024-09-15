@@ -1,0 +1,54 @@
+## useradd command
+
+    useradd -m -G <additional-groups> -s <login_shell> <username>
+
+- useful options
+    -m | --create-home : user's home dir is created at /home/username
+    -M | --no-create-home
+    -G | --groups : comma separated list of supplementary groups
+    -s | --shell: a path to the user's login shell (must be installed and path in /etc/shells).
+    -d | --home-dir
+    -g | -gid: specify primary group 
+    -p | --password
+    -c | --comment: usually the full name
+    -r | --system: create a system account
+    -U | --user-group: create a group with same name as username and add user to it (default behavior)
+
+- if main group is specified with -g it must exist. Else the behavior is defined in /etc/login.def. Usually a group with the same name as the username is created for each new user.
+- creating each user with their own group (the default) is the preferred way to add users.
+
+- nologin shell 
+The /usr/bin/nologin shell can be specified if the account is not meant to log in to a shell (e.g. it was created for a specific service) 
+
+- system users can be used to run processes/daemons under a different user, thus protecting files and directories. 
+
+    e.g. creating a system user with no shell access, no home 
+
+    # useradd -r -s /etc/usr/bin/nologin <username>
+
+## add user to group
+    
+    set supplemental groups (deleting old groups)
+    #   useradd/usermod -G admin,dev,www mike 
+
+    add supplemental groups (without deleting old ones)
+    #   useradd/usermod -a -G newgroup mike 
+
+    setting primary group
+    #   useradd/usermod -g admin mike
+
+
+## delete user
+    -r (remove home dir) 
+
+    #   userdel -r mike
+
+## change password
+
+    #   passwd [mike]
+
+
+## add new group
+
+    #   groupadd newgroup
+

@@ -1,0 +1,134 @@
+- syntax
+
+    chmod [OPTION]... MODE[,MODE]... FILE...
+    chmod [OPTION]... OCTAL-MODE FILE...
+    chmod [OPTION]... --reference=RFILE FILE...
+
+- symbolic permissions 
+
+    - format
+
+        chmod [ugoa][-+=][rwxXst] file
+
+    - multiple symbolic modes can be given separated by commas
+
+    ugoa: user, group, others, all
+    -+=: remove, add, exact
+    rwx: read, write, execute (or search for directory)
+    X: execute/search only if the file is a directory or already has execute permission for some user
+    s: set user or group ID on execution
+    t: restricted deletion flag or sticky bit
+
+    - examples
+    chmod o+r file.txt   # add read to others
+    chmod g-x file.txt   # remove execute to group
+    chmod u=rw, o+r file.txt  # set read,write to user and add read to others
+
+
+
+- numerical permissions
+    
+    - format
+
+        chmod XYZ file.txt
+
+    - where X, Y, and Z are numbers between 0 and 7 to set permissions of respectively, user, group, and others.
+
+    - The number is the result of the addition of all permissions to set.
+
+    4: read
+    2: write
+    1: execute
+    0: none
+
+    7: read + write + execute
+    6: read + write
+    5: read + execute
+    3: write + execute
+
+    - examples
+    chmod 664 file.txt # set read+write on user and group, set read on others
+
+    - add execute permission recursively to `./foo/` and its subdirectories.
+    # chmod -R u+x ./foo/
+
+    $ chmod 664 sharedfile
+    $ ls -l sharedfile 
+    -rw-rw-r--
+
+- if a symbolic link is specified, the target object is directly affected. 
+- but chmod ignores symbolic links encountered during recursive directory traversals.
+
+## Special permission (s)
+
+- a fourth access level in addition to ugo. 
+- allow for additional privileges over the standard permissions
+
+- user + s (also known as SUID)
+    - has a single function: a file with SUID always executes as the user who owns the file, regardless of the user passing the command. If the owner doesn't have execute permission, use an uppercase `S`
+
+    $ ls -l /usr/bin/passwd
+    -rwsr-xr-x. 8   root  root  2923   Oct 30  2017    /usr/bin/passwd
+
+- group + s (aka SGID)
+    - if set on a file, it allows the file to be executed as the group that owns the file.
+    - if set on a directory, any files created in the directory will have their group ownership set to that of the directory's owner  
+
+    $ ls -l
+    drwxr-s---. 29   web  web  32   Mar 27  2017    blog_articles
+
+    - chmod clears the SGID of a file if the file's group ID does not match any of the user's group ID, unless that user has appropriate privileges.
+
+- other + t (sticky)
+
+    - does not affect individual files.
+    - if sticky bit is set on a directory, it restricts file deletion and renaming within that directory.
+    - only the owner and root of a file can remove or rename the file within that directory.
+
+    e.g.
+
+    ls -ld /tmp/
+    drwxrwxrwt. 33  root    root    8292    Jul 15 2017     /tmp/
+
+- setting special permissions
+
+    - symbolic method
+
+        $ chmod u+s shared_directory/
+        $ chmod g+s shared_directory/
+        $ chmod +t shared_directory/
+
+    - numerical method
+    
+        # precede the usual 3 digits with either
+
+            4: suid
+            2: guid
+            1: sticky
+            0: none
+
+        $ chmod X### file 
+
+        e.g. set SUID and SGID on shared_directory/ 
+
+        $ chmod 6770 shared_directory/
+
+- to clear special bits add another leading zero or use `=` to set the permission
+
+    $ chmod 00755 directory 
+    $ chmod =755 directory 
+            
+## Umasks
+
+- the actual default permissions values are 
+    
+    Files: 0666 
+    Directories: 0777
+    Umask: 0022
+
+    - on file creation the umask value is subtracted from the default to give the applied default values
+
+    Files: 0644
+    Directory: 0755
+
+    - the umask value can be set in /etc/profile and ~/.bashrc 
