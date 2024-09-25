@@ -1,0 +1,3 @@
+- gzip can only compress data using a single CPU core, which leads to a data throughput considerably lower than the write speed on modern storage.
+
+- to leverage multicore compression (faster) consider the `pigz` package as a replacement

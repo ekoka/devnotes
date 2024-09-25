@@ -1,0 +1,18 @@
+# XDG Autostart specification
+
+- ref: https://specifications.freedesktop.org/autostart-spec/autostart-spec-latest.html) 
+
+- by placing an application .desktop file in one of Autostart directories, the application will be automatically launched during startup of the user's desktop environment, after the user has logged in.
+
+## Autostart Directories
+- the Autostart directories are $XDG_CONFIG_DIRS/autostart (i.e. $sysconfigdir/xdg/autostart where $sysconfigdir defaults to /etc and $XDG_CONFIG_HOME/autostart for user-specific config)
+- if the same file is located under multiple Autostart Directories only the file under the most important one is used. 
+    e.g. 
+    - if $XDG_CONFIG_HOME is not set, the Autostart Directory in the user's home is ~/.config/autostart
+    - if $XDG_CONFIG_DIRS is not set, the system wide directory is /etc/xdg/autostart
+    - if neither $XDG_CONFIG_DIRS nor $XDG_CONFIG_HOME are set, but /etc/xdg/autostart/foo.desktop and ~/.config/autostart/foo.desktop exist, only the latter one will be used because ~/.config/autostart has precedence over /etc/xdg/autostart.
+    
+## Application .desktop files
+
+- must have the format defined in the Desktop Entry Specification (see related document)
+

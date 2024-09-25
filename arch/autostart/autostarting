@@ -1,0 +1,33 @@
+- on bootup/shutdown use `systemd` services
+
+- on user login/logout user `systemd/User` services
+
+- on device plug in / unplug use `udev` rules
+
+- on time events:
+    - systemd/Timers
+    - Cron
+    - at
+
+- on filesystem events
+    - inotify
+    - incron
+    - fswatch
+    - systemd can activate units on filesystem events using `system.path` files.
+
+- on shell login/logout
+    - command-line shell config files
+
+- on Xorg startup
+    - xinitrc if you're starting Xorg manually with xinit  
+    - xprofile if you are using a display manager
+
+- on desktop environment startup, 
+    - see XDG Autostart specification (e.g. Gnome, KDE, Xfce)
+
+- on window manager startup
+   - see XDG Autostart specification 
+   - see window manager Autostart section (e.g i3)
+    
+
+
