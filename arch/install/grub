@@ -1,0 +1,4 @@
+#### GUID Partition Table (GPT) specific instruction
+- on a BIOS/GPT configuration, a separate BIOS boot partition is required, where GRUB can embed its `core.img`
+
+#### For MBR partition tables see https://www.gnu.org/software/grub/manual/grub/html_node/BIOS-installation.html
