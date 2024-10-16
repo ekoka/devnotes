@@ -1,0 +1,8 @@
+GPT: GUID Partition Table
+GUID: Globally Unique Identifier
+EFI: Extensible Firmware Interface
+UEFI: Unified Extensible Firmware Interface
+
+- designed to replace the MBR partitioning scheme method
+
+- at the start of a GUID Partition Table there's a protective Master Boot Record (PMBR) to protect against GPT-unaware software. The PMBR has a bootstrap code area, like an ordinary MBR,  which can be used for BIOS/GPT booting with boot loaders that support it. 

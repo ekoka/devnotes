@@ -1,0 +1,30 @@
+- the MBR is the first 524 bytes of storage device.
+- contains an operating system bootloader and the storage device partition table.
+- there are 3 types of partitions: primary, logical, extended
+- primary partitions can be made bootable.
+- there can be at most 4 primary partitions per disk or RAID volume.
+- if additional partitions are needed, replace 1 primary partition by an extended partition and add logical partitions within.
+- there can be only one extended partition per hard disk
+- the extended partition also counts as a primary partition, thus only 3 additional primary partitions are possible.
+- logical partitions in an extended partition are not limited.
+- possible configurations:
+
+    # 4 primary or less
+
+        /sda1 (primary)
+        /sda2 (primary)
+        /sda3 (primary)
+        /sda4 (primary)
+
+    # 3 primary or less, 1 extended containing any amount of logical
+
+        /sda1 (primary)
+        /sda2 (primary)
+        /sda3 (primary)
+        /sda4 (extended)
+            /sda5 (logical)
+            /sda6 (logical)
+            /sda7 (logical)
+            ...
+
+- when partitioning an MBR disk consider leaving 16.5KiB or more of unpartitioned space at the end of the disk to convert it to GPT. The space will be required for the backup GPT header.

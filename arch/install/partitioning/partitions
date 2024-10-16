@@ -1,0 +1,95 @@
+- before editing a partition table get a list of partitions
+
+    # fdisk -l
+
+    or
+
+    # lsblk -f
+
+    or 
+
+    # blkid
+
+- start parted on a volume or disk
+
+    # parted /dev/sda
+    (parted)
+
+- get help
+
+    (parted) help
+
+- list partitions
+
+    (parted) print all
+
+- remove a partition
+
+    (parted) rm NUMBER
+
+where NUMBER is the number obtained from the previously printed list.
+
+- create a new disklabel (i.e. a partition table)
+
+    (parted) mklabel LABEL-TYPE
+
+    # or 
+
+    (parted) mktable LABEL-TYPE
+
+you likely want "gpt" as the label type for a modern approach on a computer that can support it, else choose "msdos" to create a master boot record (MBR)
+
+    (parted> mklabel gpt
+
+    # for MBR 
+    (parted> mklabel msdos
+
+- creating partitions with `mkpart`
+
+    - The syntax for GPT partitions:
+
+        (parted) mkpart PART-LABEL FS-TYPE START END
+
+    PART-LABEL is the label for the partition. START and END can be specified by approximation (in %) or in exact locations (KiB, MiB, GiB). `parted` may sometimes suggest to adjust the size slightly.
+
+    - example of a partitioning scheme
+    You need an UEFI partition to boot (aka ESP partition) 
+
+        (parted) mkpart "EFI System Partition" fat32 1mib 261mib 
+        # find out number associated with the new partition
+        (parted) print list
+        # then set the "esp" flag on the partition using its number
+        (parted) set NUMBER esp on
+
+    You can then make the root partition take the remaining space
+
+        (parted) mkpart "root partition" ext 261mib 100%
+
+    or you can divide the space into multiple partitions to be mounted later
+
+        # 20 gig root partition 
+        (parted) mkpart "root partition" ext4 261mib 20.5gig
+        # 4 gig swap partition 
+        (parted) mkpart "swap partition" linux-swap 20.5gig 24.5gig
+        # home partition takes the remaining space
+        (parted) mkpart "home partition" ext4 24.5gig 100%
+
+    - The `mkpart` syntax for MBR partitions is slightly different
+
+        (parted) mkpart PART-TYPE FS-TYPE START END
+
+    PART-TYPE here can be any of "primary", "logical", "extended"
+
+- formatting the partitions
+
+    - format the EFI partition
+
+        # mkfs.fat -F32 /dev/sda1
+
+    - format the swap partition (if applicable)
+        # mkswap /dev/sda2
+
+    - format the ext4 partitions
+        # mkfs.ext4 /dev/sda3
+        # mkfs.ext4 /dev/sda4
+

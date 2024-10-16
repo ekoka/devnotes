@@ -1,0 +1,8 @@
+GPT: GUID Partition Table
+GUID: Globally Unique Identifier
+EFI: Extensible Firmware Interface
+UEFI: Unified Extensible Firmware Interface
+ESP: EFI System Partition
+GRUB: GRand Unified Bootloader
+MBR: Master Boot Record
+PMBR: Protective Master Boot Record
