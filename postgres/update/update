@@ -1,0 +1,29 @@
+- basic updates
+
+    UPDATE weather 
+    SET temp_hi = temp_hi - 2, temp_lo = temp_lo - 2
+    WHERE date > '1994-11-28';
+
+
+    # a more complex update example with joined tables
+    UPDATE recurrent_schedules
+    SET start_date=a.start_date, end_date=a.end_date
+    FROM
+        recurrent_schedules rs 
+            INNER JOIN schedules s ON rs.id = s.id
+            JOIN activities a ON s.activity_id=a.id; 
+
+- update from multiple tables
+
+UPDATE table_1
+SET 
+    column_a = t2.column_1,
+    column_b = t2.column_3,
+    column_c = t2.column_6,
+    column_d = t3.column_1,
+    column_e = t3.column_2,
+    column_f = t3.column_3
+FROM 
+    (SELECT * FROM table_2) AS t2,
+    (SELECT * FROM table_3) AS t3;
+WHERE column_g = "mike";

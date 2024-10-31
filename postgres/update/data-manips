@@ -1,0 +1,27 @@
+- casting to decimals
+    > select cast('30.00' as double precision); 
+        30
+
+    > select cast(str_price as double precision) from pricing;
+        30.1
+        48
+        33.25
+        ...
+
+- string replacement
+    # replace comma by a point
+    > select replace('30,24$', ',', '.');
+
+- trimming (trim, ltrim, rtrim)
+    # remove the dollar sign
+    > select rtrim('30,24$', '$')
+
+- converting '38,24$' into 38.24:
+    
+    SELECT 
+        cast(
+            replace(
+                rtrim('38,24$', '$'),   # trim dollar sign
+            ',', '.')                   # replace comma by dot
+        as double precision);           # cast as double
+    

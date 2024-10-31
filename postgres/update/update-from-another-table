@@ -1,0 +1,17 @@
+UPDATE tickets t1 
+SET ("price_description", "tax_description") = (e.price_description, e.tax_description)
+FROM (SELECT e1.event_id, e1.price_description, e1.tax_description 
+      FROM events e1 
+      JOIN tickets t2 
+            ON e1.event_id = t2.event_id) e 
+WHERE e.event_id=t1.event_id;
+
+---
+UPDATE schedules s1 set sold=ts.ticket_count
+FROM
+    (SELECT t2.schedule_id, count(t2.schedule_id) ticket_count, s2.date
+    FROM tickets t2
+        JOIN schedules s2 ON t2.schedule_id = s2.schedule_id
+    WHERE t2.payment_status in ('complimentary', 'paid')
+    GROUP BY t2.schedule_id, s2.date) ts
+where ts.schedule_id=s1.schedule_id
