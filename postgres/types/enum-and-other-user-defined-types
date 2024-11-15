@@ -1,0 +1,7 @@
+- get information on user-defined types (such as enums)
+
+\dT+ <my_type>
+
+- destroying a user-defined type
+
+DROP TYPE <my_type>

@@ -1,0 +1,32 @@
+Basic  Types
+-------------
+    - bigint|int8                               # signed four-byte integer
+    - bit[(n)]                                  # fixed-length bit string
+    - smallserial|serial2                       # autoincrementing two-byte integer
+    - serial|serial4                            # autoincrementing four-byte integer
+    - bigserial|serial8                         # autoincrementing eight-byte integer
+    - varbit                                    # variable-length bit string
+    - boolean|bool
+    - char [(n)]                                # fixed-length character string
+    - varchar [(n)]                             # variable-lenght character string
+    - date                                      # calendar date (year, month, day)
+    - float8                                    # double precision floating point (8 bytes)
+    - integer|int|int4                          # signed four-byte integer       
+    - interval [fields] [(p)]                   # time span
+    - json                                      # textual json data
+    - jsonb                                     # binary json data
+    - money                                     # currency amount
+    - numeric|decimal [(p,s)]                   # exact numeric of selectable precision
+    - real|float4                               # single precision floating-point number (4 bytes)
+    - smallint|int2
+    - text                                      # variable-length character string
+    - time [(p)] [without time zone]            # time of day (no tz)
+    - timez|time [(p)] with time zone           # tz aware time of day  
+    - timestamp [(p)] [without time zone]       # date and time no tz 
+    - timestamp [(p)] with time zone            # date and time with tz 
+    - tsquery                                   # text search query
+    - tvector                                   # text search document
+    - uuid                                      # universally unique identifier
+
+
+

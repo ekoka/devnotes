@@ -1,0 +1,17 @@
+- see `data-types` document for some useful common data types
+
+- CAST syntax
+
+    CAST( expression AS type);
+
+    e.g.
+    select cast('100' AS INTEGER);
+    select cast(product_id AS TEXT);
+    select cast('01-oct-2015' AS DATE);
+
+- `expression::type` syntax (postgresql specific)
+
+    select '100'::
+    select '100'::INTEGER;
+    select product_id::TEXT;
+    select '01-oct-2015'::DATE;

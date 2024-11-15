@@ -1,0 +1,11 @@
+- set NOT NULL on column
+    
+    ALTER TABLE table_name
+    ALTER [COLUMN] column_name
+    SET NOT NULL;
+
+- set NULL on column, i.e. DROP NOT NULL
+
+    ALTER TABLE table_name
+    ALTER [COLUMN] column_name
+    DROP NOT NULL;

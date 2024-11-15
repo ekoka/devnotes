@@ -1,0 +1,37 @@
+- Intall Postgresql contrib package
+
+    sudo apt-get install postrgresql-contrib
+
+- Enable the uuid-ossp contrib module in a database (you need superuser permissions)
+
+    # log into psql as superuser
+
+    $ psql
+    mike=#
+
+    # change to the desired database
+
+    mike# \c mydb 
+    You are now connected to "mydb" as user "mike".
+    mydb=#
+
+    # enable uuid-ossp (note the double quotes)
+    
+    mydb=# CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION
+
+    # you can now logout from your superuser account and log back in as a normal user.
+
+- Generating a uuid4
+
+    mydb=> select uuid_generate_v4();
+
+- Inserting a row with a uuid field 
+
+    mydb=> INSERT INTO mytable (my_id) \
+           VALUES (uuid_generate_v4());
+
+- selecting uuid
+
+    SELECT * FROM accounts WHERE account_id::text ILIKE '22c5%';
+    DELETE FROM products WHERE product_id::text ILIKE 'b3a8%';
