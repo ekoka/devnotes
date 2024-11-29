@@ -1,0 +1,55 @@
+getting help
+-------------
+    $ git help <topic>
+
+    #e.g.
+    $ git help config
+
+initializing repo
+-----------------
+    $ git init
+
+status
+-------
+    $ git status
+
+adding files to track
+---------------------
+    $ git add filename.txt
+    $ git add -A|--all
+    $ git add .     # where . refers to the current directory
+
+4 main stages a file can be in
+------------------------------
+    - untracked/unstaged
+        -> git add
+    - staged
+        -> git commit
+    - local repos
+        -> git push
+    - remote repos
+
+committing
+----------
+
+    $ git commit
+    $ git commit -m 'message to include here'
+    $ git commit -a     # commit all changes in currently existing files
+
+log
+---
+
+    $ git log
+    $ git log -p    # shows full diffs of each commit
+
+amending commit message
+-----------------------
+
+    $ git commit --amend
+
+diff
+----
+    
+    $ git diff
+    $ git show <sha>
+
