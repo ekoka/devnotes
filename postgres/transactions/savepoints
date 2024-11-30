@@ -1,0 +1,25 @@
+- to selectively commit or discard some of the statements within a transaction use `savepoints`.
+
+    BEGIN;
+        statement;
+        statement;
+
+        SAVEPOINT savepoint_a;
+
+        statement;
+
+        SAVEPOINT savepoint_b;
+
+        statement;
+        
+        ROLLBACK TO savepoint_a; # moves back to 
+        statement;
+    COMMIT;
+
+- You can roll back to a savepoint by using `ROLLBACK TO <savepoin>` and resume work on the transaction from that point on.
+
+- after rolling back to a savepoint, it stays defined and can be rolled back to again later. Keep in mind, however, that rolling back to a savepoint discards all other savepoints defined after it.
+
+- ROLLBACK TO is also the only way to regain control of a transaction that was put in aborted state due to an error, short of rolling it back entirely. 
+
+- to release a savepoint (perhaps because you believe you won't need to roll back to it and want to free some resources). Like rolling back, releasing a savepoint also discards other savepoints defined after it.

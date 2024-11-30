@@ -1,0 +1,5 @@
+ACID: Atomicity, Consistency, Isolation, Durability
+- each transaction is atomic, meaning that the set of operations within should succeed as a unit or fail as a unit. No partial success or failure is allowed.
+- for a transaction to succeed the result of all its operations must leave the database in a state that is consistent with the business rules. Otherwise the transaction is rejected and the database is returned to its stable state.
+- all transactions should be isolated from one another, meaning that changes made within a transaction are only visible within the transaction and only affect other operations in the same transaction, but not in other transactions.
+- once changes are committed to disk, they stay committed, this is the principle of *durability*. 

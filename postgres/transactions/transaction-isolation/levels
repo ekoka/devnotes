@@ -1,0 +1,82 @@
+Serializable
+------------
+A set of transactions when executed sequentially, regardless of the order, also results in a set of possible outcomes. Each outcome directly corresponds to the specific order the transactions were executed in. For instance, given 3 transations T1, T2, and T3, the possible orders of execution and their corresponding result is as follows:
+
+        T1, T2, T3 => R1
+        T1, T3, T2 => R2
+        T2, T1, T3 => R3
+        T2, T3, T1 => R4
+        T3, T1, T2 => R5
+        T3, T2, T1 => R6
+
+More generally, given N transactions T1, T2, ... TN, there are N! (1 x 2 x ... x N-1 x N) arrangements possible.
+
+Each arrangement can yield a specific outcome, thus there can also be N! possible outcomes (some combinations may eventually yield the same outcome, though).
+
+        T1, T2, ... TN-1, TN => R1
+        T1, T2, ... TN, TN-1 => R2
+                   
+                ...
+
+        TN, TN-1, ... T2, T1 => RN!
+
+
+Serializable Transaction Isolation Level
+----------------------------------------
+If the set of transactions are executed concurrently (rather than sequentially), the `Serializable Transaction Isolation Level` specifies that the result obtained from that concurrent execution must be restricted to any of the above possible results from sequential (serializable) executions.
+
+        
+        {
+        T1,
+        T2,
+                    <=>         {T1, T2, ..., TN}
+        ...
+
+        TN,
+        }
+
+
+`Serializable` is the strictest of four levels of transaction isolations defined by the SQL standard, which states: any concurrent execution of a set of serializable transactions should be guaranteed to produce the same effect as running them one at a time in some order. 
+
+
+Forbidden phenomena
+-------------------
+The other three isolation levels are defined in terms of forbidden phenomena, that should not occur during interaction between concurrent transactions at those levels:
+
+The definition of these phenomena is as follows:
+
+    - dirty read: 
+    different transactions can read data written by concurrent uncommitted transactions
+
+    - nonrepeatable read: 
+    transaction re-reads data it has previously read and finds that data has been modified by another transaction (that committed since the initial read)
+
+    - phantom read
+    transaction re-execute a query returning a set of rows that satisfy a search condition and finds that the set of rows satisfying the condition has changed due to another recently-committed transaction
+
+    - serialization anomaly
+    the result of committing a group of transactions is inconsistent with all the possible ordering of running them in a sequence.
+
+Transaction Isolation Levels Table as defined by the SQL standard
+------------------------------------------------------------------
+
+Isolation Level  |  Dirty Read      Nonrepeatable   Phantom     Serialization
+                 |                  Read            Read        Anomaly
+-----------------|------------------------------------------------------------
+Read uncommitted |  Yes/!PG 	    Yes       	    Yes         Yes        
+Read committed 	 |  No           	Yes        	    Yes         Yes        
+Repeatable read  |  No           	No           	Yes/!PG     Yes       
+Serializable 	 |  No          	No           	No 	        No
+
+Postgres implements the last 3 isolation levels. The first (Read uncommitted) can be requested but maps to the second. 
+
+- To set the transaction isolation level the SET TRANSACTION command is used 
+
+    SET TRANSACTION `transaction_mode` [, ...]
+
+    SET SESSION CHARACTERISTICS AS TRANSACTION `transaction_mode` [, ...]
+
+    # where `transaction_mode` is one of: 
+    ISOLATION_LEVEL {SERIALIZABLE | REPEATABLE READ | READ COMMITTED | READ UNCOMMITTED } 
+    READ WRITE | READ ONLY 
+    [ NOT ] DEFERRABLE
