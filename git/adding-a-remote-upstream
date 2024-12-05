@@ -1,0 +1,36 @@
+- adding a remote
+
+    # syntax
+    $ git remote add <remotename> <remoteurl>
+
+    # e.g. adding a remote we name "origin"
+    $ git remote add origin https://github.com/ekoka/tsk.git
+
+    # pushing "master" branch to the "origin" remote
+    $ git push origin master
+
+
+- set remote as upstream
+
+    # to set the remote as the upstream add `--set-upstream | -u` flag during push
+
+    # syntax
+    $ git push -u <remote> <localbranch>:<remotebranch>
+    $ git push --set-upstream <remote> <localbranch>:<remotebranch>
+
+    # e.g. set "origin" remote as upstream
+    $ git push --set-upstream origin master
+
+- setting push.default options
+
+    # check current config
+    $ git config --global|--local push.default
+
+    # set config
+    git config --global|--local push.default upstream|simple
+
+    upstream: push current branch to its upstream branch
+    current: push current branch to branch of same name
+    simple: (default) like upstream, but refuses to push if upstream branch name is different from local branch name.
+
+
