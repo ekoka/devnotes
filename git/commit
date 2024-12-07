@@ -1,0 +1,24 @@
+committing
+----------
+    # first add changes to staging (snapshot of files)
+
+    $ git add -A
+
+    # commit (an editor should open up for you to enter a message)
+
+    $ git commit
+
+committing and adding at once
+-----------------------------
+
+    $ git commit -a
+
+committing, adding, and typing a message at once
+------------------------------------------------
+
+    $ git commit -a -m 'this is another commit'
+
+
+commit and specify a file where you've written your messages 
+------------------------------------------------------------
+git commit -t message.gitcommit
