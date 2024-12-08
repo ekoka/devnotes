@@ -1,0 +1,38 @@
+- create new branch
+
+    git branch mybranch
+
+- switch to branch
+
+    git checkout mybranch
+
+- create and switch in one go
+
+    git checkout -b mybranch
+
+- list branches
+
+    git branch
+
+- delete branches
+
+    git branch -d mybranch stablebranch newbranch
+
+- merging branch
+
+    # go to the more ancient branch
+    git checkout oldbranch
+
+    # pull in changes from "newbranch", it will fast-forward 
+    # "oldbranch's" pointer to commit pointed at by "newbranch"
+    git merge newbranch
+
+- last commit on each branch
+
+    git branch -v 
+
+- filtering out merged or unmerged
+
+    git branch --merge --no-merged
+
+    
