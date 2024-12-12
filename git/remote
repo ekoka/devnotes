@@ -1,0 +1,44 @@
+get full list of remote references 
+----------------------------------
+    $ git ls-remote [remote]
+
+    or 
+
+    $ git remote show [remote]
+
+remote-tracking branches
+------------------------
+- local reference to the state of remote branches.
+- moved automatically whenever communicating with remote over network.
+- act as bookmarks to remind us where the branches in the remote repositories were the last time we connected to them.
+- they take the form <remote>/<branch>.
+- for e.g. to see where the `master` branch on the `origin` remote was the last time we communicated, we'd check the `origin/master` remote-tracking branch.
+
+deleting remote branches
+------------------------
+git push origin --delete <branch>  
+
+add remote and remote-tracking
+------------------------------
+# add remote
+git remote add <remote> <url>
+
+# add remote-tracking
+git fetch <remote>
+
+
+push changes from local branch X to remote branch Y
+---------------------------------------------------
+
+    $ git push <remote> <local_branch>:<remote_branch>
+
+
+update upstream on local branch X to foreign Branch Y
+-----------------------------------------------------
+
+    $ git push -u <remote> <local_branch>:<remote_branch>
+
+
+switch group
+------------
+newgrp <groupname>
