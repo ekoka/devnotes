@@ -1,0 +1,16 @@
+working directory repository
+----------------------------
+- created with the `git init` command
+- two things in the top level folder
+    - a `.git` subfolder with all the git related revision history
+    - a working tree, or checked out copies of the project files
+- a working directory is meant for *working*. That is, if you intend to edit, delete, or add files to a project.
+
+Bare repository
+---------------
+- created with the `git init --bare` command
+- contains no working or checked out copy of the project files
+- store revision history within the directory itself (i.e. their content would be equivalent to a working directory's `.git` subdirectory)
+- they're customarily given a `.git` extension
+- a bare repository is meant for *sharing*. For example, you could do some work on your own copy and then push your changes to a central bare repository (whose url typically ends with `.git`).
+
