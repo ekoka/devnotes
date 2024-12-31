@@ -1,0 +1,13 @@
+[program:acmeapi]
+directory=/srv/www/acmeapi
+#command=/srv/envs/acmeapi/bin/uwsgi --socket /tmp/acmeapi.sock --master --processes 4 --threads 2 --gid www-data --chmod-socket 664 --wsgi wsgi_app --callable app  --logto /srv/www/acmeapi/logs/uwsgi.log
+#command=/srv/envs/acmeapi/bin/uwsgi --http-socket 127.0.0.1:8888 --master --processes 4 --threads 2 --wsgi wsgi_app --callable app  --logto /srv/www/acmeapi/logs/uwsgi.log
+command=/srv/envs/acmeapi/bin/uwsgi uwsgi.ini
+environment=HOME="/home/mike"
+user=mike
+autostart=true
+autorestart=true
+stdout_logfile=/srv/www/acmeapi/logs/stdout_supervisor.log
+stderr_logfile=/srv/www/acmeapi/logs/stderr_supervisor.log
+redirect_stderr=false
+stopsignal=QUIT
