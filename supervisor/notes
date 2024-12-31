@@ -1,0 +1,59 @@
+installing
+----------
+
+    $ sudo apt-get install supervisor
+
+start-stop
+----------
+
+sudo service supervisor start|stop|restart
+
+
+adding applications
+-------------------
+
+- add a config file for each app under /etc/supervisor/conf.d/ with a .conf extension
+
+e.g. my_app.conf
+
+[program:my_app]
+command=/usr/local/bin/my_app
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/my_app.err.log
+stdout_logfile=/var/log/my_app.out.log
+
+config
+------
+- autostart: true|false|unexpected
+    unexpected tells supervisor to only restart the program if it exits with an unexpected error code (something other than 0 or 2)
+
+environment variables
+---------------------
+
+    [program:example]
+    command=/usr/bin/example --loglevel=%(ENV_LOGLEVEL)s
+
+    # in the above %(ENV_LOGLEVEL) would expand to the environment variable LOGLEVEL
+
+supervisorctl
+-------------
+
+- interactive mode
+    
+    $ supervisorctl
+    supervisor> 
+
+    supervisor> help
+
+- look for any new or changed program config
+
+    $ supervisorctl reread
+
+- apply changes
+
+    $ supervisorctl update
+
+    
+href: http://supervisord.org/configuration.html#program-x-section-settings
+
