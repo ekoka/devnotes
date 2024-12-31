@@ -1,0 +1,21 @@
+- Setting environment variables is done by with a list of key/value pairs in the form.
+
+        environment=KEY="val",KEY2="val2"
+
+
+- The variables will be placed in the supervisord process' environment and all resulting child process' environments.
+
+- You can include the value `%(here)s`, which expand to the directory in which the supervisord configuration file was found.
+
+        environment=conf="%(here)s/myapp-supervisor.conf"
+
+
+- Values containing non-alphanumeric characters should be quoted. Otherwise, quoting the values is optional but recommended.
+
+        environment=KEY="val:123",KEY2="val,456"
+
+- To escape percent characters, simply use two. e.g. Placing the secret key `Ac-77%+3UJ` in the environment
+
+        environment=SECRET_KEY="Ac-77%%+3UJ"
+
+- Subprocesses will inherit environment variables of the shell used to start supervisord, except for the ones overridden here and within           the program's environment option. (See the "subprocess_environment" section of the man page).
