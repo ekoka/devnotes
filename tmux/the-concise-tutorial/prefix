@@ -1,0 +1,16 @@
+setting the prefix
+------------------
+
+- setting the prefix to `Ctrl-a`. It will also unset `C-b` as the former shortcut combo to send the prefix.
+
+    set -g prefix C-a
+
+- now that tmux traps the `Ctrl-a` combo, we need a way to send it to programs running within a tmux session that might also need it. You use the command `send-prefix` for that. As a personal note I think this is a poorly named command, that can be confusing. Since there's already a `send-keys` command, I think it could've been reused for this (maybe even simply take a flag just for the prefix keycode).
+
+    bind C-a send-prefix
+
+- let's not forget to free the previous key combo that was set to `send-prefix`.
+
+    unbind C-b
+
+

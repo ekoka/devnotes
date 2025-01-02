@@ -1,0 +1,7 @@
+- tmux has a client/server approach.
+- you can have many sessions.
+- all sessions run in a single server.
+- you can have one or many clients.
+- to display a session on screen you need to attach a client to it.
+- the server and each client run in separate processes.
+- client and server communicate through a socket in /tmp

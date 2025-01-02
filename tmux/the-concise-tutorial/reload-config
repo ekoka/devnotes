@@ -1,0 +1,10 @@
+from any shell
+--------------
+
+    $ tmux source-file ./tmux.conf
+
+from within a tmux session
+--------------------------
+
+    <prefix> :
+    source-file

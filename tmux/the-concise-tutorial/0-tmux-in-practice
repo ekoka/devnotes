@@ -1,0 +1,35 @@
+What's tmux?
+
+tmux is defined as a terminal multiplexer. Not much of a definition, I know. That's because it's less useful to ask what tmux is, but rather what it does.
+
+So what does it do?
+
+tmux, in short, is a utility that allows you to run, organize, navigate, and manage mutliple terminal windows running concurrently. If you're already accustomed to have multiple terminal windows open on your desktop, you might be wondering what problem tmux solves that your current terminal doesn't. What does it have that would compel you to use it?
+
+So why should you use it?
+
+The short answer is that there isn't a short answer. Using tmux has many boons that are dependent of how you use it. The best way I can think of to give you an idea of how it can be useful to *you* is to describe how *I* work with it. Here's a small list of how it helps me on a daily basis:
+
+
+I can organize my work at the terminal into sessions 
+----------------------------------------------------
+When working on a project I typically start a dedicated tmux session for it. I then start the various tools and utilities that I need in separate windows or panels within. For example, I might start a window that I name "tests" and split in two. Each resulting panel then has a command line shell running. In the first panel, I change path to my tests directory and set it up so that I'll only need two or three keystrokes to run my tests. On the panel next to it I run `less +F` on my code log file (`less +F` is like `tail -f`, except that you can switch back and forth between scrolling and following the log file with ctrl-c and shift-f). Now whenever I run my tests, I can see both outputs, the tests and the code logs in their respective panels. That was the first window running on my tmux session. The second window on the same session might have an IPython shell running. The third, I might use to run my git commands. Depending if it's a database enabled application, I might also have a window somewhere in there, that I split in two, one for psql and the other for query outputs (that I usually redirect to a /tmp/ file also followed with `less +F`). And so on. 
+
+The more tools I need for this project the more windows I'll have open, each renamed to make it easier to know at a glance which runs what and to switch among them.
+
+
+I can run a set of applications in the background
+-------------------------------------------------
+Above I described how you can have a set of applications running from various windows, all attached to a tmux session. You can also have many such tmux sessions, each with its own set of running programs. To interact with a session you need to attach a client (your main terminal) to it. Being able to attach a client to a session implies that you can also detach from it (i.e. run the session in the background). It means that with just a few keystrokes you can navigate through your different tmux sessions if you need to. They show up on your terminal with all their inner windows when you need them. You might even set some special keybinding to do it in a single stroke. 
+
+
+It increases my productivity when working remotely
+--------------------------------------------------
+Before tmux I was using "GNU screen", an older multiplexer utility that, I think, inspired tmux. Working with screen on the remote server was how I was first sold to the concept of terminal multiplexers. Before screen, if I needed to do some concurrent tasks I'd open half a dozen ssh sessions to the same server to run different tasks or navigate various parts of its file system. screen offered a nicer alternative, a single ssh connection, with a screen session running remotely and terminal windows opened to my heart's content. Later I was made aware of tmux, which I found easier to work with and more configurable.
+
+To run tmux on a remote machine I typically start an ssh session from a clean terminal (no tmux running on it yet). Then once on the remote shell I start a tmux session (this assumes that there's a tmux installation on the server). I then repeat the previously described exercise with windows open to the tools necessary for my work on the server (nginx, systemctl, psql, git, etc). 
+
+I previously described how a tmux session is not tied to your terminal, but rather to the tmux server. Beyond enabling you to navigate between sessions, it also means that your tmux sessions are not at the mercy of some capricious Internet connection. If you're running a remote tmux session and the connection drops, it will simply detach your client from the tmux session. You can simply reconnect to the server later and reattach your client to your tmux session. All its windows will still be there running in the ongoing session. 
+ 
+Beyond running your applications from different windows, tmux also has a range of commands and options to help you administer panels, windows, and sessions, all at your fingertips. And since it's very easily configurable, you can specify the keybindings and configuration you are comfortable with, making your usage of it quite personal. 
+

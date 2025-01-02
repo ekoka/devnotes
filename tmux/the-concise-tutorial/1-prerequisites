@@ -1,0 +1,31 @@
+A Concise introduction to tmux
+
+Ok, so this article starts with a lie as its first line. The title says "concise introduction". It's only partially true. Partially because this is actually the second part of a two-part series. I've already introduced tmux. I originally intended to just jump into the tutorial and explain *how* to work with tmux, but I felt that I needed to also address the *what* and *why* questions somewhere, but I also really liked that title.  So, to at least stay partially true to my title, I've split the article in two independent parts. In the first I explained what tmux is and why maybe you should use it. Feel absolutely free to skip it and proceed to the meaty stuff below.
+
+If you're still here I'm assuming that you have some idea what tmux is, or maybe you're confident you'll grok it along the way. All is ok.
+
+This guide is meant to be concise, so I skip a lot of fluff to get you to work productively with tmux asap. The idea is that as you master it, you will on your own discover the bits that I've skipped.
+
+The acquisition of new knowledge about something usually requires previous knowledge of something else. tmux is no different. Here are the prerequisites, if you don't qualify you might still try to learn something, but I don't guarantee it will be painless.
+
+You have some basic familiarity with a command line shell on Unix.
+You have access to a Unix command line shell.
+You have or can install tmux v.2+ on that machine.
+
+If you don't have the first, you can proceed, but you might not understand why some of the commands or options offered by tmux are a big deal.
+
+If you don't have the second or the third, you can proceed, but this is a hands on tutorial, you better have one hell of an imagination to picture the effects of the commands in your head.
+
+So the first thing I'm gonna have you do is to change one line in your config.
+
+Go to your home directory, find .tmux.conf and open it and write this verbatim
+
+    # set the prefix
+    set-option -g prefix C-a
+
+Since tmux uses keyboard keys for commands, it needs a signal to know when to switch from normal input mode to command mode. The prefix is that switch. When you install tmux the default prefix is set to ctrl-b, which for some people might just not be too good a setting (e.g. Vim uses that keybinding, so a vim session opened within tmux would be a bit frustrating if you wanted to use that combo). need a prefix to be sent to signal that the context is that of a command.
+    
+
+Start a tmux session
+
+How to get help:

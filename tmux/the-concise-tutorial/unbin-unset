@@ -1,0 +1,17 @@
+to unset an option use the -u flag
+-----------------------------------
+
+- unset an option so that the session inherits it from the global options
+
+    set -u <option>
+
+- unset it globally so that it is restored to the default
+
+    set -u -g <option>
+
+
+unbind a key
+------------
+unbind key
+
+unbind-key key

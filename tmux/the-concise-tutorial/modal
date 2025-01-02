@@ -1,0 +1,11 @@
+tmux is a modal tool, in a way somewhat similar to vim and emacs, two very popular and very keyboard-centric text editors. What that means is that it uses triggers to know what *mode* it should be in. In its default configuration it has one such trigger, which in tmux's parlance is called the "prefix" (defaults to Ctrl-b) and most tmux users tend to leave it at that, usually only going as far as remapping it to a different key combo (Ctrl-a is a popular remapping). But tmux lets you have more than one such triggers and you don't have to map all your subsequent actions to follow-up to just the above two.
+
+In this tutorial, we'll learn how to reap the benefits of that feature carefully and unobtrusively.  
+
+
+that it should watch out for the upcoming key combinations. 
+
+Most people learning tmux either use C-a or C-b for their prefix. 
+allows you to have more than one such triggers.
+
+  

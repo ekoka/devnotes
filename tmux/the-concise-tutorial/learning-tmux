@@ -1,0 +1,11 @@
+Keyboard centric applications are usually taught by providing a cheat-sheet of commands. The hope is that the initiate will eventually grow comfortable with the shortcuts and become more productive with the tool as their usage grows.
+
+I don't find this to be an optimal approach to learn how to use tmux though. tmux is a tool that runs from the terminal and that encompasses other programs, also running from a terminal. Terminal utilities tend to be keyboard-centric, meaning that their commands are often mapped to shortcut keys on the keyboard. If you use a number of these applications you might notice some overlap in their key usage, which for the most part is not a problem since you rarely interact with more than one at a time. But tmux is different since it wraps around other applications. Your interactions with it and a contained app are thus usually concurrent. It's therefore important that it would be configured not to get in the way of your work with inner utilities. It should be set up around the way *you* already use other apps.
+
+For the most part tmux default settings offer a very good base to do this. But its configurability is the real boon, because it allows you to assess the shortcuts you'll use for it along those of your existing keyboard-centric tools on a daily basis. You can thus carefully plan for a faster, easier and more efficient tmux setup for *you*.
+
+It's my opinion then that the beyond a tutorial that shows you how to use tmux, one of the better investments would be to learn to craft a config file for yourself. That's the approach I've chosen for this tutorial.
+
+We will get familiar with some of tmux's vocabulary and will learn how to make it work for us through highly personalized shortcut mappings.
+
+  
