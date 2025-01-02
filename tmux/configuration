@@ -1,0 +1,7 @@
+- configuration file
+
+    $ vim .tmux.conf
+
+- use the `set-option` command to set option
+    can be shorten to `set`
+    set-option

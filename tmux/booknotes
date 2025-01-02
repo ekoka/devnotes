@@ -1,0 +1,129 @@
+SESSIONS
+--------
+- start anonymous session
+    
+    $ tmux
+
+- get help
+
+    <pfx> ?
+    
+- start anonymous session
+        
+        $ tmux
+
+- start named sessions
+
+    $ tmux new-session -s basic
+    
+    or
+
+    $ tmux new -s basic
+
+- detaching session
+
+    <pfx> d
+
+- listing sessions
+    
+    $ tmux list-sessions
+    $ tmux ls
+
+- create a session in the background
+
+    $ tmux new -s bg_session -d
+
+- attaching to session
+
+    $ tmux attach
+    $ tmux attach -t bg_session
+
+- killing session
+    
+    $ tmux kill-session -t bg_session
+
+- create a new session and name the first window
+    
+    $ tmux new -s windows -n shell
+
+- entering command mode
+
+    <pfx> :
+
+
+WINDOWS
+-------
+- create a new window
+
+    <pfx> c
+
+- create a new window
+
+    :new-window -n console
+
+- start a new window and launch a program
+
+    :new-window -n processes "top"
+
+
+- renaming a window
+    
+    <pfx> ,
+
+- listing windows
+
+    <pfx> w
+    <pfx> f <enter>
+
+- moving between windows
+    
+    # next
+    <pfx> n 
+    
+    # previous
+    <pfx> p
+
+    # last window
+    <pfx> ctrl-a
+
+    # using window index
+    <pfx> 0
+    <pfx> 1
+    <pfx> 5
+
+    # using window's name
+    <pfx> f + [first few characters of window's name]
+
+- closing window
+
+    <pfx> &
+
+- dividing a window vertically
+
+    <pfx> %
+
+- dividing a window horizontally
+
+    <pfx> "
+
+- momentarily display pane number in each pane
+
+    <pfx> q
+    
+- moving between panes    
+
+    <pfx> o
+    <pfx> left|right|up|down
+
+- cycling through pane layouts
+    
+    <pfx> <space>
+
+- closing a pane
+    
+    <pfx> x
+
+- checking version
+
+    $ tmux -V
+
