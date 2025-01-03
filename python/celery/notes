@@ -1,0 +1,136 @@
+# install RabbitMQ
+------------------
+
+    $ sudo apt-get install rabbitmq-server
+
+# install celery
+----------------
+
+    $ pip install celery
+
+
+# import Celery
+---------------
+
+    >>> from celery import Celery
+
+# creating app
+--------------
+    # with RabbitMQ as message broker
+    >>> app = Celery('tasks', broker='amqp://guest@localhost//')
+
+    # with RabbitMQ as message broker and backend
+    >>> app = Celery('tasks', backend='amqp', broker='amqp://')
+
+    # with RabbitMQ as message broker and Redis for backend
+    >>> app = Celery('tasks', backend='redis://localhost', broker='amqp://')
+
+- first argument, 'tasks', is the name that will be prepended to tasks to identify them.
+- `broker` specifies the url of the message broker. RabbitMQ uses the amqp protocol, so 'amqp://' or 'amqp://localhost'.
+- `backend`, optional param, necessary to query the status of a background task, or retrieve results. If your tasks do not return anything meaningful. Ignore it. If on the other hand you need to fetch the return value for some of them, enable it here. It can be disabled on a case by case basis at the task level.
+
+# defining tasks
+----------------
+
+    >>> @app.task
+    >>> def add(x, y):
+    >>>     return x + y
+
+    # we have no use for the return value on this task, 
+    # so we ask celery to not use the backend store.
+    >>> @app.task(ignore_result=True)
+    >>> def print_hello():
+    >>>     print 'hello there'
+
+
+    >>> @app.task
+    >>> def gen_prime(x):
+    >>>     multiples = []
+    >>>     results = []
+    >>>     for i in xrange(2, x+1):
+    >>>         if i not in multiples:
+    >>>             results.append(i)
+    >>>             for j in xrange(i*i, x+1, i):
+    >>>                 multiples.append(j)
+    >>>     return results
+
+# running the celery worker server 
+----------------------------------
+
+    $ celery worker -A celery_app --loglevel=info --logfile=<path-to-log>
+
+    # starting multiple workers and naming them.
+    # the %h will be replaced by the hostname
+    # when the worker is named.
+    $ celery worker -A celery_app -n one.%h &
+    $ celery worker -A celery_app -n two.%h &
+
+# running scheduled workers
+    
+    $ celery worker -A celery_app:celery --beat
+
+# stop workers
+--------------
+
+    # allow worker to complete its current task before exiting
+    $ ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill
+
+    # shutdown all workers without waiting
+    $ ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill -9
+
+
+# listing command-line options
+------------------------------
+
+    $ celery worker --help
+
+# listing command available
+---------------------------
+    
+    $ celery help
+
+# calling tasks
+---------------
+
+    ... from within ipython ...
+
+    >>> from tasks import gen_prime, print_hello
+
+    >>> result = gen_prime.delay(50000)
+
+a call to the delay() method on a celery task returns an AsyncResult object.
+
+# working with AsyncResult
+--------------------------
+
+    >>> result = gen_prime.delay(50000)
+    # checking status of task
+    >>> result.ready()
+    False
+     
+    ... few seconds later ...
+
+    >>> result.ready()
+    True
+
+    # get result
+    >>> result.get()
+    [ results here ]
+
+# waiting for the task (rarely used)
+----------------------------------
+
+    >>> results.get(timeout=1)
+
+- rarely used because it turns an asynchronous call into a synchronous one.
+- raises an exception if it times out.
+    
+
+# handling exceptions
+---------------------
+
+    # suppressing propagation or errors
+    >>> results.get(propagate=False)
+
+    # if task raised an exception you can access to traceback
+    >>> result.traceback

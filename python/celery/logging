@@ -1,0 +1,14 @@
+
+- logging to file
+see: 
+https://stackoverflow.com/questions/17366579/celery-logs-into-file
+https://docs.celeryq.dev/en/latest/userguide/tasks.html#logging
+
+    $ celery worker 
+        -A <module>:<appname>
+        --loglevel <level> | -l <level>
+        --logfile <file> | -f <file>
+
+    e.g.
+    
+    $ celery worker -A celery_app:celery --loglevel debug --logfile ~/tmp/logs/celery.log

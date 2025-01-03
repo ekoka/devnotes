@@ -1,0 +1,47 @@
+get help:
+
+    $ celery worker --help
+    $ celery worker -h
+
+---
+
+examples:
+
+    $ celery worker -A celery_app -l info
+    $ celery worker --app=celery_app --loglevel=INFO
+
+    $ celery worker 
+        -A <module>:<appname>
+        --loglevel <level> | -l <level>
+        --logfile <file> | -f <file>
+---
+
+- set celery application:
+    -A celery_app 
+    --app=celery_app
+
+- set log level
+    -l info
+    --loglevel=INFO
+
+    choose from: INFO|DEBUG|WARNING|ERROR|CRITICAL|FATAL
+
+- run the celery beat periodic task scheduler (there must only be one instance of this service).
+
+    -B
+    --beat
+
+- set a hostname
+
+    -n
+    --hostname=HOSTNAME
+
+- path to schedule database if running with the -B option. Defaults to celerybeat-schedule.
+
+    -s SCHEDULE_FILENAME
+    --schedule=SCHEDULE_FILENAME
+
+- set use id, group id, or user name of the user to run as after detaching
+
+    --uid=UID
+    --gid=GID
