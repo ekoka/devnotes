@@ -1,0 +1,43 @@
+https://cookiecutter.readthedocs.io/
+
+install
+-------
+
+    $ pip install cookiecutter
+
+usage
+-----
+
+- grab a cookiecutter template
+
+    $ git clone git@github.com:audreyr/cookiecutter-pypackage.git
+
+- personalize your copy: modify variables in cookiecutter.json, change skeleton project and push to your own cookiecutter repo if need be for future reuse.
+
+- generate your project from the project template
+
+    # with directories 
+    $ cookiecutter cookiecutter-pypackage/
+
+
+    # with repos
+    $ cookiecutter https://github.com/audreyr/cookiecutter-pypackage
+    # also works with abbreviations for github (gh), bitbucket (bb), and gitlab (gl)
+    $ cookiecutter gh:audreyr/cookiecutter-pypackage
+
+    # with zip files 
+    $ cookiecutter /path/to/template.zip
+
+configuration
+-------------
+- templates are downloaded to ~/.cookiecutter
+- replay json files are under ~/.cookiecutter_replay
+
+
+replaying after failed execution
+--------------------------------
+
+    $ cookiecutter --replay <template name>
+
+    # e.g.
+    $ cookiecutter --replay cookiecutter-django
