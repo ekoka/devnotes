@@ -1,0 +1,279 @@
+datetime.time()
+---------------
+    >>> import datetime
+
+    >>> t = datetime.time(1,2,3)
+    >>> print t
+    01:02:03
+    >>> print t.hour
+    1
+    >>> print t.minute
+    2
+    >>> print t.second
+    3
+    >>> print t.microsecond
+    0
+
+- note on timestamps
+
+    >>> import time
+    >>> time.time()
+    1342562172.718051
+    
+### Edit timestamp (change date and time)
+
+    >>> dt = datetime.datetime.now()
+    >>> dt.replace(hour=3, minute=20)
+    
+
+datetime.date()
+---------------
+
+    >>> import datetime
+
+- date(YYYY, M, D)
+    >>> d = datetime.date(2012, 1, 31)
+    2012-01-31
+    >>> print d
+
+- datetime.date.today()
+
+    >>> today = datetime.date.today()
+    >>> print today.year
+    2012
+    >>> print today.month
+    7
+    >>> print today.day
+    17
+    >>> print today.weekday() # monday
+    0
+    >>> print today.isoweekday()
+    1
+    >>> print today.ctime()
+    'Tue Jul 17 00:00:00 2012'
+    
+- date from timestamp
+
+    >>> import time
+
+    >>> timestamp = time.time()
+    >>> date = datetime.date.fromtimestamp(timestamp)
+    >>> print date
+    2012-07-17
+
+    >>> datetime.date.fromtimestamp(0)
+    datetime.date(1970, 1, 1)
+
+- date from ordinal
+
+    >>> ordinal = 734701
+    >>> date = datetime.date.fromordinal(ordinal)
+    >>> print date
+    2012-07-17
+    >>> date.toordinal()
+    734701
+
+- the replace() method
+
+    >>> d1 = datetime.date(2012, 7, 17)
+    >>> d2 = d1.replace(year=2011)
+    >>> print d1
+    2012-07-17
+    >>> print d2
+    2011-07-17
+
+date arithmetic with datetime.timedelta()
+------------------------------------------
+    >>> d1 = datetime.date(2012, 1, 15) 
+    >>> d2 = datetime.date(2012, 3, 31) 
+    >>> datediff = d2 - d1
+    >>> datediff
+    datetime.timedelta(76)
+
+    >>> one_day = datetime.timedelta(days=1)
+    >>> d3 = d2 + one_day
+    >>> d3
+    datetime.date(2012, 4, 1)
+
+date arithmetic with ordinals 
+-----------------------------
+    >>> d1 = datetime.date(2012, 1, 15) 
+    >>> ordinal = d1.toordinal()
+    >>> d2 = datetime.date.fromordinal(d1 + 2)
+
+date comparison
+---------------
+    >>> d1 < d2
+    True
+    >>> d1 > (d1 - datetime.timedelta(days=1))
+    True
+
+min - max ranges
+----------------
+    >>> print datetime.time.min
+    >>> print datetime.time.max
+
+    >>> print datetime.date.min
+    >>> print datetime.date.max
+
+
+datetime.datetime()
+-------------------
+    >>> dt = datetime.datetime.now()
+    >>> dt 
+    datetime.datetime(2012, 7, 17, 18, 17, 3, 121391)
+    >>> print dt
+    2012-07-17 18:17:03.121391
+    >>> dt.year
+    2012
+    >>> dt.microsecond
+    121391
+
+- combining a date and time objects
+
+    >>> t = datetime.time(18,24)
+    >>> d = datetime.date(2012, 7, 17) 
+    >>> dt = datetime.datetime.combine(d, t)
+    >>> dt
+    datetime.datetime(2012, 7, 17, 18, 24)
+    >>> print dt
+    2012-07-17 18:24:00
+
+formatting and parsing
+----------------------
+- default format ISO 8601: 
+    YYYY-MM-DD HH:MMSS.mmmmmm
+
+- formatting time to string: strftime()
+
+    http://strftime.org/
+
+    >>> f = "%a %b %d %H:%M:%S %Y"
+    >>> dt_str = dt.strftime(f)
+    >>> print dt_str
+    Tue Jul 17 18:24:00 2012
+
+- parse string to time: strptime() 
+
+    >>> dt_str = 'Tue Jul 17 18:24:00 2012'
+    >>> f = "%a %b %d %H:%M:%S %Y"
+    >>> dt = datetime.datetime.strptime(dt_str, f)
+    >>> dt
+    datetime.datetime(2012, 7, 17, 18, 24)
+
+Timezone info
+--------------
+    >>> t = datetime.time(1,2,3)
+    >>> t.tzinfo
+
+also see pytz: http://pytz.sourceforge.net/
+
+- "naive" datetimes simply give you date and time information, no timezone specified 
+
+    >>> dt = datetime.datetime.now()
+    >>> dt
+    datetime.datetime(2018, 10, 30, 21, 37, 17, 49956)
+
+- tz aware datetime carry the date and time info, plus an additional value for the timezone
+
+    >>> dt.replace(tzinfo=pytz.utc)
+    >>> dt
+    datetime.datetime(2018, 10, 30, 21, 37, 17, 49956, tzinfo=<UTC>)
+    
+- to get the utc datetime value (without specifying the timezone)  
+
+    >>> datetime.datetime.utcnow()
+    datetime.datetime(2018, 10, 30, 1, 43, 55, 906728)
+
+- to get a utc datetime that also carries the timezone info
+
+    >>> import pytz, datetime
+    >>> utcnow = datetime.datetime.now(pytz.utc) 
+    
+    # or we can first get the naive datetime set to utc value
+    # and then replace the timezone info
+
+    >>> utcnow = datetime.datetime.utcnow()
+    >>> utcnow = utcnow.replace(tzinfo=pytz.utc) # returns another object
+
+
+note the subtle difference above in using utcnow() and now(), 
+
+=====
+Turning a naive datetime object into a TZ-aware datetime
+------------
+- naive datetime object don't carry any time zone info
+
+- method 1:
+
+    # create a naive datetime
+    >>> naive_dt = datetime.now()
+
+    # get an equivalent object with tz information set
+    >>> my_tz = pytz.timezone('US/Eastern')
+    >>> tz_aware_dt = naive_dt.replace(tzinfo=my_tz)
+
+- method 2
+    # get timezone
+    >>> my_tz = pytz.timezone('US/Eastern')
+
+    # get naive datetime
+    >>> naive_dt = datetime.now()
+
+    # get time zone aware object
+    >>> tz_aware_dt = my_tz.localize(naive_dt)
+
+Note that tz_aware_dt and naive_dt both carry the same date time numbers, these numbers don't change. The only difference the two objects is that tz_aware_dt can tell you the tzinfo while naive_dt doesn't carry it.
+
+
+Working with UTC: producing TZ-aware UTC datetime
+-------------
+
+- method 1
+    # pass utc timezone to the datetime.now() constructor.
+    # this returns a tz-aware datetime object, set to the utc time zone.
+    >>> utc_dt = datetime.now(pytz.utc)
+    >>> utc_dt.tzinfo
+    <UTC>
+
+- method 2
+    # first, get a naive utc datetime
+    >>> naive_utc_dt = datetime.utcnow()
+    >>> naive_utc_dt.tzinfo is None
+    True
+    # now set its timezone
+    >>> utc_dt = naive_utc_dt.replace(tzinfo=pytz.utc)
+    >>> utc_dt.tzinfo
+    <UTC>
+
+Converting from local to UTC
+-------
+
+    # get the local naive datetime
+    l_dt = datetime.now()
+    # set the local timezone
+    eastern = pytz.timezone('US/Eastern')
+    # get a tz aware local datetime
+    l_dt = eastern.localize(l_dt) # or l_dt = l_dt.replace(tzinfo=eastern)
+    # convert to utc
+    utc_dt  =l_dt.astimezone(pytz.utc)
+
+
+---
+
+reference:
+http://www.doughellmann.com/PyMOTW/datetime/
+http://docs.python.org/library/datetime.html
+
+related modules:
+calendar:
+    http://www.doughellmann.com/PyMOTW/calendar/index.html
+    http://docs.python.org/library/calendar.html
+time:
+    http://www.doughellmann.com/PyMOTW/time/index.html
+    http://docs.python.org/library/time.html
+pytz (World Timezone database): 
+    http://pytz.sourceforge.net/
+strftime:
+    http://strftime.org/
+

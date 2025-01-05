@@ -1,0 +1,90 @@
+- "naive" datetimes simply give you date and time information, no timezone specified 
+
+    >>> dt = datetime.datetime.now()
+    >>> dt
+    datetime.datetime(2018, 10, 30, 21, 37, 17, 49956)
+
+- tz aware datetime carry the date and time info, plus an additional value for the timezone
+
+    >>> dt.replace(tzinfo=pytz.utc)
+    >>> dt
+    datetime.datetime(2018, 10, 30, 21, 37, 17, 49956, tzinfo=<UTC>)
+    
+- to get the utc datetime value (without specifying the timezone)  
+
+    >>> datetime.datetime.utcnow()
+    datetime.datetime(2018, 10, 30, 1, 43, 55, 906728)
+
+- to get a utc datetime that also carries the timezone info
+
+    >>> import pytz, datetime
+    >>> utcnow = datetime.datetime.now(pytz.utc) 
+    
+    # or we can first get the naive datetime set to utc value
+    # and then replace the timezone info
+
+    >>> utcnow = datetime.datetime.utcnow()
+    >>> utcnow = utcnow.replace(tzinfo=pytz.utc) # returns another object
+
+
+note the subtle difference above in using utcnow() and now(), 
+
+=====
+Turning a naive datetime object into a TZ-aware datetime
+------------
+- naive datetime object don't carry any time zone info
+
+- method 1:
+
+    # create a naive datetime
+    >>> naive_dt = datetime.now()
+
+    # get an equivalent object with tz information set
+    >>> my_tz = pytz.timezone('US/Eastern')
+    >>> tz_aware_dt = naive_dt.replace(tzinfo=my_tz)
+
+- method 2
+    # get timezone
+    >>> my_tz = pytz.timezone('US/Eastern')
+
+    # get naive datetime
+    >>> naive_dt = datetime.now()
+
+    # get time zone aware object
+    >>> tz_aware_dt = my_tz.localize(naive_dt)
+
+Note that tz_aware_dt and naive_dt both carry the same date time numbers, these numbers don't change. The only difference the two objects is that tz_aware_dt can tell you the tzinfo while naive_dt doesn't carry it.
+
+
+Working with UTC: producing TZ-aware UTC datetime
+-------------
+
+- method 1
+    # pass utc timezone to the datetime.now() constructor.
+    # this returns a tz-aware datetime object, set to the utc time zone.
+    >>> utc_dt = datetime.now(pytz.utc)
+    >>> utc_dt.tzinfo
+    <UTC>
+
+- method 2
+    # first, get a naive utc datetime
+    >>> naive_utc_dt = datetime.utcnow()
+    >>> naive_utc_dt.tzinfo is None
+    True
+    # now set its timezone
+    >>> utc_dt = naive_utc_dt.replace(tzinfo=pytz.utc)
+    >>> utc_dt.tzinfo
+    <UTC>
+
+Converting from local to UTC
+-------
+
+    # get the local naive datetime
+    l_dt = datetime.now()
+    # set the local timezone
+    eastern = pytz.timezone('US/Eastern')
+    # get a tz aware local datetime
+    l_dt = eastern.localize(l_dt) # or l_dt = l_dt.replace(tzinfo=eastern)
+    # convert to utc
+    utc_dt  =l_dt.astimezone(pytz.utc)
+
