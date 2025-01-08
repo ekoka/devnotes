@@ -1,0 +1,25 @@
+Viewing basic log information
+-----------------------------
+
+- see all log entries, starting at oldest entry
+
+    $ journalctl
+
+    # if `journald` is configured to save previous boots records you'll see entries from current and previous boots
+
+- use `-b` flag to see only entries from the current boot
+
+    $ journalctl -b
+
+- use `-k` to see only kernel messages
+
+    $ journalctl -k
+
+    # to see only those from current boot
+    $ journalctl -k -b 
+
+- see all journal entries from a unit
+
+    $ journalctl -u nginx.service
+    $ journalctl -u -b nginx.service
+
