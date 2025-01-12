@@ -1,0 +1,36 @@
+- systemd seems to also know the name of the target of symlinks, so it's not a good idea to name these targets with a generic name that might potentially clash with another symlink.
+
+    e.g. 
+    - I have 2 separate wsgi app with their corresponding gunicorn services
+    - under each project's directory I declare a configuration file to start a gunicorn service. Since they're in their own directory I might think that it would be a good idea to simply name them `gunicorn.service` and then to symlink to them from the systemd configuration directory with more descriptive name as such:
+
+    /srv/projects
+        /foo
+            gunicorn.service
+        /bar
+            gunicorn.service
+
+    /etc/systemd/system
+        foo.service -> /srv/projects/foo/gunicorn.service
+        bar.service -> /srv/projects/bar/gunicorn.service
+
+
+However with the above setup, for some reason systemctl is aware of the name of the file `gunicorn.service` that its symlinks resolve to. So when you later try 
+
+    $ sudo systemctl start gunicorn.service
+
+It works, but which one of the two `gunicorn.service` did it reach?
+
+Therefore, my original thought was that it might be best to rename the target files more descriptively. But upon reflection, I think it better to completely avoid this kind of symlink setup, since I might forget this peculiar behavior in the future and would have to again investigate some name clash as a result. I'll simply explicitly declare the services inside /etc/systemd/system.
+
+----
+
+After changing various configurations in systemd call 
+
+    $ sudo systemd daemon-reload
+
+to refresh.
+
+----
+
+watching various logs
