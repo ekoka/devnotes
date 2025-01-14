@@ -1,0 +1,168 @@
+- the basic object that systemd manages is a "unit"
+- units can be of many types, the most common being a "service" (indicated by a unit file ending in `.service`)
+
+- to manage services the main tool is the `systemctl` command
+
+    # e.g. starting the nginx service
+    $ sudo systemctl start nginx.service
+
+    # stop nginx service
+    $ sudo systemctl stop nginx.service
+
+    # restart
+    $ sudo systemctl restart nginx.service
+
+    # trying to reload without interrupting normal functionality
+    $ sudo systemctl reload nginx.service
+
+    # if you're unsure whether the service has the `reload` functionality
+    $ sudo systemctl reload-or-restart nginx.service
+
+    # check status
+    $ systemctl status nginx.service
+
+    # check for specific state
+    $ systemctl is-active nginx.service
+    $ systemctl is-enabled nginx.service
+    $ systemctl is-failed nginx.service
+
+- by default most units are not started at boot, to configure this functionality you must *enable* it, which hooks it up to a certain boot "target", causing it to be triggered when that target is started
+
+    # enable nginx service to start automatically at boot.
+    # creates a symlink from the system's copy of the service file 
+    # e.g. /lib/systemd/system or /etc/systemd/system
+    $ sudo systemctl enable nginx.service
+
+    # disable nginx service from starting automatically at boot
+    $ sudo systemctl disable nginx.service
+
+    # disable a unit and enable anew
+    $ sudo systemctl reenable unit
+
+    # masking a unit to make it impossible to start (both manually and as a dependency)
+    $ sudo systemctl mask unit
+
+    # unmask unit
+    $ sudo systemctl unmask unit
+
+Getting an overview of the system's state
+----------------------------------------
+- get a list of "active" units 
+
+    $ systemctl list-units
+
+    # or simply (since list-units is the default)
+
+    $ systemctl
+
+- list all units systemd has loaded or attempted to load into memory, including those not currently active
+
+    $ systemctl [list-units] --all
+
+- list all units installed on the system, including those systemd has not tried to load into memory
+
+    $ systemctl list-unit-files
+
+- use the `--type=` filter to list active service units
+
+    $ systemctl list-unit-files --type=service
+  
+
+
+Inspecting units and unit files
+-------------------------------
+
+- see the full contents of a unit file 
+
+    $ systemctl cat nginx.service
+
+- see the dependency tree of a unit
+
+    # with `target` recursively expanded 
+    $ systemctl list-dependencies nginx.service
+
+    # with all dependent units recursively expanded
+    $ systemctl list-dependencies --all nginx.service
+
+- see the low-level details of the unit's settings
+
+    $ systemctl show nginx.service
+
+Modify unit files
+-----------------
+
+- to add a unit file snippet, which can be used to append or override settings in the default unit file, simply call the `edit` option
+
+    $ sudo systemctl edit nginx.service
+
+- use `--full` to modify the entire content of the unit file instead of creating a snippet  
+
+    $ sudo systemctl edit --full nginx.service
+
+- after modifying a unit file reload the `systemd` daemon process to pick up the changes
+
+    $ sudo systemctl daemon-reload
+
+
+Using Targets (Runlevels)
+-------------------------
+- one of the functions of an init system is to transition the server itself between different state, aka as "runlevels" in traditional init systems. 
+
+- init systems allow the server to be in only one runlevel at a time
+
+- systemd uses "targets" instead of "runlevels"
+
+- targets are synchronization points that the server can used to bring itself into a specific state
+
+- services and other unit files can be tied to a target and multiple targets can be active at the same time
+
+- listing targets available on a system 
+
+    # using the `--type=` filter
+    $ systemctl list-unit-files --type=target
+
+- view default target systemd tries to reach at boot (which in turn starts all of the unit files that make up the dependency tree of that target)
+
+    $ systemctl get-default
+
+- change the default target that will be used at boot
+
+    sudo systemctl set-default multi-user.target
+
+- to see what units are tied to a target
+
+    systemctl list-dependencies multi-user.target
+
+- modify the system state to transition between targets with the `isolate` option, which stops any units that are not tied to the specified target. Thus, ensure that the target beeing isolated does not stop any essential services. 
+
+    $ sudo systemctl isolate multi-user.target
+
+
+Stopping or Rebooting the server
+--------------------------------
+
+- power off 
+
+    $ sudo systemctl poweroff
+
+    # aliased to simply `poweroff` in most OS
+    $ sudo poweroff
+
+- reboot
+
+    $ sudo systemctl reboot
+
+    # aliased to simply `reboot` in most OS
+    $ sudo reboot
+
+- boot into rescue mode
+
+    $ sudo systemctl rescue
+
+    
+refs:
+https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal
+https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
+https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs
+https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
+
