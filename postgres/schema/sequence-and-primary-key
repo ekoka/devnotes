@@ -1,0 +1,39 @@
+sequences
+
+- list sequences
+    \ds 
+- list table, sequences and views
+    \dS 
+
+---------
+- declaring a sequence for column "id" on table "users"
+
+    # sequence "users_id_seq" implicitly created for column 'id'
+    CREATE TABLE users(
+        id SERIAL PRIMARY KEY, 
+        name TEXT,
+        age INT4
+    );
+
+- get sequence name for column "id" on table "users"
+    select pg_get_serial_sequence('users', 'id')
+
+- next value
+    select nextval('users_id_seq')
+
+- current value *in the session*
+    select currval('users_id_seq')
+
+- fixing out of sync sequence
+    # last id in table
+    SELECT MAX(id) FROM your_table;
+
+    # sequence's next value (should be higher than the last result).
+    SELECT nextval('your_table_id_seq');
+
+    # if sequence's next value isn't higher than table's max value,
+    # set sequence's next value to table's max val.
+    SELECT setval('your_table_id_seq', (SELECT MAX(id) FROM your_table));
+
+- reset sequence to 1
+    ALTER SEQUENCE your_table_id_seq RESTART;

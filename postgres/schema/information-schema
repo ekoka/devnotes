@@ -1,0 +1,10 @@
+- get info on a schema using information-schema
+
+SELECT column_name, data_type, character_maximum_length 
+FROM information_schema.columns
+WHERE table_name = <my_table>;
+
+
+SELECT *
+FROM information_schema.columns
+WHERE table_name = <my_table> and column_name = <my_column>;

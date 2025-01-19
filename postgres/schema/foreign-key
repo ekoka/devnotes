@@ -1,0 +1,84 @@
+- defining foreign key in a CREATE TABLE 
+
+    # using a table level FOREIGN KEY and named CONSTRAINT declaration
+
+    CREATE TABLE films (
+        address_id integer primary key,    
+        user_id integer,
+        CONSTRAINT user_id_fk 
+            FOREIGN KEY(user_id) REFERENCES users (user_id)
+    );
+
+    # using a column level REFERENCES declaration
+
+    CREATE TABLE addresses(
+        address_id integer PRIMARY KEY,
+        user_id integer REFERENCES users (user_id),  
+        ...
+    )
+
+    # short form
+    CREATE TABLE addresses(
+        address_id integer PRIMARY KEY,
+        user_id integer REFERENCES users,
+        ...
+    )
+
+- referencing a group of columns
+
+    CREATE TABLE t1(
+        a INTEGER PRIMARY KEY,
+        b INTEGER,
+        c INTEGER,
+        FOREIGN KEY (b, c) REFERENCES other_table (c1, c2)
+    )
+
+- ON DELETE [RESTRICT | CASCADE | NO ACTION (default) | SET NULL | SET DEFAULT ]
+
+    CREATE TABLE t1 (
+        a1 INTEGER REFERENCES t2 ON DELETE RESTRICT,
+        b1 INTEGER REFERENCES t3 ON DELETE CASCADE,
+        ...
+
+        PRIMARY KEY (a1, b1)
+    )
+
+    # NO ACTION means that if any referencing rows still exist when the constrain is checked, an error is raised; The difference with RESTRICT is that NO ACTION allows the check to be deferred until later in the transaction, RESTRICT does not.
+    # any value set by SET DEFAULT or SET NULL must still satisfy the FOREIGN KEY constraints.
+
+- ON UPDATE [RESTRICT | CASCADE | NO ACTION (default) | SET NULL | SET DEFAULT ]
+
+    # similar to DELETE
+    
+    # CASCADE: value updated is also updated on other table
+
+
+# TODO: MATCH FULL
+
+- foreign key must reference columns that either are a primary key or form a unique constraint (i.e. the referenced column always has an index).
+
+- CREATE TABLE  syntax
+
+    CREATE TABLE table_name ( 
+        ... column declarations ...
+     
+        CONSTRAINT constraint_name
+        FOREIGN KEY ( 
+            column_name_A , column_name_B, ..., column_name_N) 
+            REFERENCES reftable [
+                (refcolumn_name_A, 
+                refcolumn_name_B,
+                ..., refcolumn_name_N)] 
+                [MATCH FULL, MATCH PARTIAL, MATCH SIMPLE]
+                [ON DELETE <action>]
+                [ON UPDATE <action>]
+    )  
+
+    <action> is:
+        - RESTRICT 
+        - CASCADE 
+        - NO ACTION (default) 
+        - SET NULL 
+        - SET DEFAULT 
+
+

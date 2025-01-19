@@ -1,0 +1,89 @@
+examples
+--------
+# adding FOREIGN KEY and UNIQUE constraint
+    - let pg auto generate constraint name
+
+    ALTER TABLE products
+    ADD FOREIGN KEY (product_id) REFERENCES products ON DELETE SET NULL;
+
+    ALTER TABLE tags 
+    ADD UNIQUE (label);
+
+    - explicitly specify constraint name
+
+    ALTER TABLE child_table
+    ADD CONSTRAINT parent_id1_id2_fk 
+        FOREIGN KEY (parent_id1, parent_id2) 
+        REFERENCES parent (id1, id2) ON DELETE CASCADE;
+
+# drop constraint
+
+    ALTER TABLE some_table
+    DROP constraint constraint_name
+
+- defining constraint during CREATE TABLE
+
+    CREATE TABLE table_name(
+        ...column definition...
+
+        CONSTRAINT constraint_name <constraint_definition>
+    )
+
+    <constraint_definition> can be any of:
+        CHECk (...)
+        UNIQUE (...)
+        PRIMARY KEY (...)
+        EXCLUDE (...)
+        FOREIGN KEY (...)
+
+- removing a constraint
+
+    ALTER table table_name
+    DROP CONSTRAINT [IF EXISTS] constraint_name [RESTRICT| CASCADE]
+
+- renaming a constraint
+
+    ALTER table table_name
+    RENAME CONSTRAINT constraint_name TO new_constraint_name
+
+- altering constraint
+
+    ALTER table table_name
+    ALTER CONSTRAINT constraint_name 
+        [DEFERRABLE|NOT DEFERRABLE] [INITIALLY DEFERRED|INITIALLY IMMEDIATE]
+
+- adding a constraint
+
+    ALTER table table_name
+    ADD <table_constraint> 
+
+    # where <table_constraint> can be:
+
+    [ CONSTRAINT constraint_name ] # optional constraint name
+        {   CHECK ( ... ) |
+            UNIQUE index_parameters |
+            PRIMARY KEY index_parameters |
+            EXCLUDE (...) |
+            FOREIGN KEY (column_names...) REFERENCES reftable (refcolumn_names...)
+                [MATCH FULL | MATCH PARTIAL | MATCH SIMPLE] 
+                [ON DELETE action] 
+                [ON UPDATE action]
+        }
+    [DEFERRABLE | NOT DEFERRABLE] 
+    [INITIALLY DEFERRED | INITIALLY IMMEDIATE]
+    
+- <column_constraint>
+
+    [ CONSTRAINT constraint_name ]
+        {   NOT NULL |
+            NULL |
+            CHECK ( ... ) |
+            DEFAULT default_expr |
+            GENERATED ... |
+            UNIQUE index_parameters |
+            PRIMARY KEY index_parameters |
+            REFERENCES reftable (...)
+        }
+    [DEFERRABLE | NOT DEFERRABLE] 
+    [INITIALLY DEFERRED | INITIALLY IMMEDIATE]
+

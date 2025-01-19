@@ -1,0 +1,101 @@
+alter column type from string to int
+------------------------------------
+ALTER TABLE product ALTER quantity TYPE INT 
+    USING CAST(quantity AS INT);
+
+or 
+
+ALTER TABLE product ALTER quantity TYPE INT 
+    USING quantity::INT;
+
+alter column type from bool to smallint:
+----------------------------------------
+    ALTER TABLE product ALTER display TYPE SMALLINT
+        USING 
+            CASE
+                WHEN display = TRUE THEN 1
+                WHEN display = FALSE THEN 0
+                ELSE 0
+            END;
+
+    or simply
+
+    ALTER TABLE product ALTER display TYPE SMALLINT
+        USING 
+            CASE WHEN display = TRUE 
+                THEN 1 
+                ELSE 0
+            END;
+
+set column (not) null
+--------------------
+    
+    ALTER TABLE table_name
+        ALTER COLUMN column_name
+            SET NOT NULL;
+
+renaming table
+--------------
+ALTER TABLE table1 RENAME TO table2;
+
+renaming column
+---------------
+ALTER TABLE products RENAME COLUMN product_no TO product_number;
+
+dropping tables
+---------------
+    DROP TABLE product CASCADE;
+
+adding a unique constraint
+--------------------------
+ALTER TABLE child_activities ADD CONSTRAINT unique_child_activity 
+    UNIQUE(child_id, activity_id)
+
+dropping a constraint
+---------------------
+# first look at table to identify constraint to drop
+    \d sometable
+
+# drop constraint
+    ALTER TABLE sometable DROP CONSTRAINT sometable_othertable_id_fkey;
+
+adding a Foreign Key
+--------------------
+ALTER TABLE sometable ADD FOREIGN KEY (foreigntable_id) REFERENCES foreigntable(id);
+
+adding a column
+---------------
+ALTER TABLE 'child_activities' ADD COLUMN my_new_column VARCHAR(20)
+
+resizing a column
+-----------------
+ref: 
+http://sniptools.com/databases/resize-a-column-in-a-postgresql-table-without-changing-data
+
+given a table named 'TABLE1' with a column named 'COL1'
+
+- To find the size of the column
+
+    SELECT atttypmod FROM pg_attribute
+    WHERE attrelid = 'TABLE1'::regclass
+    AND attname = 'COL1';
+
+        > atttypmod
+        > -------------
+        > 24
+        > (1 ROW)
+
+i.e. size is 20 (4 is added for legacy reasons)
+
+- Now you can conveniently change the column's size to 50, 
+with an UPDATE query to table pg_attribute
+
+    UPDATE pg_attribute SET atttypmod=50+4
+    WHERE attrelid='TABLE1'::regclass
+    AND attname='COL1';
+
+    UPDATE 1
+
+change database owner
+---------------------
+    ALTER DATABASE mydb OWNER TO "new_owner";

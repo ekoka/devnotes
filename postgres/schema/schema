@@ -1,0 +1,160 @@
+ref: http://www.postgresql.org/docs/9.1/static/app-pgdump.html
+
+create schema
+-------------
+
+    CREATE SCHEMA myschema;
+
+setting current schema
+----------------------
+
+    SET SEARCH_PATH TO myschema;
+
+    or 
+
+    SET SEARCH_PATH = myschema;
+
+reset to default schema
+-----------------------
+    
+    SET SEARCH_PATH TO default
+
+    or 
+
+    SET SEARCH_PATH TO public
+   
+dropping schema
+---------------
+    DROP SCHEMA myschema; 
+    DROP SCHEMA myschema CASCADE; 
+
+renaming schema
+---------------
+    ALTER SCHEMA <name> RENAME TO <newname>
+
+list schemas
+------------
+\dn
+
+db dumps
+--------
+- entire db with all schema recreated and data, but no role (no owner, no acl)
+
+    $ pg_dump -cOx <dbname> > outfile.sql
+    or
+    $ pg_dump --clean --no-owner --no-acl <dbname> > outfile.sql
+
+    e.g.
+
+    $ pg_dump -cOx moviedb > moviedb.pg.sql
+
+- gzipped
+
+    $ pg_dump -cOx <dbname> | gzip > outfile.sql.gz
+
+- just table matching the pattern "tablename"
+    
+    -t tablename | --table=tablename
+    
+    $ pg_dump -cOx moviedb -t actors > actors.sql
+
+- exclude table matching pattern "tablename"
+
+    -T tablename | --exclude-table=tablename
+
+    $ pg_dump -cOx moviedb -T actors > no-actors.sql
+
+- handy flags:
+    include only some schema *patterns*: 
+        -n <schema> | --schema=<schema>
+        # more than one pattern can be specified
+        -n schema1 -n schema2
+
+    no access privilege
+        -x | --no-privileges | --no-acl
+
+    no owner
+        -O (ucase o) | --no-owner
+
+    exclude some patterns:
+        -N <schema> | --exclude-schema=<schema>
+        # likewise, more than one pattern can be specified
+        -N schema1 -N schema2
+
+    include only some pattern, unless they also match excluded ones:
+        -n db_prod -n db_dev -N db_prod_v_1
+
+    data only, no schema
+        -a | --data-only
+
+    schema only, no data
+        -s | --schema-only
+
+    drop db objects prior to creating them
+        -c | --clean
+
+- dumping to csv
+
+    # from the shell using psql
+    psql -U user -d db_name -c "Copy (Select * From foo_table LIMIT 10) To STDOUT With CSV HEADER DELIMITER ',';" > foo_data.csv
+
+    # from within python (SQLAlchemy/psycopg2)
+    # see https://stackoverflow.com/questions/13125236/sqlalchemy-psycopg2-and-postgresql-copy/47917043#47917043
+    connection = engine.connection().connection
+    connection = connection.connection
+        # or 
+    connection = engine.raw_connection()
+
+    cursor = connection.cursor()
+    with open('/path/to/file.csv') as openfile:
+        cursor.copy_expert(
+            """
+            COPY mytable 
+            FROM STDIN 
+            WITH (FORMAT CSV, DELIMITER ',', HEADER);
+            """,
+            openfile
+        )
+    connection.commit()
+
+        
+- more on patterns here: http://www.postgresql.org/docs/9.1/static/app-psql.html#APP-PSQL-PATTERNS
+
+duplicating a schema (this is my own hackish way of doing it)
+--------------------
+- create a dump of the schema you want to copy
+
+    $ pg_dump <dbname> -n <schema> > outfile.pg.sql
+
+    e.g.
+
+    $ pg_dump moviedb -n rev1 > rev1.pg.sql
+
+- rename that schema as the intended new schema
+
+    # ALTER SCHEMA <schema> RENAME TO <newschema>
+
+    e.g.
+    # ALTER SCHEMA rev1 RENAME TO rev2 
+
+- recreate the renamed schema
+
+    # CREATE SCHEMA rev1
+
+restore
+-------
+
+- insert data back in, the name of the schema should be present in the dump file, so no need to specify it.
+    
+    $ psql moviedb < rev1.pg.sql
+
+    # gzipped
+
+    $ gunzip -c database.sql.gz | psql -U <username> <database> -h <host>
+
+    or 
+
+    $ cat database.sql.gz | gunzip | psql -U <username> <database> -h <host>
+
+
+
