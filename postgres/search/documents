@@ -1,0 +1,7 @@
+- concatenating fields into a single document
+
+    SELECT title || ' ' || author || ' ' || abstract || ' ' || body AS document
+    FROM message
+    WHERE mid = 12
+
+- coalescing null into text

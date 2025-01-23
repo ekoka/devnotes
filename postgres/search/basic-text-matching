@@ -1,0 +1,23 @@
+- executing a simple search
+
+    SELECT 'a fat cat sat on a mat and ate a fat rat'::tsvector @@ 'cat & rat'::tsquery;
+    ---
+    true
+
+    SELECT 'fat & cow'::tsquery @@ 'a fat cat sat on a mat and ate a fat rat'::tsvector;
+    ---
+    false
+
+- a search matches "search terms" to a "searched document"
+
+- a *tsvector* is not just raw text, but a text type that contains already normalized lexemes from a *document*.
+
+- similarly, a *tsquery* text contains search terms, as already-normalized lexemes, that may be combined using AND (&), OR(|), NOT (!) and FOLLOWED BY (<->) operators.
+
+- a number of functions help to convert ordinary text types to these search optimized types: 
+
+    - to_tsvector: convert text to tsvector (i.e. parse and normalize document)
+    - to_tsquery: convert text to tsquery
+    - plainto_tsquery
+    - phraseto_tsquery
+
