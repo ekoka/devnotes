@@ -1,0 +1,101 @@
+views
+-----
+- you can create a view over a query you don't want to repeat
+
+    CREATE VIEW myview AS 
+        SELECT city, temp_lo, temp_hi, prcp, date, location
+            FROM weather, cities
+            WHERE city = name;
+
+- then simply use the view as a table
+
+    SELECT * FROM myview
+
+- liberal use of views is considered good practice.
+- views can be used almost any place real tables are used.
+- you can build views upon other views.
+
+
+referential integrity
+---------------------
+
+    CREATE TABLE cities(
+        city varchar(80),
+        location point
+    );
+
+    CREATE TABLE weather(
+        city varchar(80) references cities(city),
+        ...
+        ...
+    );
+
+- if you attempt to insert a city in "weather" that doesn't match one in "cities" you'll have an error.
+
+transactions
+------------
+
+    BEGIN;
+        UPDATE account SET balance = ....
+        -- etc
+        -- etc
+        -- etc
+    COMMIT;
+
+- to cancel use ROLLBACK instead of COMMIT
+
+- pgsql implicitly treats every sql statement as being executed in a transaction
+
+- SAVEPOINTs allow you to ROLLBACK in a more granular fashion
+
+    BEGIN;
+        UPDATE account SET balance = ....
+        -- etc
+        SAVEPOINT sv1;
+        -- etc
+        -- etc
+        SAVEPOINT sv2;
+        -- etc
+        -- etc
+        SAVEPOINT sv3;
+        -- something goes wrong here
+        ROLLBACK TO sv1;
+        UPDATE ...
+    COMMIT;
+
+
+window functions
+----------------
+- performs a calculation across a set of rows
+
+    SELECT depname, empno, salary, avg(salary) OVER (PARTITION BY depname) from empsalary;
+
+    SELECT dpname, empno, salary, rank() OVER (PARTITION BY depname ORDER BY salary DESC) FROM empsalary;
+    -- the rank() function produces a numerical rank within the row's partition
+
+http://www.postgresql.org/docs/current/static/tutorial-window.html
+
+
+inheritance
+-----------
+    CREATE TABLE cities(
+        name text,
+        population real,
+        altitude int
+    );
+
+    CREATE TABLE capitals(
+        state char(2)
+    ) INHERITS (cities);
+
+- selecting from all cities including capitals
+
+    SELECT name, altitude 
+        FROM cities
+        WHERE altitude > 500;
+
+- selecting from only cities excluding capitals
+
+    SELECT name, altitude 
+        FROM ONLY cities
+        WHERE altitude > 500;

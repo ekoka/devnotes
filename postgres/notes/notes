@@ -1,0 +1,191 @@
+interactive terminal
+--------------------
+    $ psql [option]... [dbname [username]]
+
+    # exit terminal
+    \q
+
+    # change database
+    \c dbname
+
+- superuser prompt
+
+    dbname=# 
+
+- regular user prompt
+
+    dbname=>
+
+- expanded display toggle
+
+    # equivalent to the mysql \G
+    \x
+
+- execute query (and send result to file or |pipe)
+
+    # can be used to re-execute the query
+    \g
+
+- output pager
+    # turn on|off 
+    \pset pager on|off
+
+    # toggle
+    \pset pager
+
+- clear (reset) current query buffer
+    \r
+
+    e.g.
+
+    =# insert into products (name, quantity) values
+    =- ('pens', 827)
+    =- \r
+    Query buffer reset (cleared).
+    =#
+
+- edit query buffer using editor (vi is default). Useful to correct mistakes.
+    \e
+
+    e.g.
+
+    =# insert into products (name, quantity) values
+    =- (827, 'pens'),
+    =- (395, 'erasers'),
+    =- (732, 'highlighters'),
+    =- \e
+
+    >>> inside vi, we swap "quantity" and "name"
+
+        insert into products (quantity, name) values
+        (827, 'pens'),
+        (395, 'erasers'),
+        (732, 'highlighters'),
+    :wq 
+
+
+authentication
+--------------
+- by default on Ubuntu, postgres is configured to use 'ident sameuser' for connections on local machine. i.e. if your unix username matches a psql user with the same name, you're in, no password necessary.
+
+- 'ident' based auth may be enabled on local, while password based auth is disabled. i.e. just because you can successfully log in as 'mike' with
+
+    sudo -u mike psql mysweetdb
+
+doesn't imply that you'll be able to login with
+
+    psql mysweetdb -U mike -W
+
+- 'postgres' is the only user that can connect to a fresh install
+
+- for more info
+    /etc/postgres/x.x/main/pg_hba.conf 
+    https://help.ubuntu.com/community/PostgreSQL
+
+- login as user 'postgres' (default)
+
+    $ sudo -u postgres psql postgres 
+        # "[sudo -u] postgres [psql ...]": user to run the command as
+        # "[...psql] postgres [...]": the database
+
+
+create user
+-----------
+
+    # a superuser with the same name as my login
+    $ sudo -u postgres createuser --superuser $USER
+
+    # set the password
+    $ sudo -u postgres psql
+    postgres=# \password $USER
+
+    # it's a good practice to create a db with that same user name
+    $ createdb $USER
+    # or simply
+    $ createdb 
+
+    # create a user and set password
+    $ createuser someuser -P
+
+creating database
+-----------------
+- from bash
+
+    $ createdb somedb
+
+    # specify an owner
+    $ createdb somedb -O ownername
+
+- from psql
+
+    admin=# create database somename
+
+
+
+help
+----
+at the bash shell
+    $ psql --help
+
+once in the client
+    \h
+    \? 
+
+some useful command
+-------------------
+- list all databases
+    \l 
+- list roles (users)
+    \du 
+- list roles (groups)
+    \dg 
+- list tables
+    \dt 
+- list table, sequences and views
+    \dS 
+- describe table
+    \dS tablename 
+- list schema
+    \dn 
+- change db
+    \c newdb 
+
+
+sequences
+---------
+- declaring a sequence for column "id" on table "users"
+
+    # sequence "users_id_seq" implicitly created for column 'id'
+    CREATE TABLE users(
+        id SERIAL PRIMARY KEY, 
+        name TEXT,
+        age INT4
+    );
+
+- get sequence name for column "id" on table "users"
+    select pg_get_serial_sequence('users', 'id')
+
+- next value
+    select nextval('users_id_seq')
+
+- current value *in the session*
+    select currval('users_id_seq')
+
+- fixing out of sync sequence
+    # last id in table
+    SELECT MAX(id) FROM your_table;
+
+    # sequence's next value (should be higher than the last result).
+    SELECT nextval('your_table_id_seq');
+
+    # if sequence's next value isn't higher than table's max value,
+    # set sequence's next value to table's max val.
+    SELECT setval('your_table_id_seq', (SELECT MAX(id) FROM your_table));
+
+- reset sequence to 1
+    ALTER SEQUENCE your_table_id_seq RESTART;
+
+read commands from a file
+-------------------------
+    \i somefile.sql
+

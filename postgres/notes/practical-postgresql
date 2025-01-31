@@ -1,0 +1,192 @@
+Practical PostgreSQL for beginners
+----------------------------------
+
+- getting help
+    - with sql
+        \h
+        \h command
+
+        e.g. \h alter
+
+    - with psql commands
+        \?
+
+- psql startup file
+    ~/.psqlrc
+
+- listing databases
+    \l 
+
+- changing database
+    \c mydb
+
+- listing tables
+    \dt
+
+- listing sequences
+    \ds
+
+- listing views
+    \dv
+
+- list tables, sequences and views
+    \dtsv 
+
+- describe table
+    \d tablename 
+
+- set or toggle paged output
+
+    \pset pager
+    \pset pager [on|off]
+
+- set or toggle expanded display
+    \x
+    \x [on|off]
+
+- edit current or most recent buffer content in editor (defaults to vi)
+    \e 
+
+    e.g.
+    => select id, name from categories join\e
+
+    ... editor opens and displays
+
+    select id, name from categories join
+
+    psql looks for environment variables: PSQL_EDITOR, EDITOR or VISUAL in that order, to find editor.
+
+- clear (reset) current query buffer
+    \r
+
+    e.g.
+    => insert into products (name, quantity) values
+    =- ('pens', 827)
+    =- \r
+    Query buffer reset (cleared).
+    =>
+
+working in the file system
+--------------------------
+- change current working directories
+    \cd /path/to/some/dir
+
+- execute command in shell
+    \! [command]
+
+    e.g. 
+    \! mkdir dboutputs
+    \! ls
+        dboutputs
+    \! rmdir dboutputs
+        
+- TODO: saving output or command in file
+
+- read commands from file
+    \i somefile.sql
+
+single or double quotes
+-----------------------
+    - single for strings.
+        SELECT id, name 
+        FROM users 
+        WHERE name LIKE '%mike%';
+
+    - double for tables, columns, aliases.
+        SELECT "weird"."id", "weird"."name"
+        FROM "very long table name, that even has spaces and a comma" "weird";
+
+sequences
+---------
+- get sequence name for column "id" on table "users"
+    select pg_get_serial_sequence('users', 'id')
+
+- reset sequence to 1
+    ALTER SEQUENCE your_table_id_seq RESTART;
+
+- fixing out of sync sequence
+    # last id in table
+    SELECT MAX(id) FROM your_table;
+
+    # normally sequence's next value should be higher than MAX(your_table.id)
+    SELECT nextval('your_table_id_seq');
+
+    # if it's not, set sequence's next value to table's max val.
+    SELECT setval('your_table_id_seq', (SELECT MAX(id) FROM your_table));
+
+ALTER
+-----
+- renaming table
+    ALTER TABLE table1 RENAME TO table2;
+
+- renaming column
+    ALTER TABLE products RENAME COLUMN product_no TO product_number;
+
+- dropping a constraint
+    # first look at table to identify constraint to drop
+    \d sometable
+
+    # drop constraint
+    ALTER TABLE sometable DROP CONSTRAINT sometable_othertable_id_fkey;
+
+- adding a column
+    ALTER TABLE 'child_activities' ADD COLUMN my_new_column VARCHAR(20) 
+    # you can only append columns, not add them AFTER or BEFORE some other column.
+    # it's possible to change columns order, but is usually a complex operation often recommended against.
+
+- resizing a column
+    ref: 
+    http://sniptools.com/databases/resize-a-column-in-a-postgresql-table-without-changing-data
+
+    given a table named 'TABLE1' with a column named 'COL1'
+
+    - Let's first find the current size of the column
+
+        SELECT atttypmod FROM pg_attribute
+        WHERE attrelid = 'TABLE1'::regclass
+        AND attname = 'COL1';
+
+            > atttypmod
+            > -------------
+            > 24
+            > (1 ROW)
+
+    i.e. size is 20 (4 is added for legacy reasons)
+
+    - Now you can conveniently change the column's size to 50, with an UPDATE query to table pg_attribute
+
+        UPDATE pg_attribute SET atttypmod=50+4
+        WHERE attrelid='TABLE1'::regclass
+        AND attname='COL1';
+
+db dumps from bash shell 
+------------------------
+- dump entire db 
+    $ pg_dump dbname > dbname.sql
+
+- dump just tables matching a certain pattern
+    -t tablepattern | --table=tablepattern
+    
+    e.g.
+    $ pg_dump moviedb -t actors > actors.sql
+
+- other handy flags
+    data only, no schema
+        -a | --data-only
+
+    schema only, no data
+        -s | --schema-only
+
+    drop db objects prior to creating them
+        -c | --clean
+
+    no owner
+        -O (upper case o) | --no-owner
+
+    no access privilege
+        -x | --no-privileges | --no-acl
+
+    e.g. entire moviedb with all tables dropped and recreated with data, but no role (no owner, no acl)
+        $ pg_dump -cOx moviedb > moviedb.sql
+
+- more on patterns here: http://www.postgresql.org/docs/9.1/static/app-psql.html#APP-PSQL-PATTERNS

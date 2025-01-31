@@ -1,0 +1,20 @@
+WITH
+----
+WITH 
+    a AS (SELECT 'a' AS a)
+SELECT * FROM a
+
+# WITH gives queries a narrative
+
+    WITH 
+        prepared_data AS (...)
+    SELECT data, count(data), min(data), max(data)
+    FROM prepared_data
+    GROUP BY data;
+
+# WITH expressions are chainable
+
+    WITH 
+    subquery AS (SELECT 1),
+    other_query AS (SELECT * FROM subquery)
+    SELECT * FROM subquery, other_query;

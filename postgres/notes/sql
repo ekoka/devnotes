@@ -1,0 +1,79 @@
+INNER JOIN
+----------
+- most common form
+    SELECT city, date, location
+        FROM weather, cities
+        WHERE city = name;
+
+- equivalent to 
+    SELECT city, date, location
+        FROM weather INNER JOIN cities ON city = name;
+
+- to be more explicit about column origin use table names or aliases
+
+    SELECT city, date, location
+        FROM weather w, cities c
+        WHERE w.city = c.name;
+
+OUTER JOIN 
+----------
+- LEFT OUTER JOIN: all rows from left table and only row from right table that have a join with left
+
+    SELECT * FROM weather w
+        LEFT OUTER JOIN cities c ON (w.city = c.name)
+
+- RIGHT OUTER JOIN: all rows from right table and only row from left table that have a join with right
+
+- FULL OUTER JOIN: all rows from both tables, whether joined or not
+
+Aggregate functions
+-------------------
+count    max    avg
+sum      min
+
+- can't be used in WHERE clause because they need to be applied to the *result* of the query and the WHERE clause determines what the result *will be*.
+
+- if you need to put an aggregate in a WHERE clause, use a subquery
+
+    SELECT city FROM weather
+        WHERE temp_lo = (SELECT max(temp_lo) FROM weather);
+
+
+e.g. to find the max temp_lo in each city
+    SELECT city, max(temp_lo) 
+        FROM weather
+        -- to aggregate by group use GROUP BY clause
+        GROUP BY city 
+        -- you can filter out grouped rows with HAVING clause
+        HAVING max(temp_lo) < 40;
+
+WHERE and HAVING
+-----------------
+- WHERE selects input rows before groups and aggregates are computed (it controls which rows go into the aggregate computation).
+- the WHERE clause must not contain aggregate functions; it makes no sense to try to use an aggregate to determine which rows will be inputs to the aggregates. 
+- HAVING selects group rows after groups and aggregates are computed. 
+- the HAVING clause always contains aggregate functions. (Strictly speaking, you are allowed to write a HAVING clause that doesn't use aggregates, but it's seldom useful. The same condition could be used more efficiently at the WHERE stage.)
+
+
+UPDATE
+------
+    UPDATE weather 
+    SET temp_hi = temp_hi - 2, temp_lo = temp_lo - 2
+    WHERE date > '1994-11-28';
+
+
+    # a more complex update example with joined tables
+    UPDATE recurrent_schedules
+    SET start_date=a.start_date, end_date=a.end_date
+    FROM
+        recurrent_schedules rs 
+            INNER JOIN schedules s ON rs.id = s.id
+            JOIN activities a ON s.activity_id=a.id; 
+
+DELETE
+------
+    DELETE FROM weather WHERE city = 'Hayward';
+
+    --- delete the entire table
+    DELETE FROM tablename; 
+
