@@ -1,0 +1,6 @@
+position('om' in 'Thomas') # 3
+strpos('high', 'ig') # 2 (similar to `position` with arguments in reverse)
+substring('Thomas' [from 2] [for 3]) # hom
+substring('Thomas' from '...$') # mas
+regexp_matches('foobarbequebaz', '(bar) (beque)') # {bar, beque}
+substr('alphabet', 3, 2) # ph

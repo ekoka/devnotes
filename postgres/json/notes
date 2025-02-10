@@ -1,0 +1,47 @@
+- casting to jsonb or json
+    
+    given a jsonb value: 
+
+    # \set data '\'{"a":{"b": 123, "c": [1,2,true,false]}\'::jsonb'
+    data = {"a":{"b": 123, "c": [1,2,true,false]}::jsonb
+
+    # return a value as type jsonb
+    select pg_typeof(:data)->'a'->'b'
+
+- accessing attributes
+
+    # returns as type text
+    product.metadata->'discounts'->>'winter'
+
+    # error if trying to chain on a returned text type
+    product.metadata->'discounts'->>'winter'
+
+- casting to jsonb and json
+
+    select '{}'::json;
+    select '{}'::jsonb;
+
+- accessing missing attributes
+    
+    # select '{}'::->'a'->'b'
+    null
+
+    coalesce('{}'::->
+
+
+    # navigate and return `null` if there's a problem
+    jsonb_extract_path(product.metadata, 'discounts,winter')
+
+
+gotchas:
+- jsonb types cannot be cast to many other types, to properly cast, convert to text first 
+
+    (product.metadata->'discounts'->'winter')::text::bool
+
+- note the parentheses above, be careful to place them well. The following
+
+    product.metadata->'discounts'->'winter'::text::bool
+
+    is in fact interpreted as
+
+    product.metadata->'discounts'->('winter'::text::bool)

@@ -1,0 +1,14 @@
+- Insert a row with a json field
+
+    INSERT INTO my_table (data)
+    VALUES (
+        '{"address": {"city": "Montréal", "prov": "QC"}}'
+    );
+
+
+- Update
+
+    UPDATE plans set
+    (name, data) = 
+    ('beginner', '{"label": {"en": "Beginner Plan", "fr": "Plan Débutant"}}')
+
