@@ -1,0 +1,1 @@
+- a collection of values that can be accessed sequentially.
