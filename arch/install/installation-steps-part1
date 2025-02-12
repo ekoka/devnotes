@@ -1,0 +1,201 @@
+- make a bootable USB   
+
+- boot pc with USB
+
+## Create/Edit internal HD's partition table
+
+#### obtain a list of disks 
+
+    root@host# fdisk -l
+
+    # or 
+
+    root@host# lsblk -f
+
+#### create/edit partition on a disk
+
+##### open `parted` on a specific disk  
+
+    root@host# parted /dev/sda
+
+##### show all partitions
+
+    (parted) print list
+
+##### remove a partition on disk
+
+    (parted) rm NUMBER
+
+where NUMBER is the number associated with the partition in the list above
+        
+##### create a new disklabel (i.e. partition table)
+
+    (parted) mklabel LABEL-TYPE
+
+    # or 
+
+    (parted) mktable LABEL-TYPE
+
+you likely want "gpt" as the label type for a modern approach on a computer that can support it, else choose "msdos" to create a master boot record (MBR)
+
+    (parted> mklabel gpt
+
+    # for MBR 
+    (parted> mklabel msdos
+
+##### creating partitions with `mkpart`
+
+- The syntax for GPT partitions:
+
+    (parted) mkpart PART-LABEL FS-TYPE START END
+
+PART-LABEL is the label for the partition. START and END can be specified by approximation (in %) or in exact locations (KiB, MiB, GiB). `parted` may sometimes suggest to adjust the size slightly.
+
+- example of a partitioning scheme
+You need an UEFI partition to boot (aka ESP partition) 
+
+    (parted) mkpart "EFI System Partition" fat32 1mib 261mib 
+    # find out number associated with the new partition
+    (parted) print list
+    # then set the "esp" flag on the partition using its number
+    (parted) set NUMBER esp on
+
+You can then make the root partition take the remaining space
+
+    (parted) mkpart "root partition" ext 261mib 100%
+
+or you can divide the space into multiple partitions to be mounted later
+
+    # 20 gig root partition 
+    (parted) mkpart "root partition" ext4 261mib 20.5gig
+    # 4 gig swap partition 
+    (parted) mkpart "swap partition" linux-swap 20.5gig 24.5gig
+    # home partition takes the remaining space
+    (parted) mkpart "home partition" ext4 24.5gig 100%
+
+- The `mkpart` syntax for MBR partitions is slightly different
+
+    (parted) mkpart PART-TYPE FS-TYPE START END
+
+PART-TYPE here can be any of "primary", "logical", "extended"
+
+#### formatting the partitions
+
+- format the EFI partition
+
+    # mkfs.fat -F32 /dev/sda1
+
+- format the swap partition (if applicable)
+    # mkswap /dev/sda2
+
+- format the ext4 partitions
+    # mkfs.ext4 /dev/sda3
+    # mkfs.ext4 /dev/sda4
+
+#### mounting the filesystems
+
+- mount the root fs 
+    # mount /dev/sda3 /mnt
+
+- mount /home directory
+    # mount /dev/sda4 /mnt/home
+
+- turn on swap
+    # swapon /dev/sda2
+
+- mount EFI system partition
+    # mount /dev/sda1 /mnt/efi
+    
+
+## Installing Linux on disk
+
+- install essential packages to root file system
+
+    # pacstrap /mnt base linux linux-firmware
+
+- generate fstab
+
+    genfstab -U /mnt >> /mnt/etc/fstab
+
+- chroot into /mnt/
+
+    # arch-chroot /mnt
+
+## Making the hard disk bootable 
+
+- chroot into the hard disk's file system 
+
+    # arch-chroot /mnt
+
+- mount the EFI system partition to the hard disk's /efi
+
+    # mkdir /efi 
+    # mount /dev/sda1 /efi
+
+- install grub and efibootmgr, if they're not installed yet
+    
+    # pacman -S grub efibootmgr
+
+- install and configure a grub bootloader 
+
+    # grub-install \ --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/efi [--boot-directory=/boot/grub]
+
+if the main grub directory is /boot/grub (default), then grub modules will be located under /boot/grub/x86_64-efi/, and the grub config file will later have to be located at /boot/grub/grub.cfg
+    
+    # grub-mkconfig -o /boot/grub/grub.cfg
+
+`grub-install` will also try to add an entry to the firmware boot manager, labeled GRUB. Run `efibootmgr` to check.
+
+- manage boot entries in the firmware with `efibootmgr`
+
+    # efibootmgr --help
+
+e.g. remove boot entry 0001
+
+    # efibootmgr -B -b 0001
+    
+## Users and permissions
+
+- set a password for root user
+    
+    # passwd
+
+- create a new user and add to "wheel" group (as secondary group)
+
+    # useradd -m -s /usr/bin/zsh -G wheel mike
+    # passwd mike
+    
+    -m creates a home directory at /home/mike
+    -s specify the login shell
+    -G adds one or more secondary groups, the primary group will still be "mike"
+
+- add "wheel" group to sudoers file (uncomment the "wheel" line to grant it sudo privilege)
+
+    # visudo
+
+## Network and wireless
+    
+- add packages to manage network connections (provides iwctl, iwd daemon, iwmon, dhcp)
+
+    iwd: iwd daemon, iwctl, iwmon
+    dhcpcd: dhcpcd.service
+
+    # pacman -S iwd dhcpcd
+
+- start dhcpcd, systemd-networkd, systemd-resolved, and iwd
+
+    # systemctl start dhcpcd systemd-networkd systemd-resolved iwd
+
+- connect to wifi with `iwctl`
+
+    # iwctl
+
+    [iwd]# station wlan0 connect mywifi_connection
+    [iwd]# <password>...
+
+- if all went well, enable the iwd, dhcpcd, systemd-networkd, and systemd-resolved services
+    
+    # systemctl enable iwd dhcpcd systemd-networkd systemd-resolved
+
+## Reboot
+Exit installation, reboot, and edit EFI booting options if necessary to find the grub bootloader under /efi/EFI/grub

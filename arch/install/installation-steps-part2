@@ -1,0 +1,40 @@
+## installing additional utilities
+   
+    # pacman -S A B C... X Y Z
+
+some suggested packages.
+
+    parted
+    iproute2
+    neovim/nano
+    less
+    man-db
+    man-pages
+    sudo
+    systemd-resolvconf
+    zsh
+
+- Set the time zone:
+
+    # ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+
+Run `hwclock` to generate /etc/adjtime:
+
+    # hwclock --systohc
+
+- generate needed locales 
+
+e.g. edit /etc/locale.gen and uncomment `en_US.UTF-8` and `fr_CA.UTF-8`. Then generate the locales.
+
+    # locale-gen
+
+Create the `/etc/locale.conf` file, and set the LANG variable accordingly:
+
+    LANG=en_US.UTF-8
+
+If you set the keyboard layout, make the changes persistent in `/etc/vconsole.conf`
+
+    /etc/vconsole.conf
+
+    KEYMAP=de-latin1
+
