@@ -1,0 +1,4 @@
+- a list is an `Iterable` and support all its methods.
+- iteration occurs over values in index order.
+- changing a value does not affect iteration.
+- changing the list's length between iteration steps causes a `ConcurrentModificationError`. Note that if the length changes and temporarily and is restored before continuing iteration, the iterator might not detect it. 
