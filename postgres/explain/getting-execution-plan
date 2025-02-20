@@ -1,0 +1,45 @@
+- getting an execution plan is done with the `EXPLAIN` command
+
+- EXPLAIN
+    - on statements without bind parameters
+
+        EXPLAIN SELECT 1
+
+    - on statements with bind parameters
+
+        # prepare a statement and name it `stmt`
+        PREPARE stmt(int) AS SELECT $1
+        # explain the statement executed passing `1` as param
+        EXPLAIN EXECUTE stmt(1)
+
+        # finally, deallocate prepared statement
+        DEALLOCATE stmt
+
+- EXPLAIN plan output
+
+                    QUERY PLAN
+    ------------------------------------------
+     Result  (cost=0.00..0.01 rows=1 width=0)
+
+    - 'Result' is the operation's name
+    - the related 'cost' is split into two parts:
+        - the startup cost 
+        - the total cost if all rows are retrieved
+
+- EXPLAIN has two options VERBOSE and ANALYZE
+
+- ANALYZE 
+    - records actual timing and row count
+    - actually executes INSERT, DELETE, and UPDATE operations
+    - should probably be used in the context of a transaction
+    
+    BEGIN
+    EXPLAIN ANALYZE EXECUTE stmt(1)
+    
+                    QUERY PLAN
+    ------------------------------------------
+     Result  (cost=0.00..0.01 rows=1 width=0) \ 
+        (actual time=0.002..0.002 rows=1 loops=1)
+     Total runtime: 0.020 ms
+
+    ROLLBACK
