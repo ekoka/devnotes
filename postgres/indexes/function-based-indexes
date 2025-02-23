@@ -1,0 +1,17 @@
+- non-deterministic functions are not suitable for indexes. That is, functions whose results are influenced by changing factors such as date, random number generator, temperature, environment variables, etc.
+
+- to be used in indexes the functions must be deterministic and must be declared as `IMMUTABLE`
+
+
+    CREATE OR REPLACE FUNCTION fnc(param1 text, param2 int)
+    RETURNS text
+    AS
+    $BODY$
+
+        ... definition
+
+    $BODY$
+    LANGUAGE sql
+    IMMUTABLE;
+
+- note that postgres cannot verify that a function is immutable, it trusts the developer for that. 
