@@ -1,0 +1,8 @@
+e.g. setting PYTHONPATH for thumbor
+
+    [Service]
+    Environment="PYTHONPATH=$PYTHONPATH:/srv/www/thumbor"
+    ExecStart=/srv/venv/thumbor/bin/thumbor \
+        --port=9001 \
+        --log-level=error \
+        --conf=/srv/www/thumbor/thumbor.conf

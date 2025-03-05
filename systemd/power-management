@@ -1,0 +1,2 @@
+- `polkit` is necessary for power management as an unprivileged user.
+

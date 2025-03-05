@@ -1,0 +1,37 @@
+https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
+
+- man page
+
+    $ man systemd.unit
+
+- in systemd a "unit" refers to any resource that the system knows how to operate on and manage. It's the primary object the system knows how to deal with.
+
+- units are defined using configuration files called "unit files"
+
+- example of features units are able to implement easily:
+    - socket-based activation
+    - bus-based activation
+    - path-based activation
+    - device-based activation
+    - implicit dependency mapping
+    - instances and templates
+    - easy security hardening
+    - drop-ins and snippets
+    - more...
+
+system's unit files
+-------------------
+- /lib/systemd/system/
+    - hosts system's copy of units
+    - these are generic unit files, often written by the upstream project's maintainers.
+    - they're not meant to be edited (see /etc/systemd/system/)
+
+overriding units files
+----------------------
+- /etc/systemd/system/
+    - the best location to modify a unit's functions
+    - supercede any of the other locations on the filesystem
+    - putting a replacement file here is the safest and most flexible way
+
+- to override only specific directives
+

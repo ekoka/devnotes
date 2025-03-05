@@ -1,0 +1,32 @@
+https://wiki.archlinux.org/title/Systemd
+
+manpage man systemd.unit
+
+- the syntax is inspired by the XDG Desktop Entry Specification .desktop files (see my notes under arch/autostart/xdg/desktop-entry-specification)
+
+- unit name may only contain ascii alphanumeric characters (i.e. [a-zA-Z0-9_.]). Other characters must be replaced by c-style escapes or employ some predefined semantics ('@,' '-').
+
+- unit files are loaded from multiple locations. The main ones being `/usr/lib/systemd/system/` and `/etc/systemd/system/`. To see the full list run
+
+    # systemctl show --property=UnitPath
+
+- the load paths are completely different when running systemd in user mode.
+
+## Handling dependencies
+- dependencies can be resolved by designing the unit files correctly.
+- if unit A depends on unit B before it's started, add `Requires=B` and `After=B` to its [Unit] section.
+- if the dependency is optional, add `Wants=B` and `After=B` instead.
+- `Wants=` and `Requires=` do not imply `After=`. If the latter is not specified the units will be started in parallel. 
+- dependencies are typically placed on services and not on targets. e.g. `network.target` is pulled in by whatever service configures the network interfaces, therefore ordering the custom unit after is sufficient since `network.target` is started anyway. 
+
+## Service types
+- different start-up types to consider when writing a custom service file
+    - `Type=simple`: service is considered started up immediately. Process must not fork. This type must not be used if other services need to be ordered on this service, unless it is socket activated. 
+    - `Type=forking`: service is considered started up once the process forks and parent has exited. For classic daemons use this, unless you know it won't be necessary. Specify `PIDFile=` as well, so systemd can keep track of the main process.
+    - `Type=oneshot`: useful for script that do a single job and then exit. You may want to set `RemainAfterExit=yes` so that systemd still considers the service active after the process has exited.
+    - `Type=notify`: identical to `Type=simple`, but daemon will send a signal to systemd when it's ready.
+    - `Type=dbus`: service is considered ready when the specified `BusName` appears on DBus's system bus. 
+    - `Type=idle`: systemd delays execution of the service binary until all jobs are dispatched. Other than that behavior is similar to `Type=simple`. 
+
+## Editing provided units
+
