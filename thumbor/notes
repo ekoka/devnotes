@@ -1,0 +1,51 @@
+- to install thumbor in a virtualenv
+
+    $(thumbor) pip install thumbor
+
+    if you have problems installing ensure that python-dev and python-setuptools are already installed.
+
+    sudo apt-get install \
+        python-dev\
+        python-setuptools\ 
+        libcurl4-openssl-dev\ 
+        libcurl4-gnutls-dev
+
+- create a set of directories for thumbor
+
+    mkdir -p /srv/www/thumbor/{source,storage,logs}
+
+- create a commented config
+
+    $(thumbor) thumbor-config > /srv/www/thumbor/thumbor.conf
+
+thumbor in a supervisor
+-----------------------
+    [program:thumbor] 
+    command=/srv/envs/thumbor/bin/thumbor --port=900%(process_num)s --conf=/srv/www/thumbor/thumbor.conf
+    process_name=thumbor900%(process_num)s
+    numprocs=2
+    user=mike
+    autostart=true
+    autorestart=true
+    stdout_logfile=/srv/www/thumbor/logs/supervisor_stdout.log
+    stdout_logfile_backups=3
+    stderr_logfile=/srv/www/thumbor/logs/supervisor_stderr.log
+    stderr_logfile_backups=3
+
+
+thumbor in systemd
+------------------
+# File: /etc/systemd/system/thumbor.service
+
+[Unit]
+Description=Photo thumbnail service
+
+[Service]
+Type=simple
+# adding PYTHONPATH to environment to allow us to load our own thumbor
+# extensions.
+Environment="PYTHONPATH=$PYTHONPATH:/srv/www/thumbor"
+ExecStart=/srv/venv/thumbor/bin/thumbor --port=9001 --conf=/srv/www/thumbor/thumbor.conf
+
+[Install]
+WantedBy=default.target
