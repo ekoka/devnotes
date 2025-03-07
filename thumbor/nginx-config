@@ -1,0 +1,30 @@
+- bundling all thumbor servers into a single alias
+
+    upstream thumbor {
+        # set this to the number of processes configured in thumbor' supervisor script
+        server 127.0.0.1:9000;
+        server 127.0.0.1:9001;
+    }
+
+- forwarding requests to thumbor
+    # a server block is set for one specific host or ip and a port.
+    # ensure that there no other server with the same ip, host and port combo. 
+
+    server {
+        listen 80;
+        server_name 45.33.94.109;
+
+        location / {
+            default_type "text/html";
+            try_files $uri.html $uri;
+        }
+
+        # within a server set the location for thumbor
+        location /img/ {
+            # this is redundant, only the part after /img is passed to thumbor.
+            #rewrite /img(/.*) $1 break;
+
+            # we use the alias we set earlier
+            proxy_pass http://thumbor
+        }
+    }
