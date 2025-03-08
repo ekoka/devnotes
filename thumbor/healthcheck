@@ -1,0 +1,1 @@
+- thumbor supports health checking under the '/healthcheck' URI

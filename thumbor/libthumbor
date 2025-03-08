@@ -1,0 +1,62 @@
+using it
+--------
+
+    from libthumbor import CryptoURL
+
+    crypto = CryptoURL(key='my-security-key')
+
+    encrypted_url = crypto.generate(
+        width=300,
+        height=200,
+        smart=True,
+        image_url='/path/to/my/image.jpg'
+    )
+
+
+arguments with default values
+-----------------------------
+
+- indicate that thumbor should return only meta-data on the operations it would otherwise perform
+
+    meta = bool 
+
+- width
+
+    width = <int>
+
+- height
+
+    height = <int>
+
+- indicate that image should fit in the box defined by width x height
+
+    fit_in = <bool>
+
+- cropping
+
+    crop = ((left, top), (bottom, right))
+    where left, top, bottom, and right are of type <int>
+
+- smart cropping
+
+    smart = <bool>
+
+- horizontal alignment to use for cropping
+
+    halign = 'left', 'center' or 'right'
+
+- vertical alignment to use for cropping;
+
+    valign = 'top', 'middle' or 'bottom'
+
+- horizontal flip
+
+    flip = <bool>
+
+- vertical flip (mirror image)
+
+    flop = <bool> 
+
+- indicate no need to decrypt the url
+
+    unsafe = <bool>
