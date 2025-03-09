@@ -1,0 +1,17 @@
+Thumbor makes a distinction between 3 paths in which files can be found:
+
+FILE_LOADER_ROOT_PATH:
+- where the original files are dumped as is from an external source.
+- they've not been treated yet.
+- they have arbitrary names that have not yet been normalized by thumbor.
+- defaults to /tmp
+
+FILE_STORAGE_ROOT_PATH:
+- where thumbor dumps its own normalized copy of the original files.
+- they're identical in dimensions to the original, but might be smaller storage wise.
+- these are the files thumbor uses as the basis for its further redimensioned copies.
+- defaults to: /tmp/thumbor/storage
+
+RESULT_STORAGE_ROOT_PATH:
+- where thumbor dumps the various redimensioned versions of the original.
+- defaults to: /tmp/thumbor/result_storage
