@@ -1,0 +1,8 @@
+Reference: 
+help('_threading_local')
+http://pyramid.readthedocs.org/en/1.3-branch/narr/threadlocals.html
+http://stackoverflow.com/questions/104983/what-is-thread-local-storage-in-python-and-why-do-i-need-it
+http://jimmyg.org/blog/2009/pylons-as-a-microframework.html
+
+
+

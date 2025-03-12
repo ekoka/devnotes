@@ -1,0 +1,9 @@
+Done: http://effbot.org/zone/thread-synchronization.htm
+Done: http://effbot.org/pyfaq/what-kinds-of-global-value-mutation-are-thread-safe.htm
+Done: http://stackoverflow.com/questions/104983/what-is-thread-local-storage-in-python-and-why-do-i-need-it
+Done: http://stackoverflow.com/questions/31340/how-do-threads-work-in-python-and-what-are-common-python-threading-specific-pit
+
+Doing: http://code.google.com/p/modwsgi/wiki/ProcessesAndThreading
+Doing: http://linuxgazette.net/107/pai.html
+TODO: http://www.doughellmann.com/PyMOTW/threading/
+TODO: http://www.python-course.eu/threads.php
