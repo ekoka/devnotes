@@ -1,0 +1,185 @@
+assertions
+==========
+
+assertive methods
+-----------------
+- `assert_called_with(1, 2, 3, foo='bar')`
+    assert the most recent call was made with this signature.
+
+- `assert_called_once_with(1,2, foo='bar')`
+    assert the call was made exactly once, and with this signature.
+
+- `assert_any_call(1,2, foo='bar')`
+    assert a call was made at some point with this signature.
+
+- `assert_has_calls(calls, any_order=False)`
+    assert the mock has been called with the specified `calls`  
+
+    >>> mock = Mock(return_value=None)
+    >>> mock(1)
+    >>> mock(2)
+    >>> mock(3)
+    >>> mock(4)
+    >>> calls = [call(2), call(3)]
+    >>> mock.assert_has_calls(calls)
+    >>> calls = [call(4), call(2), call(3)]
+    >>> mock.assert_has_calls(calls, any_order=True)
+
+# in version 3.5
+
+- `assert_not_called()`
+    assert the mock was never called.
+
+# in version 3.6
+- `assert_called()`
+    assert that the mock was called at least once
+
+- `assert_called_once()`
+    assert the mock was called exactly once
+
+useful introspective properties to use in assertions
+----------------------------------------------------
+- `called`
+    boolean indicating if the mock has been called
+
+- `call_count`
+    integer indicating how many times the mock was called
+
+- `call_args`
+    is `None` if the mock has not been called.
+
+    `call` object (tuple) of arguments for the last call.
+
+        >>> m = Mock()
+        >>> m.baz(1, 2, 3, foo="bar")
+        >>> m.baz.call_args
+        call(1, 2, 3, foo='bar')
+        >>> args, kwargs = m.baz.call_args 
+
+   see more details on `call` objects.
+
+- `call_args_list`
+    list of call objects
+
+
+`call` objects
+==============
+These are tuples of individual arguments passed during a call.
+
+The following properties are implemented as such:
+- `mock.call_args` 
+- members of the `mock.call_args_list` list
+- members of the `mock.method_calls` list
+- members of the `mock.mock_calls` list
+
+- a `call` is a tuple made of 2 elements: 
+    - a tuple of positional args
+    - and a dict of keyword args
+
+    ((arg1, arg2,...), {key1:val1, key2:val2...})
+
+    # e.g.
+
+    >>> m = Mock()
+    >>> m.baz(1, 2, 3, foo="bar", key="value")
+    >>> args, kwargs = m.baz.call_args
+    >>> args
+    (1, 2, 3)
+    >>> kwargs
+    {"foo": "bar", "key":"value"}
+
+- with no positional argument, the first element is an empty tuple.
+- with no keyword argument, the second element is an empty dict.
+
+
+more advanced call tracking properties
+======================================
+The `mock_calls` and `method_calls` properties track calls on a mock, its attributes and methods, their attributes and methods, and so forth. They can be used for more complex introspective scenarios.
+
+- `mock_calls` : 
+
+    a record of all calls to the mock object, its methods, magic methods and return value mocks.
+
+    >>> m = MagicMock()
+    >>> m.mock_calls
+    []
+    >>> result = mock(1, 2, 3)
+    >>> m.mock_calls
+    [call(1, 2, 3)]
+    >>> result
+    <MagicMock name='mock()' id='1406.....952'>
+    >>> m.mock_calls
+    [call(1, 2, 3)]
+    >>> m.first(a=3)
+    <MagicMock name='mock.first()' id='1406.....456'>
+    >>> m.mock_calls
+    [call(1, 2, 3), call.first(a=3)]
+    <MagicMock name='mock.first()' id='...'>
+    >>> m.second()
+    <MagicMock name='mock.second()' id='...'>
+    >>> m.mock_calls
+    [call(1, 2, 3), call.first(a=3), call.second()]
+    >>> int(m)
+    1
+    >>> m.mock_calls
+    [call(1, 2, 3), call.first(a=3), call.second(), call.__int__()]
+    >>> result(1)
+    <MagicMock name='mock()()' id='...'>
+    >>> m.mock_calls
+    [call(1, 2, 3),
+     call.first(a=3),
+     call.second(),
+     call.__int__(),
+     call()(1)]
+
+/!\ note that if trying the above example in IPython and using the tabbing
+autocomplete feature, you might also see listed a few calls to the __hash__()
+magic method, these are most certainly calls made by IPython itself on the
+mock during its storage/retrieval from IPython's caching dictionaries.
+
+- `method_calls` :
+
+    similar to `mock_calls`, but only tracks the mock's method calls and attribute's method calls.
+
+    # using the above example, we'd get
+    >>> m.method_calls
+    [call.first(a=3), call.second()]
+
+`method_calls` can be considered a subset of `mock_calls`. 
+
+
+methods
+=======
+
+- attach_mock()
+
+- configure_mock()
+
+    class Something(objetc):
+        def __init__(self):
+            self.backend = BackendProvider()
+        def method(self):
+            response = (self.back_end.get_endpoint('foobar')
+                                     .create_call('spam', 'eggs')
+                                     .start_call())
+
+    >>> something = Something()
+    >>> mock_response = Mock(spec=file) 
+    >>> mock_backend = Mock()
+    >>> mock_backend.get_endpoint.return_value.create_call.return_value.start_call.return_value = mock_response
+    # or you can use configure_mock
+    >>> config = {'get_endpoint.return_value'
+                  '.create_call.return_value'
+                  '.start_call.return_value': mock_response}
+    >>> mock_backend.configure_mock(**config)
+
+- mock_add_spec()
+
+- reset_mock()
+
+
+setup
+=====
+- return_value             
+- side_effect  
+

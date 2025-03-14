@@ -1,0 +1,57 @@
+http://www.voidspace.org.uk/python/mock/examples.html
+
+mocking chained calls
+---------------------
+    class Something(object):
+        def __init__(self):
+            self.backend = BackendProvider()
+        def method(self):
+            response = self.backend.get_endpoint('foobar').create_all('spam', 'eggs').start_call()
+
+
+partial mocking
+----------------
+e.g. patching date and datetime
+
+
+mocking a generator method
+--------------------------
+applying the same patch to every test method
+--------------------------------------------
+mocking unbound methods
+-----------------------
+checking multiple calls with mock
+---------------------------------
+coping with mutable arguments
+-----------------------------
+raising exceptions on attribute access
+--------------------------------------
+multiple calls with different effects
+-------------------------------------
+nesting patches
+---------------
+mocking a dictionary with MagicMock
+-----------------------------------
+mock subclasses and their attributes
+------------------------------------
+mocking imports with patch.dict
+-------------------------------
+tracking order of calls and less verbose call assertions
+---------------------------------------------------------
+more complex argument matching
+------------------------------
+less verbose configuration of mock objects
+------------------------------------------
+    see Mock.configure_mock()
+matching any argument in assertions
+-----------------------------------
+    see Mock.ANY
+mocking properties
+------------------
+    see Mock.PropertyMock
+mocking open
+------------
+    see Mock.mock_open()
+mock without some attributes
+----------------------------
+    see deleting attributes in the manual

@@ -1,0 +1,182 @@
+# py2: requires previous install by pip or other
+import mock
+
+ py3
+from unittest import mock
+
+---
+
+creating
+--------
+m = mock.Mock()
+
+    # properties of a mock object
+    >>> dir(m)
+    ['assert_any_call'  
+    'assert_called_once_with'  
+    'assert_called_with'       
+    'assert_has_calls'         
+    'attach_mock'              
+    'call_args'                
+    'call_args_list'           
+    'call_count'               
+    'called'                   
+    'configure_mock'           
+    'method_calls'              
+    'mock_add_spec'            
+    'mock_calls'               
+    'reset_mock'               
+    'return_value'             
+    'side_effect']  
+
+read some random (non-existant) attribute
+-----------------------------------------
+    >>> m.some_random_attribute
+    <Mock name='mock.some_random_attribute' id='19238510893423'>
+
+setting return value
+--------------------
+    >>> m.some_random_attribute.return_value = 42
+    >>> m.some_random_attribute()
+    42
+
+setting attributes
+------------------
+    >>> m.x = 3
+    >>> m.y = 6
+
+limiting attributes that can be auto-accessed
+---------------------------------------------
+    >>> m = mocker.Mock(spec=['a', 'b'])
+    >>> m.a
+    <Mock name='mock.a' id=1406429...00>
+    >>> m.b
+    <Mock name='mock.b' id=1406429...76>.
+    >>> m.c
+    AttributeError: Mock object has no attribute c
+
+mocking from existing object    
+----------------------------
+
+    # can't call non-existing methods but can set arbitrary attributes
+    >>> m = Mock(spec=SomeClass)
+    >>> m.non_existing_method()
+    Traceback (...)
+    AttributeError: object has no attribute 'non_existing_method'
+
+    # can't call nor set non-existing methods and attributes
+    >>> m = Mock(spec_set=SomeClass)
+    >>> m.non_existing_method()
+    Traceback (...)
+    AttributeError: object has no attribute 'non_existing_method'
+
+
+
+
+naming mocks
+------------
+    >>> m = mock.MagicMock(name='foo')
+    >>> m
+    <MagicMock name='foo' ...>
+
+tracking all calls
+------------------
+    >>> m.method()
+    >>> m.attribute.method(10, x=53)
+    >>> m.mock_calls
+    [call.method(), call.attribute.method(10, x=53)]
+
+# `mock.call` to construct lists for comparing with `mock_calls`
+    >>> expected = [mock.call.method(), mock.call.attribute.method(10, x=53)]
+    >>> m.mock_calls == expected
+
+specify side effects
+--------------------
+- exceptions 
+    >>> m = Mock(side_effect=Exception('Boom!'))
+    >>> m()
+    Traceback (...) 
+    Exception: Boom!
+
+- iterables 
+    >>> m = MagicMock(side_effect=[4,5,6])
+    >>> m()
+    4
+    >>> m()
+    5
+    >>> m()
+    6
+
+- varying returns
+
+    >>> vals = {(1,2): 1, (2,3): 2}
+    >>> def side_effects(*args):
+    ...     return vals[args]
+    >>> m = MagicMock(side_effects=side_effects)
+    >>> m(1,2)
+    1
+    >>> m(2,3)
+    2
+
+patching
+--------
+- when patching it's important that the patched attribute already exist
+- to patch a module including `__builtin__` use `patch` instead of `patch.object`
+
+    mock = MagicMock(return_value=sentinel.file_handle)
+    with patch('__builtin__.open', mock):
+        handle = open('filename', 'r')
+
+    mock.assert_called_with('filename', 'r')
+    assert handle == sentinel.file_handle
+
+    --- 
+    @patch('package.module.ClassName.attribute', sentinel.attribute)
+    def test():
+        from package.module import ClassName
+        assert ClassName.attribute == sentinel.attribute
+
+
+- patch
+
+    # to patch package.module.Class.attribute
+    @patch('package.module.Class.attribute')
+    def fnc():
+        # the patch is applied within this context
+        # assert the state of the attribute here
+        assert package.module.Class.attribute == ...
+    # the patch is no longer in effect here
+
+    # you can give an explicit value to the patched attribute
+    @patch('package.module.Class.attribute', 39)
+    def fnc():
+        assert package.module.Class.attribute==39
+
+- patch.object
+    # patch an attribute on an object
+    @patch.object(SomeClass, 'abc')
+    def fnc():
+        # patch in effect here
+        assert SomeClass.abc == ...
+    # patch no longer in effect
+
+
+    # with an explicit value
+    @patch.object(SomeClass, 'abc', 39)
+    def fnc():
+        # patch in effect here
+        assert SomeClass.abc == 39
+    # patch no longer in effect
+
+- patch.dict
+    foo = {'key': 'value'}
+    original = foo.copy()
+    with patch.dict(foo, {'newkey': 'newvalue'}, clear=True):
+        assert foo == ['newkey': 'newvalue'}
+
+    assert foo == original
+
+- patch, patch.object, and patch.dict can also be class decorators to apply the patch across tests in the class.
+
+
+

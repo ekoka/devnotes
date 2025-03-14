@@ -1,0 +1,21 @@
+patching
+--------
+
+>>> real = SomeClass()
+>>> real.method = MagicMock(name='method')
+>>> real.method(2,4,5, key='value')
+<MagicMock name='method()' id='...'>
+
+---
+
+class ProductionClass(object):
+    def method(self):
+        self.something(1,2,3)
+    def something(self, a,b,c):
+        pass
+
+real = SomeClass()
+real.something = MagicMock()
+real.method()
+real.something.assert_called_once
+
