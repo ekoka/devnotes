@@ -1,0 +1,8 @@
+useful discovery rules
+----------------------
+- first current directory
+- recursing into directories, unless they match `norecursedirs`
+- in directories: test_*.py and *_test.py files and from those files:
+    - test_* functions outside of class
+    - test_* methods inside "Test" prefixed classes (without an `__init__` method)
+

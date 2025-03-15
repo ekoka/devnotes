@@ -1,0 +1,49 @@
+running tests 
+-------------
+
+    # by directory
+    pytest tests
+
+    # by module file name
+    pytest test_some_module.py
+    pytest path/to/some/file.py
+
+    # by node ids
+    pytest path/to/some/file.py::test_some_function
+    pytest path/to/some/file.py::TestClass::test_method
+
+    # by keyword
+    pytest -k "MyClass and not method"
+
+    # by marker expressions
+    pytest -m slow
+    pytest -m "not webtest"
+
+    # from packages. This will import `pkg.testing` and use its 
+    # filesystem location to find and run tests.
+    pytest --pyargs pkg.testing
+
+- stopping after first failure
+
+    pytest -x tests
+
+- turn off output capture (i.e. show output)
+
+    pytest -s 
+
+- stopping after 2 failures
+
+    pytest --maxfail=2 tests
+
+- pdb
+
+    # drop to pdb on every failures
+    pytest --pdb
+
+    # drop to pdb after first failure
+    pytest -x --pdb tests
+
+    # drop to pdb for first 3 failures
+    pytest --maxfail=3 --pdb tests
+
+    on any failure the exception information is stored in `sys.last_value`, `sys.last_type` and `sys.last_traceback`

@@ -1,0 +1,20 @@
+assert exception raised
+-----------------------
+- context manager
+    def fnc():
+        raise SomeException()
+
+    def test_fnc():
+        with pytest.raises(SomeException):
+            fnc()
+
+- for Python 2.4
+    pytest.raises(SomeException, fnc, *args, **kwargs)
+    pytest.raises(SomeException, "fnc(*args, **kwargs)")
+        
+- with `mark.xfail`
+
+    @pytest.mark.xfail(raises=SomeException)
+    def test_should_fail():
+        raises SomeException('I'm failing!')
+

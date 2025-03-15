@@ -1,0 +1,7 @@
+https://docs.pytest.org/en/latest/customize.html
+
+setup.py
+pytest.ini
+tox.ini
+setup.cfg
+

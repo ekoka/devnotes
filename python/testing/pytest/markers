@@ -1,0 +1,74 @@
+MarkGenerator
+-------------
+- factory for MarkDecorator objects
+- `pytest.mark` allows to set metadata on test functions
+
+    #e.g. create some MarkDecorators
+    new = pytest.mark.new
+    old = pytest.mark.old
+    web = pytest.mark.web
+    api = pytest.mark.api
+
+    # then you use the decorator
+    @api
+    def test_some_api_call(): 
+        pass
+
+MarkDecorator
+-------------
+- some built-in mark decorators
+    skip        : skip a test function or class
+    skipif      : skip if a condition is met
+    xfail       : expected failure
+    parametrize : to perform multiple calls to the same function
+
+- applying markers 
+
+    # applied on a function
+    @pytest.mark.newtest
+    def test_fnc():
+        pass
+
+    # apply on a class (i.e. to all its methods)
+    @pytest.mark.newtest
+    class MyClass:
+        pass
+
+    # or 
+    class TestAPI:
+        pytestmark = pytest.mark.api
+
+    # on a module  
+    pytestmark = pytest.mark.newtest
+
+    # applying multiple markers
+        # on class
+        class TestAPI:
+            pytestmark = [pytest.mark.new, pytest.mark.api]
+
+        # on module
+        pytestmark = pytest.mark.new
+
+
+- working more explicitly with `MarkDecorator`
+
+    newtest = pytest.mark.newtest
+    @newtest
+    def test_fnc():
+        pass
+
+- parametrize `MarkDecorator`
+    new = pytest.mark.new
+    pmzed_new = new(val1='abc', val2='efg')
+    @pmzed_new
+    def test_fnc2():
+        pass
+
+running marked tests
+--------------------
+
+    # run only tests marked as "new"
+    pytest -m new
+
+    # run all tests except those marked as "old"
+    pytest -m "not old"

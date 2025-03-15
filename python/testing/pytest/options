@@ -1,0 +1,19 @@
+other useful options
+--------------------
+- verbosity:
+    -q, --quiet
+    -v, --verbose
+
+- mark expression:
+
+    -m <mark>  # execute only tests matching a certain mark expression
+
+    e.g.
+
+    pytest -m mark1
+
+- stopping
+    -x          # stop after first failure
+    --maxfail=3 # stop after 3 failures
+
+
