@@ -1,0 +1,46 @@
+Testing API
+
+werkzeug.test.EnvironBuilder
+
+    class werkzeug.test.EnvironBuilder(
+        path='/',                   errors_stream=None,
+        base_url=None,              multithread=False,
+        query_string=None,          multiprocess=False,
+        method='GET',               run_once=False,
+        input_stream=None,          headers=None,
+        content_type=None,          data=None,
+        content_length=None,        environ_base=None,
+        environ_overrides=None,     charset='utf-8'
+    )
+
+    builder = EnvironBuilder()
+    environ = builder.get_environ()
+
+`query_string` can be an optional string or dict
+
+
+this signature is also used in 
+    test.create_environ()
+    wrappers.BaseResponse.from_values()
+    test.Client.open()
+
+
+werkzeug.test.Client
+
+    class werkzeug.test.Client(
+        application,
+        response_wrapper=None,
+        use_cookies=True,
+        allow_subdomain_redirects=False
+    )
+
+
+werkzeug.test.create_environ([options])
+     a thin wrapper over EnvironBuilder
+
+werkzeug.test.run_wsgi_app(app, environ, buffered=False)
+    params:
+        app : application to execute
+        buffered : set to True to enforce buffering
+    returns: tuple of the form (app_iter, status, headers) 
+        
