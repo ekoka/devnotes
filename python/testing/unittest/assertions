@@ -1,0 +1,34 @@
+assertEqual(a, b)
+assertNotEqual(a, b)
+assertTrue(x)
+assertFalse(x)
+assertIs(a, b)
+assertIsNot(a, b)
+assertIsNone(x)
+assertIsNotNone(x)
+assertIn(a, b)
+assertNotIn(a, b)
+assertIsInstance(a, b)
+assertNotIsInstance(a, b)
+
+# check for exceptions or warning
+assertRaises(exc, fun, *args, **kwds)
+assertRaisesRegexp(exc, r, fun, *args, **kwds)
+
+assertAlmostEqual(a, b)         round(a-b, 7) == 0 	 
+assertNotAlmostEqual(a, b)      round(a-b, 7) != 0 	 
+assertGreater(a, b)             a > b 
+assertGreaterEqual(a, b)        a >= b
+assertLess(a, b)                a < b 
+assertLessEqual(a, b)           a <= b
+assertRegexpMatches(s, r)       r.search(s)
+assertNotRegexpMatches(s, r) 	not r.search(s)
+assertItemsEqual(a, b) 	        sorted(a) == sorted(b) and works with unhashable objs
+assertDictContainsSubset(a, b)
+
+assertMultiLineEqual(a, b) 	strings
+assertSequenceEqual(a, b) 	sequences
+assertListEqual(a, b) 	lists
+assertTupleEqual(a, b) 	tuples
+assertSetEqual(a, b) 	sets or frozensets
+assertDictEqual(a, b) 	dicts

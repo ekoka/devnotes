@@ -1,0 +1,23 @@
+importing:
+----------
+
+    >>> try:
+    ...     import unittest2 as unittest
+    ... except ImportError:
+    ...     import unittest
+
+test case:
+----------
+    >>> class SomeTestCase(unittest.TestCase):
+    ...     def setUp(self):
+    ...         pass
+
+    ...     def tearDown(self):
+    ...         pass
+
+failing a test
+--------------
+
+    >>> def some_failing_test(self):
+    ...     self.fail()
+
