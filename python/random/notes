@@ -1,0 +1,78 @@
+- random() functions usually generate a number between 0 (inclusive) and 1 (exclusive)
+
+    0 <= random() < 1
+
+    repeat 6, result = []:
+        result.add(random())
+
+    output_lines(results)
+
+    0.183...
+    0.530...
+    0.021...
+    0.119...
+    0.351...
+    0.951...
+
+- thus, to generate a number  0 <= x < 10 just multiply those results by 10
+
+    foreach number in results: 
+        <- number * 10
+
+    1.83...
+    5.30...
+    0.21...
+    1.19...
+    3.51...
+    9.51...
+
+- to turn them into integers use a flooring function 
+
+    foreach number in results: 
+        <- floor(number * 10)
+
+    1
+    5
+    0
+    1
+    3
+    9
+
+- if you need to include 10 in the results multiply by 11 instead 
+
+    foreach number in results: 
+        <- floor(number * 11)
+    2
+    5
+    0
+    1
+    3
+    10
+
+- so as a general principle to inclusively generate numbers from 0 to a number N, you multiply `random()` by N+1
+
+    >>> random() * (N+1)
+
+- if you want to start from a lower bound other than 0, simply remove the lower bound from the (exclusive) upper bound and add it to the results. So to generate numbers from 3 to 10, the exclusive upper bound 11. The factor is calculated by doing 11 - 3 = 8. Then 3 is added back to the result.
+
+    foreach number in results: 
+        <- floor(number * 8) + 3
+    
+    4
+    7
+    3
+    3
+    5
+    10
+
+- as a general principle to randomly generate a number between N and M inclusively you do
+
+    random() * (M - N + 1) + N
+
+    e.g. generate any number between 1 and 10
+
+    
+
+    
+    
+    

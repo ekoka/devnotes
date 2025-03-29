@@ -1,0 +1,26 @@
+
+    >>> import os
+    >>> os.urandom()
+
+
+- os.urandom uses the entropy created from the system's temperature, mouse and key events
+
+- it's thus secure randomness (as opposed to pseudo-randomness, like `random.random()`) and is safe to use for cryptographic purposes
+
+- generate a secure random sequence of 20 bytes
+
+    import os
+    os.urandom(20)
+    
+- generate a random string
+
+    from string import ascii_letters, digits 
+    import os.urandom
+
+- get a random integer using os.urandom()
+
+    random_binary_string = os.urandom(4)
+    random_hex = random_binary_string.encode('hex')
+    random_int = int(random_hex, 16) # python 2.6+
+    random_int = int.from_byte(random_binary_string, sys.byteorder)
+

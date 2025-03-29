@@ -1,0 +1,10 @@
+    >>> import random
+
+- a pseudo-random generator
+
+    >>> random.random()
+
+- to seed
+
+    >>> random.seed(seed)
+
