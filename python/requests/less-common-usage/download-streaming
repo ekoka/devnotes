@@ -1,0 +1,13 @@
+download streaming
+------------------
+
+    # get response with `stream=True`
+    >>> r = requests.get('https://api.github.com/events', stream=True)
+
+    # use this pattern to stream download
+    >>> chunk_size = 20
+    >>> filename = '/home/mike/mydownload.file'
+    >>> with open(filename, 'wb') as fd:
+    ...     for chunk in r.iter_content(chunk_size):
+    ...         fd.write(chunk)
+
