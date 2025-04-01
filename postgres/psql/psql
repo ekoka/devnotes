@@ -1,0 +1,19 @@
+- ref: 
+http://www.craigkerstiens.com/2013/02/21/more-out-of-psql/
+http://merlinmoncure.blogspot.com/2007/10/better-psql-with-less.html
+
+- config: .psqlrc
+
+- configuring the pager in .psqlrc
+
+    \timing
+    \pset pager always
+    \setenv LESS '-iMSx4 -FX'
+
+- send output to a file
+
+    > \o /tmp/psql-session
+
+    - you can then optionally follow the file with less
+
+    $ less /tmp/psql-session
