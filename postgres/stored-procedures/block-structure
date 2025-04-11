@@ -1,0 +1,59 @@
+- a pl/pgsql function is organized into blocks
+
+    e.g. syntax of a complete block
+
+    [ <<label>> ]
+    [ DECLARE 
+        declarations ]
+    BEGIN
+        statements;
+        ...
+    END [label];
+
+- each block has 2 section
+    - an optional declaration section 
+        - this is where all variables used in the body are declared 
+        - each statement within is terminated with a semi-colon 
+    - a body section
+            - where you put the logic
+
+- e.g.
+
+    DO 
+    $func$
+        <<first_block>>
+        DECLARE
+            counter INTEGER := 0;
+        BEGIN
+            counter := counter + 1;
+            RAISE NOTICE 'The current value of counter is %', counter;
+        END first_block;
+    $func$;
+
+- subblock
+
+    DO 
+    $func$
+        <<outerblock>>
+        DECLARE
+            counter INTEGER := 0;
+        BEGIN
+            counter := counter + 1;
+            RAISE NOTICE 'The current value of counter is %', counter;
+
+            DECLARE
+                counter INTEGER := 0;
+            BEGIN
+                counter := counter + 10;
+                RAISE NOTICE 'The current value of counter in the subblock is %', counter;
+                RAISE NOTICE 'The current value of counter in the outer block is %', outerblock.counter;
+            END;
+            RAISE NOTICE 'The current value of counter in the outer block is %', outerblock.counter;
+
+        END outerblock; 
+    $func$;
+
+    NOTICE: The current value of counter is 1
+    NOTICE: The current value of counter in the subblok is 10
+    NOTICE: The current value of counter in the outer block is 1
+    NOTICE: The current value of counter in the outer block is 1

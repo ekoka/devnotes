@@ -1,0 +1,94 @@
+- stored procedures extends the sql-standard with elements such as control structures, calculations, and more to the ease the development of complex functions that may be beyond the reach of plain sql. 
+
+- PL/pgSQL is the procedure language of Postgresql, but alternative languages are available such as python, tcl, c, and perl
+
+- Postgresql divides procedural languages in two main groups:
+    - safe languages that can be used by any users: PL/pgSQL and SQL are both safe languages
+    - sandboxed languages or untrusted, only to be used by superusers: c and Python are two examples
+
+syntax to create a user-defined function
+----------------------------------------
+- you use the `CREATE FUNCTION` statement to create a user-defined function in postgresql
+
+    CREATE FUNCTION function_name (p1 type, p2 type) RETURNS type AS
+    BEGIN
+        -- logic
+    END;
+    LANGUAGE language_name;
+
+    - e.g. if using PL/pgSQL as a language specify `plpgsql`
+
+- e.g.
+    CREATE FUNCTION inc(val integer) RETURNS integer AS $$
+    BEGIN
+    RETURN val + 1;
+    END; $$
+    LANGUAGE PLPGSQL;
+
+- the entire function definition given to CREATE FUNCTION must be a single quoted string. i.e. if the function has single quotes,they must be escaped.
+- in postgresql v.8.0 and later a feature called dollar quoting was added that allows to choose a suitable string that does not appear in the function, so that escaping it is not needed
+
+- the returned function can be used like any build-in functions provided it's valid.
+
+- functions can have the same name but different parameters, this is called function overloading.
+
+function parameters
+-------------------
+- IN parameters is the default parameter type. You pass them to the function but cannot get them back as part of the result 
+
+    CREATE FUNCTION get_sum(
+        a NUMERIC, 
+        b NUMERIC) 
+    RETURNS NUMERIC AS $$
+    BEGIN
+        RETURN a+b;
+    END; $$
+
+- OUT parameters are part of the function arguments and can be part of the result
+
+    # this function accept 3 IN params `a`, `b`, and `c` and 2 OUT `hi` and `lo` 
+    CREATE FUNCTION hi_lo(
+        a NUMERIC, 
+        b NUMERIC, 
+        c NUMERIC,
+        OUT hi NUMERIC, 
+        OUT lo NUMERIC) 
+    AS $$
+    BEGIN
+        hi := GREATEST(a,b,c);
+        lo := LEAST(a,b,c);
+        RETURN a+b;
+    END; $$
+
+- INOUT parameters is a combination of IN and OUT. You can pass the value to the function which can then change the argument and pass it back as part of the result    
+
+    CREATE OR REPLACE FUNCTION square(
+        INOUT a NUMERIC)
+    AS $$
+    BEGIN
+        a := a * a;
+    END;
+    $$
+    LANGUAGE plpgsql;
+
+- VARIADIC parameters. A PosgreSQL function can accept a variable number of arguments if they all share the same data type. They're then passed to the function in an array. 
+
+    CREATE OR REPLACE FUNCTION sum_avg(
+        VARIADIC list NUMERIC [],
+        OUT total NUMERIC,
+        OUT average NUMERIC)
+    AS $$
+    BEGIN
+        SELECT INTO total SUM(list[i]) 
+        FROM generate_subscripts(list, 1) g(i);
+        SELECT INTO average AVG(list[i])
+        FROM generate_subscripts(lis, 1) g(i);
+    END; $$
+    LANGUAGE plpgsql;
+
+    SELECT sum_avg(10, 20, 30);
+
+    total | average
+       60 |      20
+
+

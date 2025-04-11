@@ -1,0 +1,213 @@
+- PostgreSQL has 3 loop statements
+    
+    <<label>>
+    LOOP
+        statements;
+        EXIT [<<label>>] WHEN condition;
+    END LOOP;
+    
+    # condition is a boolean statement evaluating to true|false
+
+- loop statements can be nested, in which case you need the `label` to specify which loop to exit
+
+- e.g. return the nth fibonacci sequence number
+    # fibonacci algorithm
+
+    input(n)
+    if n<1:
+        return 0
+    counter = 0
+    l = 0
+    r = 1
+    while counter < n:
+        l, r = r, (r+l)
+        counter += 1
+    return l
+
+    # stored procedure implementation using `LOOP` construct
+    
+    CREATE OR REPLACE FUNCTION fibonacci(n INTEGER)
+    RETURNS INTEGER AS $$
+    DECLARE
+        counter INTEGER := 0;
+        i INTEGER := 0;
+        j INTEGER := 1;
+    BEGIN
+
+        IF (n < 1) THEN
+            RETURN 0;
+        END IF; 
+
+        LOOP EXIT WHEN counter = n;
+            counter := counter + 1;
+            SELECT j, i + j INTO i, j;
+        END LOOP;
+
+        RETURN i;
+    END; 
+    
+    $$ LANGUAGE plpgsql;
+
+- WHILE loop
+
+    [<<label>>]
+    WHILE condition LOOP
+        statements;
+    END LOOP;
+
+    # e.g.
+    CREATE OR REPLACE FUNCTION fibonacci (n INTEGER)
+    RETURNS INTEGER AS $$
+    DECLARE 
+        counter INTEGER := 0;
+        i INTEGER := 0;
+        j INTEGER := 1;
+    BEGIN
+        IF (n < 1) THEN
+            RETURN 0;
+        END IF;
+        WHILE counter < n LOOP
+            SELECT j, i+j INTO i, j;
+            counter := counter + 1;
+        END LOOP;
+
+        RETURN i;
+    END; 
+    $$ LANGUAGE plpgsql;
+
+- FOR loop
+
+    [<<label>>]
+    FOR loop_counter IN [REVERSE] from..to [BY expression] LOOP
+        statements
+    END LOOP [ label ];
+    
+    ---
+
+    # e.g. loop through 1 to 4 and print a message at each iteration
+    DO $$
+    BEGIN
+        FOR counter IN 1..4 LOOP 
+        RAISE NOTICE 'Counter: %', counter;
+        END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    NOTICE: Counter: 1
+    NOTICE: Counter: 2
+    NOTICE: Counter: 3
+    NOTICE: Counter: 4
+
+    ---
+    # e.g. loop through 4 to 1 and print a message at each iteration
+    DO $$
+    BEGIN
+        FOR counter IN REVERSE 4..1 LOOP 
+        RAISE NOTICE 'Counter: %', counter;
+        END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    NOTICE: Counter: 4
+    NOTICE: Counter: 3
+    NOTICE: Counter: 2
+    NOTICE: Counter: 1
+
+    ---
+
+    # e.g. loop through 1 to 8, increment counter by 2 and print it out
+    DO $$
+    BEGIN
+        FOR counter IN 1..8 BY 2 LOOP 
+        RAISE NOTICE 'Counter: %', counter;
+        END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+    NOTICE: Counter: 1
+    NOTICE: Counter: 3
+    NOTICE: Counter: 5
+    NOTICE: Counter: 7
+
+
+    ---
+
+    # e.g. fibonacci function
+    CREATE OR REPLACE FUNCTION fibonacci (n INTEGER)
+    RETURNS INTEGER AS $$
+    DECLARE 
+        i INTEGER := 0;
+        j INTEGER := 1;
+    BEGIN
+        FOR counter IN REVERSE n..1 LOOP
+            SELECT j, i+j INTO i, j;
+        END LOOP;
+        RETURN i;
+    END;
+    $$ LANGUAGE plpgsql;
+    
+
+- FOR loop for looping through a query result
+
+    [<<label>>]
+    FOR target IN query LOOP
+        statements;
+    END LOOP [label];
+
+    # e.g. a function that displays the title of n films from a table 
+    CREATE OR REPLACE FUNCTION show_titles(n INTEGER DEFAULT 10)
+    RETURNS VOID AS $$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT title
+            FROM films
+            ORDER BY title
+            LIMIT n
+        LOOP
+            RAISE NOTICE '%', rec.title;
+        END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    # to use this function
+    select show_titles(5);
+
+    NOTCE: Arrival
+    NOTCE: As Good As It Gets
+    NOTCE: Office Space
+    NOTCE: Swingers
+    NOTCE: The Big Lebowski
+
+- looping through a dynamic query
+    
+    [<<label>>]
+    FOR row IN EXECUTE string_expression [USING query_params [, ...]] LOOP
+        statements;
+    END LOOP [label];
+
+    ---
+
+    # e.g.
+
+    CREATE OR REPLACE FUNCTION show_titles(
+        n INTEGER DEFAULT 10, 
+        sort_type INTEGER)
+    RETURNS VOID as $$ 
+    declare
+        rec RECORD;
+        query text;
+    BEGIN
+        query = 'SELECT title, release_year FROM films ';
+        IF sort_type = 1 THEN
+            query := query || 'ORDER BY title ';
+        ELSIF sort_type = 2 THEN
+            query := query || 'ORDER BY release_year ';
+        ELSE
+            RAISE EXCEPTION 'Invalid sort type %s', sort_type;
+        END IF;
+        query := query || 'limit $1'
+        FOR rec IN EXECUTE query USING n LOOP
+            RAISE NOTICE '% - %', rec.release_year, rec.title;
+        END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;

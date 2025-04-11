@@ -1,0 +1,40 @@
+- a variable is always associated with a particular data type
+- you must declare variable in the declaration section of the PL/pgSQL block before using it
+- syntax
+    
+    variable_name data_type [:= expression]
+
+- valid postgresql data type include integer, numeric, varchar, char, etc
+- you can assign a default value to a variable, otherwise it is initialized to `NULL`
+
+- e.g.
+    
+    DO $$
+        DECLARE
+            counter integer := 1;
+            first_name varchar(50) := 'John';
+            last_name varchar(50) := 'Doe';
+            payment numeric(11, 2) := 20.5;
+        BEGIN
+            RAISE NOTICE '% % % has been paid % USD', counter, first_name, last_name, payment;
+        END;
+    $$;
+
+- postgresql evaluates the default value at run time, not compile time. That is the value is evaluated each time the block is ran.    
+
+- you can define a variable with data type that references to the data type of a column in a table or another variable.
+
+    variable_name table_name.column_name%TYPE;
+    variable_name another_variable%TYPE;
+
+    # e.g.
+    city_name city%TYPE := 'San Francisco';
+
+    - 3 advantages to this approach:
+        - no need to care about data type of a column.
+        - no need to care about data type changes.
+        - you can refer the type of variable to data type of function arguments to create polymorphic functions since the type of the internal variable can change from one call to the next. 
+
+- you can assign an alias to a variable. They're used mainly in a trigger procedure to give a more meaningful name to variables that have a predetermined names e.g. NEW or OLD
+
+    new_name ALIAS FOR old_name; 

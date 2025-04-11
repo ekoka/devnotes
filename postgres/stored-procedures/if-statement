@@ -1,0 +1,81 @@
+- IF statement
+
+    IF condition THEN
+        statement;
+    END IF;
+
+    # condition is a boolean expression that evaluates to `true|false`
+    DO 
+    $block$
+        DECLARE
+            a integer := 10;
+            b integer := 20;
+        BEGIN
+            IF a > b THEN
+                RAISE NOTICE 'a is greater than b';
+            END IF;
+
+            IF a < b THEN
+                RAISE NOTICE 'a is less than b';
+            END IF;
+
+            IF a = b THEN
+                RAISE NOTICE 'a is equal to b';
+            END IF;
+        END 
+    $block$;
+
+
+- IF THEN ELSE statement
+
+    
+    IF condition THEN
+        statement;
+    ELSE
+        alternative statement;
+    END IF;
+
+    # e.g.
+
+    DO 
+    $block$
+        DECLARE
+            a integer := 10;
+            b integer := 20;
+        BEGIN
+            IF a > b THEN
+                RAISE NOTICE 'a is greater than b';
+            ELSE
+                RAISE NOTICE 'a is not greater than b';
+            END IF;
+        END; 
+    $block$;
+
+- IF THEN ELSIF THEN ELSE statement
+
+    IF condition-1 THEN
+        if-statement;
+    ELSIF condition-2
+        elsif-statement; 
+    ...
+    ELSE
+        else-statement;
+    END IF;
+
+    # e.g.
+
+    DO 
+    $block$
+        DECLARE
+            a integer := 10;
+            b integer := 20;
+        BEGIN
+            IF a > b THEN
+                RAISE NOTICE 'a is greater than b';
+            ELSIF a < b THEN
+                RAISE NOTICE 'a is less than b';
+            ELSE
+                RAISE NOTICE 'a is equal to b';
+            END IF;
+        END;
+    $block$;
