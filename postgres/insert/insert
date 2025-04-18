@@ -1,0 +1,42 @@
+Given a table 'products':
+
+CREATE TABLE products(
+    product_no integer,
+    name text,
+    price numeric
+);
+
+# no need to list columns if you specify values in order
+    INSERT INTO products VALUES (1, 'Cheese', 9.99);
+
+# otherwise be explicit
+    INSERT INTO products (name, price, product_no) VALUES ('Cheese', 9.99, 1);
+
+# you can omit some columns, their DEFAULT value will be used
+    INSERT INTO products (product_no, name) VALUES (1, 'Cheese');
+    INSERT INTO products VALUES (1, 'Cheese');
+
+# explicitly ask for the default
+    INSERT INTO products (product_no, name, price) VALUES (1, 'Cheese', DEFAULT);
+    INSERT INTO products DEFAULT VALUES; 
+
+# multiple rows, single command
+    INSERT INTO products (product_no, name, price) VALUES
+        (1, 'Cheese', 9.99),
+        (2, 'Bread', 1.99),
+        (3, 'Milk', 2.99);
+
+# When inserting lots of data at once, consider using the COPY command.
+
+# insert from another table
+
+    INSERT INTO product (product_no, name, price)
+    SELECT product_no, name, 9.99 FROM liquidations
+
+# insert from a table in another database
+    # using `dblink`
+    INSERT INTO products (product_no, name, price)
+    SELECT dbl.product_no, dbl.name, dbl.price 
+    FROM dblink('dbname=anotherdb', 'SELECT product_no, name, 9.99 as price 
+                                     FROM liquidations') as dbl
+                                     
