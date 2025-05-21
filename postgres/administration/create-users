@@ -1,0 +1,60 @@
+http://www.postgresql.org/docs/8.1/static/sql-createrole.html
+
+- create user from bash
+
+    # a superuser with the same name as my login
+    $ sudo -u postgres createuser --superuser $USER
+
+    # set the password
+    $ sudo -u postgres psql
+    postgres=# \password $USER
+
+    # it's a good practice to create a db with that same user name
+    $ createdb $USER
+    # or simply
+    $ createdb 
+
+    # create a user and set password
+    $ createuser someuser -P
+
+- create user
+    CREATE ROLE mike WITH PASSWORD 'password'
+    # you need to explicitly specify if it has logon
+
+or 
+
+    CREATE USER mike WITH PASSWORD 'password';
+    # will implicitly create a logon
+
+- alter user
+
+    ALTER ROLE mike PASSWORD 'password';
+    ALTER USER mike PASSWORD 'password';
+
+- delete user
+
+    DROP ROLE mike;
+    DROP USER mike;
+
+- privileges are granular and layered
+
+    GRANT ALL ON DATABASE movies TO mike;
+    # user can list and create new schemas, but won't necessarily be able to work on existing schemas.
+
+    GRANT ALL ON SCHEMA sch_1 TO mike;
+    # user can list and create new tables on schema "sch_1", but won't necessarily be able to run queries on tables within.
+
+    GRANT ALL ON TABLE actors TO mike;
+    # user can run queries on the table specified.
+
+- give ownership to user
+    
+    ALTER DATABASE movies OWNER TO mike;
+    ALTER SCHEMA public OWNER TO mike;
+    ALTER TABLE actors OWNER TO mike;
+
+- giving all privileges on tables to user (only works in PostgreSQL 9.0+)
+
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO mike;
+
+- if you'd like a non-admin user to have complete access to a db or a subset of it, have her create the db objects she needs to access.
