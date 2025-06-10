@@ -1,0 +1,14 @@
+https://www.postgresql.org/docs/9.1/mvcc-intro.html
+
+Multiversion Concurrency Control (MVCC): 
+---------------------------------------
+- while querying a database, each transaction sees a snapshot of data
+- by eschewing the locking methodologies MVCC minimizes lock contention and allows for reasonable performance in multiuser environments.
+
+- locks acquired for reading do not conflict with locks acquired for writiong. Thus reading never blocks writing and writing never blocks reading.
+
+- table and row level locking facilities are also available when full transaction isolation is not needed.
+
+- note however that proper use of MVCC generally provide better performance than locks.
+
+

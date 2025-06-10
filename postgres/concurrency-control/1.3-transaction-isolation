@@ -1,0 +1,28 @@
+- The SQL standard defines 4 levels of transaction isolation which are: 
+    - Read uncommitted
+    - Read committed
+    - Repeatable read
+    - Serializable
+
+The first three levels specify which of the following behaviors are absolutely forbidden:
+    - dirty read: a transaction can read data written by a concurrent uncommitted transaction 
+    - nonrepeatable read: a transaction can re-read data it has previously read and find that data has been modified by another transaction (that committed since the initial read)
+    - phantom read: a transaction can re-execute a query returning a set of rows that satisfy a search condition and find that the set of rows satisfying the condition has changed due to another recently committed transaction.
+
+The fouth level, "serializable", is the most strict and specifies that any concurrent execution of a set of serializable transactions is guaranteed to produce the same effect as running them one at a time in some order. 
+
+A summary table of the Transaction Isolation Levels
+
+Iso. Lvl.           | dirty read | nonrepeatable read | phantom read
+--------------------+------------+--------------------+-------------
+Read uncommitted    | possible   | possible           | possible  
+Read committed      | no         | possible           | possible
+Repeatable read     | no         | no                 | possible
+serializable        | no         | no                 | no
+
+Particularities of Postgresql implementation of the standard isolation levels
+-----------------------------------------------------------------------------
+- any level can be requested, but there's only three distinct ones implemented, there's no "Read uncommitted"
+- when requesting "Read uncommitted" you really get "Read committed"
+- phantom reads are not possible in the "Repeatable read" level.
+
