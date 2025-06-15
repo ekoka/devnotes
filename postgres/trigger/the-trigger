@@ -1,0 +1,35 @@
+the trigger
+-----------
+
+- to create a trigger use the `CREATE TRIGGER` statement
+
+    CREATE TRIGGER trigger_name {BEFORE | AFTER | INSTEAD OF} {event [OR ...]}
+    ON table_name
+    [FOR [EACH] {ROW | STATEMENT}]
+    EXECUTE PROCEDURE my_triggered_action();
+
+- `event` could be INSERT, UPDATE, DELETE, TRUNCATE
+
+- trigger can fire BEFORE or AFTER event
+
+- INSTEAD OF is used only on views, for INSERT, UPDATE, and DELETE
+
+- FOR EACH {ROW|STATEMENT} determines whether it's a ROW or STATEMENT level trigger
+
+- e.g.
+
+    CREATE TRIGGER last_name_changes
+    BEFORE UPDATE
+    ON employees
+    FOR EACH ROW
+    EXECUTE PROCEDURE log_last_name_changes();
+
+- for TRUNCATE events triggers should be marked FOR EACH STATEMENT
+
+triggers on views
+-----------------
+
+- BEFORE and AFTER triggers on a view must be marked FOR EACH STATEMENT
+- INSTEAD OF triggers are used only on views, for INSERT, UPDATE, and DELETE
+- INSTEAD OF triggers should be marked FOR EACH ROW
+

@@ -1,0 +1,93 @@
+trigger procedure 
+-----------------
+- a trigger procedure is a function with no arguments and a return type of `trigger` (for data change triggers) or `event_trigger` (for database event triggers)
+
+triggers on Data Changes
+------------------------
+- the function must be declared with the return type `trigger`
+
+- the function must be declared with no arguments even if it expects to receive some arguments specified in CREATE TRIGGER.
+
+- function arguments are passed via TG_ARGV.
+
+- the function must return either NULL or a record/row value having exactly the structure of the table the trigger was fired for.
+
+    CREATE FUNCTION my_triggered_action () RETURNS trigger
+    AS $fnc$
+        ...
+    $fnc$;
+
+    # example:
+    CREATE OR REPLACE FUNCTION log_last_name_changes() RETURNS trigger
+    AS
+    $fnc$
+    BEGIN
+        IF NEW.last_name <> OLD.last_name THEN
+            INSERT INTO employee_audits (employee_id, last_name, changed_on)
+            VALUES (OLD.employee_id, OLD.last_name, now())
+        END IF;
+        RETURN NEW;
+    END;
+    $fnc$;
+
+- several special variables are created automatically in the top-level block
+    - `NEW` : 
+        - data type RECORD
+        - new database row for INSERT/UPDATE operations in row-level triggers (FOR EACH ROW)
+        - Unassigned in statement-level triggers and for DELETE.
+
+    - `OLD` : 
+        - data type RECORD
+        - the old database row for UPDATE/DELETE operations in row-level triggers (FOR EACH ROW)
+        - Unassigned in statement-level triggers and for INSERT.
+
+    - TG_NAME: 
+        - data type `name`
+        - name of the trigger actually fired.
+
+    - TG_WHEN: 
+        - data type `text`
+        - string of value 'BEFORE'|'AFTER'|'INSTEAD OF'
+
+    - TG_LEVEL: 
+        - data type `text` 
+        - string of value 'ROW'|'STATEMENT'
+
+    - TG_OP: 
+        - data type `text`
+        - a string of value 'INSERT'|'UPDATE'|'DELETE'|'TRUNCATE'
+
+    - TG_RELID:
+        - data type `oid`
+        - object ID of the table that caused the trigger invocation
+
+    - TG_TABLE_NAME:
+        - data type `name`
+        - name of the table that caused the trigger invocation
+
+    - TG_TABLE_SCHEMA:
+        - data type `name`
+        - name of the schema of the table that caused the trigger invocation
+
+    - TG_NARGS:
+        - data type `integer`
+        - number of arguments given to the trigger procedure in the CREATE TRIGGER statement
+
+    - TG_ARGV[]:
+        - data type array of `text`
+        - arguments from the CREATE TRIGGER statement
+        - invalid indexes (less than 0 and greater than TG_NARGS) result in a null value
+
+
+- during FOR EACH ROW triggers special variables are available from within the body of the function
+
+
+- the `OLD` variable is the updated/deleted row in its old state. `OLD` is available for UPDATE and DELETE type queries.
+
+function return values
+----------------------
+- in BEFORE type triggers the return value of the function affects INSERT and UPDATE operations.
+    - if not NULL and valid, its value is recorded in the table, which is why `NEW` is often returned for this type of triggers.
+    - if NULL, the INSERT or UPDATE operation is silently skipped.
+
+- in AFTER type triggers the return value has no effect.

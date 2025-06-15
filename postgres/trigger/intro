@@ -1,0 +1,18 @@
+- a trigger is a construct used to bind a function to an event on a table
+
+- to create a trigger you must first define a function that encapsulates the desired action or effect.
+
+- postgresql provides 2 main types of triggers:
+    - row level triggers
+    - statement level triggers
+    
+    e.g. if you issue an update statement that affects 20 rows, the row level trigger will be invoked  20 times, while the statement level trigger will be invoked once.
+
+- you can specify whether the trigger should be invoked BEFORE or AFTER an event
+    - if invoked before the event it can skip the operation for the current row or even change the row being updated or inserted.
+    - if invoked after the event, all changes are available to the trigger
+
+- postgresql has additional features on top of the standard sql
+    - it can fire triggers for `truncate`
+    - you can define statement-level triggers on views
+    - you're required to define a user-defined function as the action of the trigger, whereas the sql standard allows any number of sql commands
