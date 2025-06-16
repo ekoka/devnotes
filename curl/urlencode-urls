@@ -1,0 +1,21 @@
+e.g.
+    query params are actually
+    ?param1=+firstname:mike +lastname:ekoka&param2=+firstname:john +lastname:doe
+
+    after encoding:
+    <space char>    => +
+    +               => %2B
+    :               => %3A
+
+    url encoded should thus give
+    
+    ?param1=%2Bfirstname%3Amike+%2Blastname%3Aekoka&param2=%2Bfirstname%3Ajohn+%2Blastname%3Adoe
+
+
+to do this with curl:
+    
+    curl -G 'http://my.url/some/random/path' \
+        --data-urlencode 'param1=+firstname:mike +lastname:ekoka' \
+        --data-urlencode 'param2=+firstname:john +lastname:doe'
+
+note: the -G option places the data in the query string. see `curl --manual` for more.

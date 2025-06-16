@@ -1,0 +1,68 @@
+testing your REST API with cURL
+===============================
+
+
+GETting 
+-------
+Simply invoque curl with the url of the resource
+    $ curl http://my.server.dom/users/1
+
+    name: Michael Ekoka
+    member since: Oct 2006
+
+It may be useful to see response headers, let's turn them on
+
+    $ curl -i http://my.server.dom/users/1
+    HTTP:/1.1 200 OK
+    Date: Sun, 29 Sep 2013 04:39:09 GMT
+    Content-Type: text/plain
+
+    name: Michael Ekoka
+    member since: Oct 2006
+
+Sometimes we want to control the server's behavior for a request. We use request headers to do so. e.g. server may support multiple formats for the same resource (xml, json, text). Let's specify that we want the json version using the "Accept" request header.
+
+    -H "Accept: application/json"
+
+    $ curl  -i -H "Accept: application/json" http://my.server.dom/users/1
+    HTTP:/1.1 200 OK
+    Date: Sun, 29 Sep 2013 04:40:20 GMT
+    Content-Type: application/json
+    Content-Length: 59
+
+    {
+        "name": "Michael Ekoka"
+        "member_since": "Oct 2006"
+    }
+
+POSTing
+-------
+If this is an http POST request, we specify it with the -X option
+    
+    e.g.
+    -X POST 
+
+    $ curl -X POST http://my.server.dom/machines/3/reboot
+
+When passing params we do so with the -d request option:
+
+    e.g.
+    -d "firstname=Michael&lastname=Ekoka"
+
+    e.g. post JSON and specify content type
+
+    $ curl -X POST http://my.server.dom/machines/3/reboot -H "Content-type: application/json" -d '{"key": "value"}'
+
+data from files or stdin
+------------------------
+- use @<filename> to read from a file
+    $ curl -XPUT 'http://my.server.com/someurl' -d @/tmp/somefile.json
+
+- use @- to read from stdin
+    $ curl -XPUT 'http://my.server.com/someurl' -d @- < /tmp/somefile.json
+    $ cat /tmp/somefile.json | curl -XPUT 'http://my.server.com/someurl' -d @-
+
+
+ref: 
+http://blogs.operationaldynamics.com/andrew/software/research/testing-rest-the-hard-way
+http://blogs.plexibus.com/2009/01/15/rest-esting-with-curl/
