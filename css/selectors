@@ -1,0 +1,163 @@
+basic
+-----
+- select element
+
+    // select all <h1>
+    h1 
+
+    // select all <p>
+    p 
+
+- select an id 
+
+    // select <div id='username'> 
+    #username
+
+    // select <button id='logout'>
+    #logout
+
+- select a class
+    
+    // select <div class='section'>
+    .section
+
+- specify element with id or class
+
+    // select <p id="introduction">
+    p#introduction
+
+    // select <div class="separation">
+    div.separation
+
+- select multiple items
+
+    // select <p> and <div class="paragraph">
+    p, div.paragraph
+
+- select all items
+    *
+
+intermediate
+------------
+
+- select descendants
+
+    // select <p> in the following structure 
+    <main>
+         <div id="article">
+            <p> Lorem ... </p>
+         </div>
+    </main>
+
+    main p {
+        ...
+    }
+
+- select first sibling
+
+    // select <div> elements that are first sibling of a <p>
+    p + div
+
+- select siblings
+    // select <div> elements that are siblings of <p>
+    p ~ div
+
+- select direct child 
+
+    // select all <p> that are direct children of <article>
+    article > p
+
+
+advanced
+--------
+
+- :first-child : select first item in a set of sibling items
+
+    // select first <p>
+    p:first-child
+
+- :only-child
+
+- :last-child
+    // select every element that is the last children of another element
+    :last-child
+
+    // select every child that is the last of another element, if that child is a <p>
+    p:last-child
+
+- :nth-child
+    // select every element that is the 2nd child of another
+    :nth-child(2)
+
+    // select the even children
+    :nth-child(even)
+    :nth-child(2n) // n is a counter starting at 0
+
+    // select every 2nd child starting from the 5th 
+    :nth-child(2n + 5) // n a is counter starting at 0
+
+    // select the 3rd child of another element if it's a <p>
+    p:nth-child(3)
+
+    // select all odd children of another element if they're <div>
+    div:nth-child(odd)
+    div:nth-child(2n+1) // n is a counter starting at 0
+
+- :nth-last-child : same as `nth-child` but starting in reverse
+
+- :first-of-type : select the first element of a specific type within another element
+
+    // select the first <p> in any element
+    p:first-of-type
+
+- :nth-of-type: select the nth element of a specific type within another element
+    
+    // select the 3rd <p> in any element
+    p:nth-of-type(3)
+
+    // select all even <td>
+    td:nth-of-type(2n) // n is a counter starting at 0
+    td:nth-of-type(even)
+
+    // select every 2nd <li> starting from the 5th 
+    li:nth-of-type(2n + 5) // n is a counter starting at 0
+
+- :only-of-type : select the element if it's the only one of its type in an element
+
+- :last-of-type : select the element if it's the last of its type in an element
+
+- :empty : select elements if they have no child
+
+- :not : negate a selector, i.e. select elements that do not match
+
+    // select all elements that are not .big
+    :not(.big)
+
+    // select all <p> except <p id="introduction">
+    p:not(#introduction)
+
+- [attribute] to select all element that have a specific attribute
+
+    // select all elements that have an `href` attribute
+    [href]
+
+    // select all <a target="anything" /> 
+    a[target]
+
+    // select all  <a target="_blank" /> 
+    a[target="_blank"]
+
+    // class starts with 'hol'
+    [class^='hol']
+
+    // href ends with '.pdf' 
+    [href$='.pdf']
+
+    // class contains 'attach'
+    [class*='attach']
+
+    // class starts with the word 'good'
+    [class|='good']
+
+https://flukeout.github.io/
+https://htmlcheatsheet.com/css/

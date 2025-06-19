@@ -1,0 +1,35 @@
+#example1
+{
+    position: absolute;
+    top:100px;
+    left:100px;
+}
+
+#wrapper
+{
+    position:relative;
+    top:100px;
+    left:100px;
+    border:1px solid;
+    width: 800px;
+    /** 
+     * wrapped image is absolutely positioned
+     * we need to force the height 
+     **/
+    height: 500px; 
+    background: gray;
+    margin : auto;
+}
+
+#example2
+{
+    position: absolute;
+    top:100px;
+    left:100px;
+}
+#example3
+{
+    position: relative;
+    top:100px;
+    left:100px;
+}

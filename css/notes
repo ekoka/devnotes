@@ -1,0 +1,60 @@
+============================================
+Specificity
+
+#wrap #myStyle
+{
+    color: black;
+}
+
+---
+will not work
+#myStyle
+{
+    color: red;
+}
+
+----
+will work because it's more specific
+#wrap p#myStyle
+{
+    color: red;
+}
+
+---
+calculating specificity
+Element : 1 point
+Classes : 10 points
+Identifiers : 100 points
+Inline Styling : 1000 points
+
+============================================
+Absolute and Relative positioning
+
+---
+default positioning is 'static'
+
+    position : static;
+
+---
+Absolutely positioned elements are positioned in relation to their closest positioned parent.
+
+---
+Absolutely placing an image 100px from the top and 100px from the left of the window:
+
+img
+{
+    position : absolute;
+    top : 100px;
+    left : 100px;
+}
+
+---
+when relative positioned wrapper contain absolutely positioned element, we need to force their height
+
+#wrapper
+{
+    position: relative;
+    background: gray;
+    height: 600px; /* forcing the height */
+    ...
+}
