@@ -1,0 +1,39 @@
+e.g. syntax to configure and start uwsgi server
+-----------------------------------------------
+
+    $ uwsgi 
+        --http :9090 # run app on port 9090
+        --master # spawn a master process that can respawn your child processes when they die
+        --processes 4 # spawn 4 child processes
+        --threads 2 # each process should have 2 threads
+        --wsgi-file foobar.py # file hosting the wsgi app
+        --stats 127.0.0.1:9190 # start the stats subsystem host it at this address
+
+
+using a config file
+-------------------
+
+    $ uwsgi --ini myconf.ini
+    $ uwsgi --json myconf.json
+    $ uwsgi --yaml myconf.yaml
+    $ uwsgi --xml myconf.xml
+
+    ...
+
+    # content of myconf.ini
+
+    [uwsgi]
+
+    socket = 127.0.0.1:3031
+    chdir = /home/mike/myproject
+    pythonpath = ..
+    wsgi-file = foobar.py
+    callable = app
+    processes = 4
+    threads = 2
+    stats = 127.0.0.1:3131
+    virtualenv = <path>
+    uid = mike # it's better not to let uwsgi run as root
+    gid = webdev # it's better not to let uwsgi run as root
+    harakiri = 30 # kill workers that have been blocked for more than 30 seconds
+

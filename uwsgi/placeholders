@@ -1,0 +1,21 @@
+setting placeholder in uwsgi config
+-----------------------------------
+
+[uwsgi]
+# setting a placeholder directly
+brazen_home = www.brazen.ca
+# setting a placeholder using the set-ph/set-placeholder options
+set-ph admin_email=admin@brazen.ca
+set-placeholder admin_firstname=Michael
+
+setting placeholder on the command line
+---------------------------------------
+    
+    $ uwsgi [...] --set-ph foo=bar [...]
+
+using a placeholder
+-------------------
+socket = /tmp/%(socket).sock
+chdir = /home/%(admin_firstname)/%(brazen_home)
+
+ref: http://uwsgi-docs.readthedocs.org/en/latest/Configuration.html
