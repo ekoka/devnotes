@@ -1,0 +1,3 @@
+# installing
+
+    $ npm install pug
