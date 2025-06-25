@@ -1,0 +1,10 @@
+# syntax to generate output from contents
+
+    $ pelican <path_to_content_files> [--output|-o <output_dir>]
+
+# if <output_dir> is not specified, one is created in the current directory
+
+# example: dumping output in a /srv/www/blog directory
+
+    $ pelican output/ --output /srv/www/blog/
+

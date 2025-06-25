@@ -1,0 +1,3 @@
+
+    $ workon pelican
+    (pelican) $ pip install "pelican[markdown]"

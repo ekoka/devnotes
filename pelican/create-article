@@ -1,0 +1,12 @@
+##### Write a new article    
+
+    $ vim new-page.md
+
+        Title: My New Article
+        Date: 2022-12-23 19:33
+        Category: 
+
+        This is the first line of the article
+    
+
+    :w cd ~/path/to/foo/content

@@ -1,0 +1,1 @@
+- by default items in content/pages/ are loaded using the page.html template and those under content/articles/ use the article.html template.
