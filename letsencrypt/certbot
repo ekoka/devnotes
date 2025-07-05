@@ -1,0 +1,29 @@
+https://certbot.eff.org/lets-encrypt/ubuntuxenial-nginx
+
+- Install Certbot for Nginx through apt in Ubuntu 16.04
+
+    $ sudo apt update
+    $ sudo apt install software-properties-common
+    # adding the certbot ppa
+    $ sudo add-apt-repository ppa:certbot/certbot
+    $ sudo apt update
+    $ sudo apt install python-certbot-nginx
+
+- Get a certificate and have Cerbot edit the nginx configuration automatically 
+
+    $ sudo certbot --nginx
+
+- Same thing but manual nginx config  editing
+
+    $ sudo certbot certonly --nginx
+
+- Testing automatic renewal
+
+    sudo certbot renew --dry-run
+
+- Install with pip3 (make sure you have uninstalled and purged the apt version)
+
+    sudo apt uninstall certbot
+    sudo apt purge certbot
+    sudo pip3 install certbot
+    sudo pip3 install certbot-nginx

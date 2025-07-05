@@ -1,0 +1,19 @@
+automatic (non-interactive) renewals
+------------------------------------
+- Only for certs that do not require a manual interaction. If the cert was created with manual authentication, such as when specifying a TXT DNS challenge at _acme-challenge.example.com, this will likely not work, without specifying an authentication script (see: https://certbot.eff.org/docs/using.html#pre-and-post-validation-hooks).
+
+    $ sudo certbot renew
+
+manual renewals
+---------------
+- renewing a manual certs is done exactly the same way as when creating it
+
+    $ certbot certonly \
+        --manual \
+        --preferred-challenges dns
+        --server https://acme-v02.api.letsencrypt.org/directory \
+
+        -d example.com \
+        -d "*.example.com"
+
+

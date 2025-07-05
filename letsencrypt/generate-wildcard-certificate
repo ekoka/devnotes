@@ -1,0 +1,37 @@
+
+    $ sudo certbot \
+        certonly 
+        --manual \
+        --server https://acme-v02.api.letsencrypt.org/directory \
+        --preferred-challenges dns \
+        -d myserver.com \
+        -d *.myserver.com
+
+
+    # you'll be asked to create a TXT record  "_acme-challenge.myserver.com" that returns a specific key that is given to you now. 
+
+    Go to digitalocean, or linode, or whatever and create it.
+
+    # You'll be asked again to create another TXT with a different key pointing again to "_acme-challenge.myserver.com". This is because you're creating certificates for two domains. Go again to digitalocean and do it. You can have 2 records with hte same name.
+
+
+- flags and options
+
+    certonly    :   issue a certificate, but don't install it automatically
+    --manual    :   whether domain validation is manual (or through a shell script)
+    --server    :   the certificate authority server (defaults to acme-v01). For wildcard certs it must be acme-v02 (https://acme-v02.api.letsencrypt.org/directory)
+    --preferred-challenges: the ACME challenge type (such as dns, http). For wildcard certs the challenge must be "dns".
+
+- verify that TXT record is live 
+
+    $ dig _acme-challenge.myserver.com txt +noall +answer
+
+- certificates location in ubuntu
+
+    /etc/letsencrypt/live/myserver.com/
+
+- todo: look into acme-dns
+        
+
+ref:
+https://www.nikio.io/infrastructure/lets-encrypt-wildcard-certificate-with-certbot/
