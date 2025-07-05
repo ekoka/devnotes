@@ -1,0 +1,29 @@
+- installing
+
+    $ pip install uwsgi
+
+- starting
+
+    $ uwsgi 
+        --socket 127.0.0.1:8080 
+        --protocol=http  # make sure to specify this when using http, or use  --http instead of --socket as shown in next example.
+        --wsgi myapp 
+        --callable app 
+        --logto ./uwsgi.log
+
+    or 
+
+    $ uwsgi 
+        --http :9090 
+        --wsgi-file myapp.py 
+        --callable app
+
+
+    --wsgi | --module | -w
+    --callable <callable_name> (default is 'application')
+
+
+- logging
+    --logto ./uwsgi.log
+    --logto2 ./uwsgi.log
+    --daemonize ./uwsgi.log

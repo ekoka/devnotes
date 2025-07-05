@@ -1,0 +1,137 @@
+uwsgi
+-----
+- installing uwsgi
+    - creating an init script
+
+            $ sudo vim /etc/init/uwsgi.conf
+        
+        content of the uwsgi.conf init script
+
+            description "uWSGI"
+            start on runlevel [2345]
+            stop on runlevel [06]
+
+            # location of uwsgi executable
+            env UWSGI=/usr/local/bin/uwsgi
+            # location of emperor mode's log
+            env LOGTO=/var/log/uwsgi/emperor.log
+
+            exec $UWSGI
+                --master
+                --emperor /etc/uwsgi/apps-enabled # indicates which directory contains apps
+                --die-on-term
+                --uid mike 
+                --gid www-data # sometime you might want www-data as both user and group
+                --logto $LOGTO
+
+    - creating apps directories
+
+        $ sudo mkdir -p /etc/uwsgi/apps-availables /etc/uwsgi/apps-enabled
+
+
+- configuring an app to be managed by uwsgi in emperor mode 
+
+        $ touch /etc/uwsgi/apps-available/mysite.ini
+
+    # content of mysite.ini
+
+        [uwsgi]
+        # Declaring some variables to be used later in this file
+        base=/home/mike/workspace/mysite
+        app=bootstrap
+
+        # config really begins here 
+        master=true
+        plugins=http,python
+
+        # if your application works from a virtualenv, specify it.
+        # either of these 2 options seem to do the trick.
+        home = /path/to/your/virtualenv
+        #venv = /path/to/your/virtualenv
+
+        # specify path of the dir containing the startup module.
+        # these 2 options also seem interchangeable.
+        # also, note our use of the variable %(base) declared earlier in the file.
+        pythonpath=%(base)
+        #chdir=%(base)
+
+        # indicate the startup module, in this case "bootstrap.py", as per
+        # the declaration of the variable %(app) earlier.
+        module=%(app)
+
+        # some people don't like to call their wsgi application "application"
+        # callable = app
+
+        # one can specify a different log file for each app.
+        # note the use of the variable %n that holds the name of the current 
+        # config file, minus the .ini suffix. 
+        # i.e. config is '/etc/uwsgi/apps-available/mysite.ini' => %n is 'mysite'
+        # logto = /var/log/uwsgi/%n.log
+
+        # you can change uwsgi's uid or owner if you want
+        #uid=www-data
+        #gid=www-data
+
+        # sometimes we might want to work with uwsgi at the http level,
+        # e.g. during development for example.
+        #http = 127.0.0.1:3032
+
+        # other times we might want to work at the socket level,
+        # e.g. when putting uwsgi behind nginx in production.
+        # file socket
+        socket=/tmp/mysite.sock
+        # or tcp socket
+        #socket = 127.0.0.1:3031
+
+        # if using a file socket, let's set read-write permissions
+        chmod-socket=666
+
+    # some gotchas to avoid obscure problems
+    - if you're having problems while using a file socket, delete it in case it has gone stale, then restart uwsgi and nginx.
+    - do not activate both http and sockets.
+    - don't forget to change socket permissions/ownership for access by nginx.
+
+- enabling an app
+
+    $ ln -s /etc/uwsgi/apps-available/mysite.ini /etc/uwsgi/apps-enabled/mysite.ini
+
+- starting/stopping/restarting 
+
+    $ sudo service uwsgi [start|stop|restart]
+
+nginx
+-----
+- adding a site
+
+    $ sudo touch /etc/nginx/sites-available/mysite
+
+- configuring a site
+
+    content of the uwsgi.conf init script
+
+        server {
+            listen 80;
+            server_name local.mysite.com;
+            #root /home/mike/workspace/mysite;
+            
+            location /static/ {
+                alias /path/to/mysite/static/;
+                expires 30d;
+                access_log off;
+            }
+
+            location / {
+                include uwsgi_params;
+                # activate appropriate socket
+                #uwsgi_pass 127.0.0.1:3031;
+                uwsgi_pass unix:///tmp/site.sock;
+            }
+        }
+
+    gotchas:
+    - note that with filesystem's socket we start with 'unix:///'
+    - we don't with tcp sockets
+
+- starting/stopping/restarting 
+
+    $ sudo service nginx [start|stop|restart]
