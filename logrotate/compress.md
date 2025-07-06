@@ -1,0 +1,1 @@
+- The `compress` option instruct logrotate to compress logs after they are rotated.
