@@ -1,0 +1,11 @@
+- consider the following postgres container running inside a network 
+
+    $ docker run --rm -d                                \
+        --net[work] mynetwork                             \
+        --name db                                       \ 
+        -p 5433:5432                                    \ 
+        -v pgdata:/var/lib/postgresql/data     \
+        -e POSTGRES_PASSWORD=password                   \
+        postgres
+
+Other services on the network can access the postgres server simply by specifying its name on the network. They don't need to provide a port. The mapping is done seamlessly.

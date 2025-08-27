@@ -1,0 +1,37 @@
+- you can use the `docker run` command with `--mount` or `-v` (aka `--volume`) to specify a volume that will be created if it doesn't yet exist.
+- the difference is that `--mount` is more explicit and verbose
+- `-v` combines all the options together in one field, whereas `--mount` breaks them down.
+
+    -v or --volume consists of three fields, separated by colon characters (:)
+    --mount consists of multiple `key=value` tuples separated by commas
+
+- key-values of --mount
+
+    - `type`: bind|volume|tmpfs
+    - `source` | `src`: 
+        - for named volumes, this is the name of the volume.
+        - for anonymous volume, skip this field
+    - `destination` | `dst` | `target`: path where dir or file is mounted in the container
+    - `readonly`: causes bind mount to be read-only in the container.
+    - `volume-opt`: 
+        - takes a key-value pair representing an option   
+        - can be used more than once 
+
+    $ docker service create \
+        --mount 'type=volume,src=<volume_name>,dst=<container_path>,\
+        volume-driver=local,volume-opt=type=nfs,volume-opt=device=<nfs-server>:<nfs-path>,\
+        "volume-opt=o=addr=<nfs-address>,vers=4,soft,timeo=180,bg,tcp,rw"'
+
+- specifying source and target
+
+    - with `--mount`
+
+        $ docker run --name test \
+            --mount source=some-volume,dst=/app \
+            nginx
+
+    - with `-v`
+        $ docker run --name test \
+            -v some-volume:/app \
+            nginx
+    

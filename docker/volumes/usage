@@ -1,0 +1,15 @@
+creating
+
+    $ docker volume create some-volume
+
+listing
+
+    $ docker volume ls
+
+inspecting a volume
+
+    $ docker volume inspect some-volume
+
+remove a volume
+
+    $ docker volume rm some-volume

@@ -1,0 +1,29 @@
+- create a network
+
+    $ docker network create mynetwork
+
+- list networks 
+    
+    $ docker network ls
+
+- remove a network
+
+    $ docker network rm mynetwork
+
+- remove all networks
+
+    $ docker network prune
+
+- adding container to network
+
+    # e.g. postgresql   
+    $ docker run --rm -d                                \
+        --net[work] mynetwork                             \
+        --name db                                       \ 
+        -p 5433:5432                                    \ 
+        -v ~/docker/pgdata:/var/lib/postgresql/data     \
+        -e POSTGRES_PASSWORD=password                   \
+        postgres
+
+        
+        

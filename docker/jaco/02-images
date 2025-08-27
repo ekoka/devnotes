@@ -1,0 +1,64 @@
+Images
+======
+Une image est une "recette" qui décrit les "ingrédients" qu'un container doit avoir ainsi que la séquence d'opérations pour installer et initialiser ses applications. Une image peut ensuite être utilisée pour démarrer une multitude de containers. L'idée est analogue à celle d'un CD-ROM. Pour démarrer une application on insère un CD-ROM et une copie de l'application est démarrée et placée en mémoire.
+
+L'ingrédient de base d'une image est le système d'exploitation sur lequel reposeront les applications (e.g. Ubuntu, Debian, Alpine, etc). L'image pourrait n'être consistuée que du système d'exploitation (OS), mais l'intérêt principal de la virtualisation est l'accès offert à un éventail d'applications qui tournent sur l'OS. Des images peuvent donc aussi être créées en se basant sur une autre et en spécifiant ce qu'on y ajoute. Par exemple, la recette de l'image "debian" spécifie simplement d'installer Debian Linux dans un container, alors que la recette "postgresql" spécifie qu'elle se base sur la recette "debian", mais ajoute en plus des instructions d'installation et de configuration pour Postgresql, une fois que Debian a démarré. Une autre image pourrait ainsi se baser sur celle de "postgres" et ainsi de suite.
+
+Une liste d'images publiquement disponibles se trouve sur Docker Hub (https://hub.docker.com/search)
+
+Importer une image depuis Docker Hub
+------------------------------------
+
+- importer localement l'image de la dernière version de Postgresql 
+
+    $ docker pull postgres 
+
+    ou 
+
+    $ docker pull postgres:latest
+
+- pour spécifier la version explicitement
+
+    $ docker pull postgres:12.1
+
+Une fois importées, Docker gère lui même l'espace où sont placées les images. Pour les administrer (supprimer, lister, ajouter), il faut passer par un client docker.
+
+
+Lister les images installées 
+----------------------------
+
+    $ docker image ls
+
+- le nom des images est sous la colonne REPOSITORY
+- la version est sous la colonne TAG
+- l'ID est sous IMAGE ID
+
+Supprimer une image par son nom
+-------------------------------
+
+    $ docker image rm <nom de l'image> 
+
+- par exemple supprimer l'image de postgres
+
+    $ docker image rm postgres
+
+Supprimer une image par son ID 
+-------------------------------
+
+    $ docker image rm <quelques charactère de l'ID>
+
+- exemple:
+
+    $ docker image rm f2bd
+
+Supprimer toutes les images balantes (dangling) 
+-----------------------------------------------
+Les images balantes sont des images anonymes qui ne sont utilisées par aucun container et dont aucune autre images ne dépend. Elles n'ont aucune utilité et consomme juste de l'espace. Elles peuvent être toutes supprimées avec la commande
+
+    $ docker image prune
+
+Supprimer toutes les images inutilisées
+---------------------------------------
+Les images inutilisées n'ont actuellement aucun container (actifs ou inactifs) qui y fait référence. Pour les supprimer:
+
+    $ docker image prune --all

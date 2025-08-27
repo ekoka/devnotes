@@ -1,0 +1,5 @@
+- remove anonymous volumes with the --rm option 
+
+    $ docke run --rm -v /foo -v awesome:/bar busybox top
+
+    - in the above the anonymous volume that '/foo' points to is removed while the named volume 'awesome' is kept.

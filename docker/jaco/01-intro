@@ -1,0 +1,26 @@
+Un "container" Docker est un compartiment isolé dans la mémoire, au dessus duquel un autre système d'exploitation est installé avec virtuellement toutes ses capacités, incluant l'installation d'autres applications.
+
+Docker permet donc un accès virtuel à un nombre d'applications qui tournent dans des containers, sans avoir besoin de configurer la machine locale et sans se soucier de problèmes de compatibilité. On installe Docker sur le système local, on installe les containers d'applications qui nous intéressent et on interagit avec.
+
+Installer Docker sur Mac
+========================
+https://docs.docker.com/v17.12/docker-for-mac/install/
+
+La fenêtre de terminal du Mac et l'interface non-graphiqe de Docker
+===================================================================
+L'outil de base pour administrer Docker est le client non-graphique, accessible depuis le terminal du Mac. Il existe aussi quelques clients graphiques qui peuvent aider à faire les opérations les plus communes (chercher sur google "gui tools to administer docker on mac"). 
+
+De manière générale, l'attrait des clients non-graphiques est qu'ils ne sont pas limités. Toutes les opérations offertes par un service peuvent être exécutées si on connaît la bonne commande à taper. En comparaison, les clients graphiques n'exposent qu'une portion des opérations, généralement les plus communes.
+
+La ligne de commande dans la fenêtre du terminal commence généralement avec le symbole "$" pour un usager ordinaire et "#" pour un administrateur.
+
+Pour exécuter une commande de Docker on tape d'abord le nom du client de Docker (docker) et on spécifie la commande à exécuter. Par exemple, pour avoir une liste des images actuellement installées localement: 
+
+    $ docker image ls
+
+La commande se décompose comme suit:
+- docker: le client non-graphique
+- image: la section de Docker sur laquelle on veut exécuter une action.
+- ls: la commande à exécuter sur cette portion, dans ce cas "ls" qui veut dire "liste".
+
+

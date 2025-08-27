@@ -1,0 +1,18 @@
+https://stackoverflow.com/questions/47536536/whats-the-difference-between-docker-compose-and-kubernetes
+
+Excerpt from an answer:
+Many people argue that Kubernetes is hard to learn. It's because it solves a series of problems and people try to understand without knowing all the prerequisites. This makes it complicated. Start putting the pieces of the puzzle together by reading about concepts/terms like the following. This process will help you understand the kind of problems Kubernetes tries to solve:
+
+    12-factor apps,
+    Automatic binpacking,
+    Self-healing mechanisms,
+    Horizontal scaling,
+    Service discovery and Load balancing,
+    Automated rollouts and rollbacks,
+    Blue-Green deployments / Canary deployments
+    Secrets and configuration management,
+    Storage orchestration
+
+And because there are a lot of different things around containers and their management, keep an eye on the Cloud Native landscape:
+
+Interactive version here: landscape.cncf.io/

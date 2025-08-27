@@ -1,0 +1,3 @@
+- useful if the container generates non-persistent state data. It avoids persisting the data on the host machine and using the container's writable layer, which improves performance.   
+
+

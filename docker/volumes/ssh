@@ -1,0 +1,3 @@
+- to allow a docker host to connect to another node via ssh, install the `vieux/sshfs` plugin
+
+    $ docker plugin install --grant-all-permissions vieux/sshfs

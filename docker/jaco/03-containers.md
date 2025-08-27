@@ -1,0 +1,22 @@
+# Containers 
+Un "container" est une copie active d'une image en mémoire. Une image peut ainsi être réutilisée pour créer plusieurs containers en parallèle.
+
+Une fois activé le container peut être arrêté, redémarré ou supprimé.
+
+
+### Activer un container à partir d'une image
+
+    $ docker container run <nom de l'image>
+
+    ou 
+
+    $ docker container run <quelques charactères de l'ID de l'image>
+
+- par exemple, pour démarrer l'image "postgres"
+
+    $ docker container run postgres
+
+Une fois que l'image postgres a démarrée 
+
+### Quelques petites choses à savoir sur les containers:
+- Les containers sont démarrés par défaut en mode non-interractif, qui veut dire qu'il n'est pas possible d'interagir directement avec par le terminal.

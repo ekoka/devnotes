@@ -1,0 +1,6 @@
+ref: https://hackernoon.com/docker-tutorial-getting-started-with-python-redis-and-nginx-81a9d740d091
+
+- 1 application = 1 container
+- run the process in the foreground (don't use systemd, upstart, etc)
+- keep data out of containers, use volumes. Do not use SSH (if you need to step into a container, use `docker exec`)
+- avoid manual configurations (or actions) inside container.

@@ -1,0 +1,29 @@
+- volume drivers allow to abstract the underlying storage system from application logic. For example, services that use a volume with an NFS driver can be seamlessly updated to use a different driver (e.g. to store data in the cloud), without changing their application logic.
+
+- you can specify a volume driver at creation time
+
+- using the vieux/sshfs driver to connect to another node using ssh. 
+
+    # As with other ssh clients, the password can be omitted if you have a key.
+    $ docker volume create --driver vieux/sshfs \
+        -o sshcmd=test@node2:/home/test \
+        -o password=testpassword \
+        sshvolume
+
+- create a service which creates an NFSV3 volume
+
+    # note that the volume driver specified is "local"
+    $ docker service create -d \
+        --name nfs-service \
+        --mount 'type=volume,volume-driver=local,source=nfsvolume,target=/app,volume-opt=type=nfs,volume-opt=device=:/var/docker-nfs,volume-opt=o=addr=10.0.0.10' \
+        nginx
+
+- create a service which creates an NFSV4 volume
+
+    # note how the last volume options are captured inside double quotes 
+    $ docker service create -d \
+        --name nfs-service \
+        --mount 'type=volume,volume-driver=local,source=nfsvolume4,target=/app,volume-opt=type=nfs,volume-opt=device=:/,"volume-opt=o=10.0.0.10,rw,nfservers=4,async"' \
+        nginx
+
+

@@ -1,0 +1,32 @@
+### Pour savoir les commandes disponibles à une section de docker
+
+    $ docker <section> --help
+
+- ou simplement
+
+    $ docker <section>
+
+- par exemple, pour les commande de la section "image"
+
+    $ docker image
+
+- pour la section "volume"
+
+    $ docker volume
+
+- pour la section "container"
+
+    $ docker container
+
+
+### Pour avoir des détails sur les options diponibles à une commande d'une section
+
+    $ docker <section> <commande> --help
+
+- par exemple, pour le listing d'image
+
+    $ docker image ls --help
+
+- pour la suppression de container
+
+    $ docker container rm --help

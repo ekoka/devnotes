@@ -1,0 +1,31 @@
+- permission issues with data-only containers (or why you should create them from the same image as the container that updates them)
+https://container42.com/2014/11/18/data-only-container-madness/
+https://stackoverflow.com/questions/36317295/docker-postgres-mounting-an-existing-database-within-a-dockerized-postgresql
+https://github.com/docker-library/postgres/blob/3f8e9784438c8fe54f831c301a45f4d55f6fa453/9.5/Dockerfile
+
+- remote volume (NFS)
+https://stackoverflow.com/questions/45282608/how-to-directly-mount-nfs-share-volume-in-container-using-docker-compose-v3
+https://forums.docker.com/t/how-to-mount-nfs-drive-in-container-simplest-way/46699/2
+
+- RUN vs CMD vs ENTRYPOINT
+https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/
+
+- docker compose guide
+https://gabrieltanner.org/blog/docker-compose
+
+- docker backup: save and restore
+https://blog.ssdnodes.com/blog/docker-backup-volumes/
+
+- dealing with persistent storage
+https://stackoverflow.com/questions/18496940/how-to-deal-with-persistent-storage-e-g-databases-in-docker
+    - postgresql
+    https://smalldata.tech/blog/2018/02/23/dockerized-postgresql-with-local-data-storage-on-ubuntu
+    https://dinfratechsource.com/2018/12/11/deploying-postgresql-on-a-docker-container/
+
+- best docker base image for python
+https://pythonspeed.com/articles/base-image-python-docker-images/
+
+- docker ONBUILD
+https://www.learnitguide.net/2018/06/docker-onbuild-command-with-examples.html
+
+- https://docker-curriculum.com/

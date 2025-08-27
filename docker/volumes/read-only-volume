@@ -1,0 +1,13 @@
+- use a read-only volume
+
+    # using --bind
+    $ docker run -d \
+        --name=nginxtest
+        --mount source=some-volume,dst=/usr/share/nginx/html,readonly \
+        nginx
+
+    # using -v
+    $ docker run -d \
+        --name=nginxtest
+        -v some-volume:/usr/share/nginx/html:ro \
+        nginx
