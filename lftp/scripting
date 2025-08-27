@@ -1,0 +1,76 @@
+lftp in a bash script 
+---------------------
+# when running lftp in a bash script, the commands to run from insid lftp can be listed inside an <<EOF ... EOF  block
+
+    #!/bin/bash
+    lftp -u username,password ftp://someserver << EOF
+    cd some/remote/dir
+    lcd some/local/dir
+    mirror somesubdir
+    EOF
+
+write mirror commands to a file without executing them
+------------------------------------------------------
+
+    lftp << EOF
+        mirror --script=<file> dest source
+    EOF
+
+
+lftp native scripting
+----------------------
+# commands can also be passed as parameters to lftp itself with the -c, -e and -f argument
+- with -f: 
+
+    # option must be used alone with no other arguments passed to lftp
+    # loads commands from a script file
+    lftp -f script_file
+    # e.g. content of script_file
+        
+        open -u username,password ftp://someserver 
+        cd some/remote dir
+
+- with -c: 
+    # option must be used alone with no other arguments passed to lftp
+    # execute listed commands and exit
+
+        lftp -c '\
+            open ftp://someserver;\
+            user username password;\
+            set ftps:initial_prot "P";\
+            set ftp:ssl-force true;\
+            set ftp:ssl-protect-data true;\
+            set ssl:verify-certificate false;\
+            set xfer:clobber true;\
+            cd some/remote/dir;\
+            lcd some/local/dir;\
+            mirror somesubdir;\
+        '
+
+- with -e:
+    # execute listed commands and don't exit
+    # can be used with other arguments passed to lftp
+
+        lftp -e ' user username password;\
+                  set xfer:clobber true;\
+                  cd some/remote/dir;\
+                  ls;'\
+            ftp://someserver
+
+issuing a local command in a script
+-----------------------------------
+    # when issuing a local command in a script you need to issue 
+    # an `exit` command to exit the local shell back to the lftp one.
+        lftp -c '\
+            open ftp://someserver;\
+            user username password;\
+            set ftps:initial_prot "P";\
+            set ftp:ssl-force true;\
+            set ftp:ssl-protect-data true;\
+            set ssl:verify-certificate false;\
+            set xfer:clobber true;\
+            cd some/remote/dir;\
+            !cd some/local/dir;\    <-- local command 
+            exit;\                  <-- exiting local shell
+            mirror somesubdir;\
+        '

@@ -1,0 +1,8 @@
+Other topics of varying degree of interest (see man lftp)
+---------------------------------------------------------
+# synchronize directories between two remote servers
+# bitTorrent
+# bookmarks
+# attach terminal to specified backgrounded lftp process
+    attach [PID]
+# cache

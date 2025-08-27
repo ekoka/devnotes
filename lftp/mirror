@@ -1,0 +1,43 @@
+syntax:
+
+    mirror [options] [source [target]]
+
+useful options (see man page for more):
+-c, --continue : continue a mirror job if possible
+-e, --delete : delete files not present at remote site
+--only-missing : download only missing files
+--only-existing : download only files already existing at target
+-n, --only-newer : download only newer files (-c won't work)
+--no-empty-dirs : don't create empty directories (implies --depth-first)
+-r, --no-recursion : don't go to subdirectories
+--no-symlinks : don't create symbolic links
+-p, --no-perms : don't set file permissions
+--no-umask : don't apply umask to file modes
+-R, --reverse : reverse mirror (put files)
+-L, --dereference : download symbolic links as files
+-N, --newer-than=SPEC : download only files newer than specified time
+--older-than=SPEC : download only files older than specified time
+--size-range=RANGE : download only files with size in specified range
+-P, --parallel[=N] : download N files in parallel
+--use-pget[-n=N] : use pget to transfer every single file
+--on-change=CMD : execute the command if anything has been changed
+--loop : repeat mirror until no changes found
+-i REGEX, --include=REGEX : include matching files
+-x REGEX, --exclude=REGEX : exclude matching files
+-I GLOB, --include-glob=GLOB : include matching files
+-X GLOB, --exclude-glob=GLOB : exclude matching files
+-f FILE, --file=FILE : mirror a single file or globbed group (e.g. /path/to/*.txt)
+-O DIR, --target-directory=DIR : target base path or URL
+-v, --verbose[=level] : verbose operation
+--log=FILE : write lftp commands being executed to FILE
+--script=FILE : write lftp commands to FILE, but don't execute them
+--just-print, --dry-run : same as --script=-
+--Remove-source-files : remove files after transfer (use with caution)
+-a : same as --allow-chown --allow-suid --no-umask
+
+- if the target directory ends with a slash (except the root), the source base name is appended to target directory name.
+- include and exclude options can be specified multiple times. A file or directory is mirrored if it passes the requirements of all those options.
+- directories are matched with a slash appended
+- symlink are not created when uploading to remote server. use `mirror -RL` to dereference and upload the symlinked file.
+- `--only-newer` turns off file size comparison and uploads/downloads only newer files even if the size is different. by default older files are transferred and replace newer ones.
+- you can mirror between two servers if you specify the URLs instead of directories. FXP is used automatically for transfer between servers if possible.

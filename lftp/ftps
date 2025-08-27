@@ -1,0 +1,1 @@
+lftp -u myname,mypassword somehost

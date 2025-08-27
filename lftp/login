@@ -1,0 +1,9 @@
+# at start time
+    $ lftp -u username,password host
+
+# within lftp
+    user username [password]
+    user url [pass]
+    open [-u user[,pass]] [-p port] host|url
+
+

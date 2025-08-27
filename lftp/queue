@@ -1,0 +1,31 @@
+- syntax
+    queue [-n num] [cmd]
+    # queue with no argument creates a stopped queue or print the queue status
+
+- delete items
+    # delete one or more items, or the last entry if no argument given
+    queue --delete|-d [index or wildcard expression]
+
+- move items
+    # move matching items before the given index, or to the end if no destination given 
+    queue --move|-m <index or wildcard expression> [index]
+
+    - move options:
+        -q : quiet
+        -v : verbose
+        -Q : output in format that can be used to re-queue (useful with --delete)
+
+e.g.
+
+    > get file &
+    [1] get file
+    > queue wait 1
+    > queue get another_file
+    > cd a_directory
+    > queue get yet_another_file
+
+    queue -d 3              : Delete third item in the queue
+    queue -m 6 4            : move sixth item before the fourth
+    queue -m "get*zip" 1    : move all commands matching get*zip to top of queue (order of items is preserved)  
+    queue -d "get*zip"      : delete all commands matching get*zip
+
